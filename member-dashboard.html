@@ -543,6 +543,92 @@
             color: var(--danger);
         }
 
+        /* ====== Notifications Section ====== */
+        .notifications-container {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        .notification-time {
+            font-size: 0.7rem;
+        }
+
+        .notification-type {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .notification-type.info {
+            background-color: rgba(58, 134, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .notification-type.warning {
+            background-color: rgba(255, 190, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .notification-type.important {
+            background-color: rgba(239, 35, 60, 0.1);
+            color: var(--danger);
+        }
+
+        .notifications-empty {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
         /* ====== Loading States ====== */
         .loading-spinner {
             display: inline-block;
@@ -796,7 +882,7 @@
                         <p>Status: <span class="status-badge active" id="membershipStatus">Active</span></p>
                     </div>
                     <div class="card-footer">
-                        <i class="fas fa-calendar-alt"></i> <span id="membershipExpiry">Expires in 30 days</span>
+                        <i class="fas fa-calendar-alt"></i> <span id="membershipExpiry">Loading...</span>
                     </div>
                 </div>
 
@@ -808,8 +894,8 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <h3 id="dietPlan">Standard</h3>
-                        <p>Last updated: <span id="dietUpdate">2 days ago</span></p>
+                        <h3 id="dietPlan">Loading...</h3>
+                        <p>Last updated: <span id="dietUpdate">Loading...</span></p>
                     </div>
                     <div class="card-footer">
                         <i class="fas fa-arrow-right"></i> <a href="diet.html">View Details</a>
@@ -849,9 +935,22 @@
                 </div>
             </div>
 
+            <!-- Notifications Section -->
+            <div class="notifications-container" data-aos="fade-up" data-aos-delay="300">
+                <div class="detail-header">
+                    <h3 class="detail-title">Recent Notifications</h3>
+                    <a href="notifications.html" class="detail-link">View All</a>
+                </div>
+                <div id="notificationsList">
+                    <div class="notifications-empty">
+                        Loading notifications...
+                    </div>
+                </div>
+            </div>
+
             <!-- Member Details -->
             <div class="member-details">
-                <div class="detail-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="detail-card" data-aos="fade-up" data-aos-delay="350">
                     <div class="detail-header">
                         <h3 class="detail-title">Membership Details</h3>
                         <a href="profile.html" class="detail-link">View All</a>
@@ -859,10 +958,9 @@
                     <div class="detail-body">
                         <table class="detail-table">
                             <tbody id="membershipDetails">
-                                <!-- Membership details will be inserted here by JavaScript -->
                                 <tr>
-                                    <td colspan="2">
-                                        <div class="skeleton" style="width: 100%; height: 20px;"></div>
+                                    <td colspan="2" style="color: var(--gray);">
+                                        Loading membership details...
                                     </td>
                                 </tr>
                             </tbody>
@@ -870,7 +968,7 @@
                     </div>
                 </div>
 
-                <div class="detail-card" data-aos="fade-up" data-aos-delay="350">
+                <div class="detail-card" data-aos="fade-up" data-aos-delay="400">
                     <div class="detail-header">
                         <h3 class="detail-title">Recent Bills</h3>
                         <a href="bills.html" class="detail-link">View All</a>
@@ -885,10 +983,9 @@
                                 </tr>
                             </thead>
                             <tbody id="recentBills">
-                                <!-- Recent bills will be inserted here by JavaScript -->
                                 <tr>
-                                    <td colspan="3">
-                                        <div class="skeleton" style="width: 100%; height: 20px;"></div>
+                                    <td colspan="3" style="color: var(--gray);">
+                                        Loading recent bills...
                                     </td>
                                 </tr>
                             </tbody>
@@ -898,7 +995,7 @@
             </div>
 
             <!-- Upcoming Workouts -->
-            <div class="detail-card" data-aos="fade-up" data-aos-delay="400">
+            <div class="detail-card" data-aos="fade-up" data-aos-delay="450">
                 <div class="detail-header">
                     <h3 class="detail-title">Upcoming Workouts</h3>
                     <a href="#" class="detail-link">View Schedule</a>
@@ -914,10 +1011,9 @@
                             </tr>
                         </thead>
                         <tbody id="upcomingWorkouts">
-                            <!-- Upcoming workouts will be inserted here by JavaScript -->
                             <tr>
-                                <td colspan="4">
-                                    <div class="skeleton" style="width: 100%; height: 20px;"></div>
+                                <td colspan="4" style="color: var(--gray);">
+                                    Loading upcoming workouts...
                                 </td>
                             </tr>
                         </tbody>
@@ -1004,18 +1100,14 @@
                 const userData = userDoc.data();
                 
                 if (userData.role !== 'member') {
-                    // User is not member, redirect to appropriate dashboard
-                    window.location.href = userData.role === 'admin' ? 'admin-dashboard.html' : 'login.html';
+                    // User is not member, redirect to 404.html
+                    window.location.href = '404.html';
                     return;
                 }
 
                 // User is member, load dashboard data
                 updateUserProfile(userData);
-                loadMemberData(user.uid);
-                loadMembershipDetails(user.uid);
-                loadRecentBills(user.uid);
-                loadUpcomingWorkouts(user.uid);
-                loadUnreadNotificationsCount(user.uid);
+                setupRealtimeListeners(user.uid);
 
             } catch (error) {
                 console.error('Error checking user role:', error);
@@ -1025,6 +1117,302 @@
                 hideLoading();
             }
         });
+
+        // Set up real-time listeners for all data
+        function setupRealtimeListeners(userId) {
+            // Membership details
+            db.collection('memberships')
+                .where('userId', '==', userId)
+                .limit(1)
+                .onSnapshot((snapshot) => {
+                    const tableBody = document.getElementById('membershipDetails');
+                    
+                    if (!snapshot.empty) {
+                        const membershipData = snapshot.docs[0].data();
+                        tableBody.innerHTML = '';
+                        
+                        const rows = [
+                            { label: 'Membership Plan', value: membershipData.plan || 'Basic' },
+                            { label: 'Start Date', value: membershipData.startDate ? membershipData.startDate.toDate().toLocaleDateString() : 'N/A' },
+                            { label: 'End Date', value: membershipData.endDate ? membershipData.endDate.toDate().toLocaleDateString() : 'N/A' },
+                            { label: 'Payment Cycle', value: membershipData.paymentCycle || 'Monthly' },
+                            { label: 'Monthly Fee', value: membershipData.fee ? `$${membershipData.fee.toFixed(2)}` : '$0.00' }
+                        ];
+                        
+                        rows.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${row.label}</td>
+                                <td>${row.value}</td>
+                            `;
+                            tableBody.appendChild(tr);
+                        });
+
+                        // Update membership card
+                        document.getElementById('membershipPlan').textContent = membershipData.plan || 'Basic';
+                        
+                        if (membershipData.endDate) {
+                            const endDate = membershipData.endDate.toDate();
+                            const today = new Date();
+                            const diffTime = endDate - today;
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                            
+                            if (diffDays > 0) {
+                                document.getElementById('membershipExpiry').textContent = `Expires in ${diffDays} days`;
+                                document.getElementById('membershipStatus').className = 'status-badge active';
+                                document.getElementById('membershipStatus').textContent = 'Active';
+                            } else {
+                                document.getElementById('membershipExpiry').textContent = `Expired`;
+                                document.getElementById('membershipStatus').className = 'status-badge expired';
+                                document.getElementById('membershipStatus').textContent = 'Expired';
+                            }
+                        }
+                    } else {
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="2">No active membership found</td>
+                            </tr>
+                        `;
+                        document.getElementById('membershipPlan').textContent = 'Not Active';
+                        document.getElementById('membershipExpiry').textContent = 'N/A';
+                        document.getElementById('membershipStatus').className = 'status-badge expired';
+                        document.getElementById('membershipStatus').textContent = 'Inactive';
+                    }
+                }, (error) => {
+                    console.error('Error listening to membership:', error);
+                    document.getElementById('membershipDetails').innerHTML = `
+                        <tr>
+                            <td colspan="2">Error loading membership details</td>
+                        </tr>
+                    `;
+                });
+
+            // Diet plan details
+            db.collection('diets')
+                .where('userId', '==', userId)
+                .orderBy('updatedAt', 'desc')
+                .limit(1)
+                .onSnapshot((snapshot) => {
+                    if (!snapshot.empty) {
+                        const dietData = snapshot.docs[0].data();
+                        document.getElementById('dietPlan').textContent = dietData.planName || 'Standard';
+                        
+                        if (dietData.updatedAt) {
+                            const updatedDate = dietData.updatedAt.toDate();
+                            const today = new Date();
+                            const diffTime = today - updatedDate;
+                            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                            
+                            document.getElementById('dietUpdate').textContent = diffDays === 0 ? 'Today' : 
+                                diffDays === 1 ? 'Yesterday' : `${diffDays} days ago`;
+                        }
+                    } else {
+                        document.getElementById('dietPlan').textContent = 'Not Assigned';
+                        document.getElementById('dietUpdate').textContent = 'N/A';
+                    }
+                }, (error) => {
+                    console.error('Error listening to diet plan:', error);
+                    document.getElementById('dietPlan').textContent = 'Error';
+                    document.getElementById('dietUpdate').textContent = 'Error';
+                });
+
+            // Recent bills
+            db.collection('bills')
+                .where('userId', '==', userId)
+                .orderBy('paymentDate', 'desc')
+                .limit(3)
+                .onSnapshot((snapshot) => {
+                    const tableBody = document.getElementById('recentBills');
+                    tableBody.innerHTML = '';
+                    
+                    if (!snapshot.empty) {
+                        snapshot.forEach((doc) => {
+                            const billData = doc.data();
+                            const paymentDate = billData.paymentDate ? billData.paymentDate.toDate().toLocaleDateString() : 'N/A';
+                            
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${paymentDate}</td>
+                                <td>$${billData.amount?.toFixed(2) || '0.00'}</td>
+                                <td><span class="status-badge ${billData.status === 'paid' ? 'active' : 'pending'}">${billData.status || 'pending'}</span></td>
+                            `;
+                            tableBody.appendChild(tr);
+                        });
+                    } else {
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="3">No bills found</td>
+                            </tr>
+                        `;
+                    }
+                }, (error) => {
+                    console.error('Error listening to bills:', error);
+                    document.getElementById('recentBills').innerHTML = `
+                        <tr>
+                            <td colspan="3">Error loading bills</td>
+                        </tr>
+                    `;
+                });
+
+            // Pending bills count
+            db.collection('bills')
+                .where('userId', '==', userId)
+                .where('status', '==', 'pending')
+                .onSnapshot((snapshot) => {
+                    document.getElementById('pendingBills').textContent = snapshot.size;
+                }, (error) => {
+                    console.error('Error listening to pending bills:', error);
+                });
+
+            // Upcoming workouts
+            db.collection('workouts')
+                .where('userId', '==', userId)
+                .where('date', '>=', new Date())
+                .orderBy('date')
+                .limit(3)
+                .onSnapshot(async (snapshot) => {
+                    const tableBody = document.getElementById('upcomingWorkouts');
+                    tableBody.innerHTML = '';
+                    
+                    if (!snapshot.empty) {
+                        // Get all trainer IDs first
+                        const trainerIds = [];
+                        const workoutsData = [];
+                        
+                        snapshot.forEach(doc => {
+                            const workoutData = doc.data();
+                            workoutsData.push(workoutData);
+                            
+                            if (workoutData.trainerId && !trainerIds.includes(workoutData.trainerId)) {
+                                trainerIds.push(workoutData.trainerId);
+                            }
+                        });
+                        
+                        // Get all trainers in one query if needed
+                        let trainers = {};
+                        if (trainerIds.length > 0) {
+                            const trainersQuery = await db.collection('users')
+                                .where(firebase.firestore.FieldPath.documentId(), 'in', trainerIds)
+                                .get();
+                            
+                            trainersQuery.forEach(doc => {
+                                trainers[doc.id] = doc.data();
+                            });
+                        }
+                        
+                        // Now render the table
+                        workoutsData.forEach(workout => {
+                            const workoutDate = workout.date ? workout.date.toDate() : new Date();
+                            const trainerName = workout.trainerId ? 
+                                (trainers[workout.trainerId]?.fullName || 'Trainer') : 'Trainer';
+                            
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${workoutDate.toLocaleDateString()}</td>
+                                <td>${workout.time || 'N/A'}</td>
+                                <td>${trainerName}</td>
+                                <td>${workout.type || 'Personal Training'}</td>
+                            `;
+                            tableBody.appendChild(tr);
+                        });
+                    } else {
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="4">No upcoming workouts scheduled</td>
+                            </tr>
+                        `;
+                    }
+                }, (error) => {
+                    console.error('Error listening to workouts:', error);
+                    document.getElementById('upcomingWorkouts').innerHTML = `
+                        <tr>
+                            <td colspan="4">Error loading workouts</td>
+                        </tr>
+                    `;
+                });
+
+            // Workout count for current month
+            const currentDate = new Date();
+            const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            
+            db.collection('workouts')
+                .where('userId', '==', userId)
+                .where('date', '>=', firstDayOfMonth)
+                .onSnapshot((snapshot) => {
+                    document.getElementById('workoutCount').textContent = snapshot.size;
+                }, (error) => {
+                    console.error('Error listening to workout count:', error);
+                });
+
+            // Notifications
+            db.collection('notifications')
+                .where('userId', '==', userId)
+                .orderBy('timestamp', 'desc')
+                .limit(5)
+                .onSnapshot((snapshot) => {
+                    const notificationsContainer = document.getElementById('notificationsList');
+                    notificationsContainer.innerHTML = '';
+                    
+                    if (!snapshot.empty) {
+                        snapshot.forEach(doc => {
+                            const notification = doc.data();
+                            const notificationDate = notification.timestamp ? notification.timestamp.toDate() : new Date();
+                            
+                            // Determine icon and type
+                            let iconClass = 'fa-info-circle';
+                            let typeClass = 'info';
+                            if (notification.type === 'warning') {
+                                iconClass = 'fa-exclamation-triangle';
+                                typeClass = 'warning';
+                            } else if (notification.type === 'important') {
+                                iconClass = 'fa-exclamation-circle';
+                                typeClass = 'important';
+                            }
+                            
+                            const notificationItem = document.createElement('div');
+                            notificationItem.className = 'notification-item';
+                            notificationItem.innerHTML = `
+                                <div class="notification-icon">
+                                    <i class="fas ${iconClass}"></i>
+                                </div>
+                                <div class="notification-content">
+                                    <div class="notification-message">${notification.message || 'No message'}</div>
+                                    <div class="notification-meta">
+                                        <span class="notification-type ${typeClass}">${notification.type || 'info'}</span>
+                                        <span class="notification-time">${notificationDate.toLocaleString()}</span>
+                                    </div>
+                                </div>
+                            `;
+                            notificationsContainer.appendChild(notificationItem);
+                        });
+                    } else {
+                        notificationsContainer.innerHTML = `
+                            <div class="notifications-empty">
+                                No notifications available
+                            </div>
+                        `;
+                    }
+                }, (error) => {
+                    console.error('Error listening to notifications:', error);
+                    document.getElementById('notificationsList').innerHTML = `
+                        <div class="notifications-empty" style="color: var(--danger);">
+                            Error loading notifications
+                        </div>
+                    `;
+                });
+
+            // Unread notifications count
+            db.collection('notifications')
+                .where('userId', '==', userId)
+                .where('read', '==', false)
+                .onSnapshot((snapshot) => {
+                    const count = snapshot.size;
+                    notificationBadge.textContent = count;
+                    topbarNotificationBadge.textContent = count;
+                }, (error) => {
+                    console.error('Error listening to unread notifications:', error);
+                });
+        }
 
         // Update user profile in topbar
         function updateUserProfile(userData) {
@@ -1038,297 +1426,6 @@
                 // Generate avatar from name
                 const name = userData.fullName || 'Member';
                 userProfileImage.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=3a86ff&color=fff`;
-            }
-        }
-
-        // Load member data
-        async function loadMemberData(userId) {
-            try {
-                showLoading();
-                
-                // Get membership details
-                const membershipQuery = await db.collection('memberships')
-                    .where('userId', '==', userId)
-                    .limit(1)
-                    .get();
-                
-                if (!membershipQuery.empty) {
-                    const membershipData = membershipQuery.docs[0].data();
-                    document.getElementById('membershipPlan').textContent = membershipData.plan || 'Basic';
-                    
-                    // Calculate days remaining
-                    if (membershipData.endDate) {
-                        const endDate = membershipData.endDate.toDate();
-                        const today = new Date();
-                        const diffTime = endDate - today;
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        
-                        if (diffDays > 0) {
-                            document.getElementById('membershipExpiry').textContent = `Expires in ${diffDays} days`;
-                            document.getElementById('membershipStatus').className = 'status-badge active';
-                            document.getElementById('membershipStatus').textContent = 'Active';
-                        } else {
-                            document.getElementById('membershipExpiry').textContent = `Expired`;
-                            document.getElementById('membershipStatus').className = 'status-badge expired';
-                            document.getElementById('membershipStatus').textContent = 'Expired';
-                        }
-                    }
-                }
-                
-                // Get diet plan details
-                const dietQuery = await db.collection('diets')
-                    .where('userId', '==', userId)
-                    .orderBy('updatedAt', 'desc')
-                    .limit(1)
-                    .get();
-                
-                if (!dietQuery.empty) {
-                    const dietData = dietQuery.docs[0].data();
-                    document.getElementById('dietPlan').textContent = dietData.planName || 'Standard';
-                    
-                    if (dietData.updatedAt) {
-                        const updatedDate = dietData.updatedAt.toDate();
-                        const today = new Date();
-                        const diffTime = today - updatedDate;
-                        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                        
-                        document.getElementById('dietUpdate').textContent = diffDays === 0 ? 'Today' : 
-                            diffDays === 1 ? 'Yesterday' : `${diffDays} days ago`;
-                    }
-                } else {
-                    document.getElementById('dietPlan').textContent = 'Not Assigned';
-                    document.getElementById('dietUpdate').textContent = 'N/A';
-                }
-                
-                // Get pending bills count
-                const pendingBillsQuery = await db.collection('bills')
-                    .where('userId', '==', userId)
-                    .where('status', '==', 'pending')
-                    .get();
-                
-                document.getElementById('pendingBills').textContent = pendingBillsQuery.size;
-                
-                // Get workout count (this month)
-                const currentDate = new Date();
-                const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-                
-                const workoutsQuery = await db.collection('workouts')
-                    .where('userId', '==', userId)
-                    .where('date', '>=', firstDayOfMonth)
-                    .get();
-                
-                document.getElementById('workoutCount').textContent = workoutsQuery.size;
-                
-                // Mock workout change (would be real in production)
-                document.getElementById('workoutChange').textContent = '3';
-                
-            } catch (error) {
-                console.error('Error loading member data:', error);
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Load membership details
-        async function loadMembershipDetails(userId) {
-            const tableBody = document.getElementById('membershipDetails');
-            tableBody.innerHTML = '';
-            
-            try {
-                showLoading();
-                
-                const membershipQuery = await db.collection('memberships')
-                    .where('userId', '==', userId)
-                    .limit(1)
-                    .get();
-                
-                if (!membershipQuery.empty) {
-                    const membershipData = membershipQuery.docs[0].data();
-                    
-                    const rows = [
-                        { label: 'Membership Plan', value: membershipData.plan || 'Basic' },
-                        { label: 'Start Date', value: membershipData.startDate ? membershipData.startDate.toDate().toLocaleDateString() : 'N/A' },
-                        { label: 'End Date', value: membershipData.endDate ? membershipData.endDate.toDate().toLocaleDateString() : 'N/A' },
-                        { label: 'Payment Cycle', value: membershipData.paymentCycle || 'Monthly' },
-                        { label: 'Monthly Fee', value: membershipData.fee ? `$${membershipData.fee.toFixed(2)}` : '$0.00' }
-                    ];
-                    
-                    rows.forEach(row => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>${row.label}</td>
-                            <td>${row.value}</td>
-                        `;
-                        tableBody.appendChild(tr);
-                    });
-                } else {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="2">No active membership found</td>
-                        </tr>
-                    `;
-                }
-                
-            } catch (error) {
-                console.error('Error loading membership details:', error);
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="2">Error loading membership details</td>
-                    </tr>
-                `;
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Load recent bills
-        async function loadRecentBills(userId) {
-            const tableBody = document.getElementById('recentBills');
-            tableBody.innerHTML = '';
-            
-            try {
-                showLoading();
-                
-                const querySnapshot = await db.collection('bills')
-                    .where('userId', '==', userId)
-                    .orderBy('paymentDate', 'desc')
-                    .limit(3)
-                    .get();
-                
-                if (!querySnapshot.empty) {
-                    querySnapshot.forEach((doc) => {
-                        const billData = doc.data();
-                        const paymentDate = billData.paymentDate ? billData.paymentDate.toDate().toLocaleDateString() : 'N/A';
-                        
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>${paymentDate}</td>
-                            <td>$${billData.amount?.toFixed(2) || '0.00'}</td>
-                            <td><span class="status-badge ${billData.status === 'paid' ? 'active' : 'pending'}">${billData.status || 'pending'}</span></td>
-                        `;
-                        tableBody.appendChild(tr);
-                    });
-                } else {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="3">No bills found</td>
-                        </tr>
-                    `;
-                }
-                
-            } catch (error) {
-                console.error('Error loading recent bills:', error);
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="3">Error loading bills</td>
-                    </tr>
-                `;
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Load upcoming workouts
-        async function loadUpcomingWorkouts(userId) {
-            const tableBody = document.getElementById('upcomingWorkouts');
-            tableBody.innerHTML = '';
-            
-            try {
-                showLoading();
-                
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                
-                const querySnapshot = await db.collection('workouts')
-                    .where('userId', '==', userId)
-                    .where('date', '>=', today)
-                    .orderBy('date')
-                    .limit(3)
-                    .get();
-                
-                if (!querySnapshot.empty) {
-                    // Get all trainer IDs first
-                    const trainerIds = [];
-                    const workoutsData = [];
-                    
-                    querySnapshot.forEach(doc => {
-                        const workoutData = doc.data();
-                        workoutsData.push(workoutData);
-                        
-                        if (workoutData.trainerId && !trainerIds.includes(workoutData.trainerId)) {
-                            trainerIds.push(workoutData.trainerId);
-                        }
-                    });
-                    
-                    // Get all trainers in one query
-                    const trainersQuery = await db.collection('users')
-                        .where(firebase.firestore.FieldPath.documentId(), 'in', trainerIds)
-                        .get();
-                    
-                    const trainers = {};
-                    trainersQuery.forEach(doc => {
-                        trainers[doc.id] = doc.data();
-                    });
-                    
-                    // Now render the table
-                    workoutsData.forEach(workout => {
-                        const workoutDate = workout.date ? workout.date.toDate() : new Date();
-                        const trainerName = workout.trainerId ? 
-                            (trainers[workout.trainerId]?.fullName || 'Trainer') : 'Trainer';
-                        
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>${workoutDate.toLocaleDateString()}</td>
-                            <td>${workout.time || 'N/A'}</td>
-                            <td>${trainerName}</td>
-                            <td>${workout.type || 'Personal Training'}</td>
-                        `;
-                        tableBody.appendChild(tr);
-                    });
-                } else {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="4">No upcoming workouts scheduled</td>
-                        </tr>
-                    `;
-                }
-                
-            } catch (error) {
-                console.error('Error loading upcoming workouts:', error);
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="4">Error loading workouts</td>
-                    </tr>
-                `;
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Load unread notifications count
-        async function loadUnreadNotificationsCount(userId) {
-            try {
-                const querySnapshot = await db.collection('notifications')
-                    .where('userId', '==', userId)
-                    .where('read', '==', false)
-                    .get();
-                
-                const count = querySnapshot.size;
-                notificationBadge.textContent = count;
-                topbarNotificationBadge.textContent = count;
-                
-                // Set up real-time listener for notifications
-                db.collection('notifications')
-                    .where('userId', '==', userId)
-                    .where('read', '==', false)
-                    .onSnapshot((snapshot) => {
-                        const newCount = snapshot.size;
-                        notificationBadge.textContent = newCount;
-                        topbarNotificationBadge.textContent = newCount;
-                    });
-                
-            } catch (error) {
-                console.error('Error loading notifications count:', error);
             }
         }
 
@@ -1365,7 +1462,3 @@
     </script>
 </body>
 </html>
-
-
-<!-- All Done --><!-- All Done --><!-- All Done -->
-<!-- All Done --><!-- All Done --><!-- All Done --> 

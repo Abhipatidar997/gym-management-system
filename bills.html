@@ -512,9 +512,15 @@
             color: var(--gray);
         }
 
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .bills-table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 800px;
         }
 
         .bills-table th {
@@ -687,6 +693,10 @@
             color: var(--darker);
         }
 
+        .form-group label .required {
+            color: var(--danger);
+        }
+
         .form-group input,
         .form-group select,
         .form-group textarea {
@@ -711,6 +721,13 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
         }
 
         .modal-footer {
@@ -871,13 +888,18 @@
                 gap: 1rem;
             }
 
-            .bills-table {
-                display: block;
-                overflow-x: auto;
+            .billing-filters {
+                flex-direction: column;
+                align-items: flex-start;
             }
 
             .form-row {
                 grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
             }
         }
 
@@ -1083,27 +1105,29 @@
                     </div>
                 </div>
                 <div class="bills-body">
-                    <table class="bills-table">
-                        <thead>
-                            <tr>
-                                <th>Bill No.</th>
-                                <th>Member</th>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Package</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="billsTable">
-                            <!-- Bills will be loaded here -->
-                            <tr>
-                                <td colspan="7" style="text-align: center; padding: 2rem;">
-                                    <div class="skeleton" style="width: 100%; height: 20px;"></div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="bills-table">
+                            <thead>
+                                <tr>
+                                    <th>Bill No.</th>
+                                    <th>Member</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Package</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="billsTable">
+                                <!-- Bills will be loaded here -->
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 2rem;">
+                                        <div class="skeleton" style="width: 100%; height: 20px;"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1120,14 +1144,15 @@
                 <form id="billForm">
                     <input type="hidden" id="billId">
                     <div class="form-group">
-                        <label for="billMember">Member</label>
+                        <label for="billMember">Member <span class="required">*</span></label>
                         <select id="billMember" required>
                             <option value="">Select Member</option>
                             <!-- Members will be populated by JavaScript -->
                         </select>
+                        <div class="error-message" id="memberError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="billPackage">Package</label>
+                        <label for="billPackage">Package <span class="required">*</span></label>
                         <select id="billPackage" required>
                             <option value="">Select Package</option>
                             <option value="Basic">Basic ($30/month)</option>
@@ -1135,22 +1160,26 @@
                             <option value="Premium">Premium ($80/month)</option>
                             <option value="VIP">VIP ($120/month)</option>
                         </select>
+                        <div class="error-message" id="packageError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="billAmount">Amount ($)</label>
+                        <label for="billAmount">Amount ($) <span class="required">*</span></label>
                         <input type="number" id="billAmount" step="0.01" required>
+                        <div class="error-message" id="amountError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="billDate">Due Date</label>
+                        <label for="billDate">Due Date <span class="required">*</span></label>
                         <input type="date" id="billDate" required>
+                        <div class="error-message" id="dateError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="billStatus">Status</label>
+                        <label for="billStatus">Status <span class="required">*</span></label>
                         <select id="billStatus" required>
                             <option value="pending">Pending</option>
                             <option value="paid">Paid</option>
                             <option value="overdue">Overdue</option>
                         </select>
+                        <div class="error-message" id="statusError"></div>
                     </div>
                     <div class="form-group">
                         <label for="billNotes">Notes</label>
@@ -1199,7 +1228,7 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-com pat .js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
@@ -1257,6 +1286,10 @@
         const startDateInput = document.getElementById('startDate');
         const endDateInput = document.getElementById('endDate');
 
+        // Current user data
+        let currentUser = null;
+        let billsListener = null;
+
         // Show loading state
         function showLoading() {
             document.body.classList.add('loading');
@@ -1295,6 +1328,8 @@
                 return;
             }
 
+            currentUser = user;
+            
             try {
                 // Check if user is admin
                 const userDoc = await db.collection('users').doc(user.uid).get();
@@ -1310,14 +1345,14 @@
                     return;
                 }
 
-                // User is admin, load billing data
-                loadBillingSummary();
-                loadBills();
+                // Update UI with admin data
+                document.getElementById('userProfileImage').src = userData.photoURL || 'https://randomuser.me/api/portraits/men/32.jpg';
+                document.querySelector('.user-name').textContent = userData.fullName || 'Admin';
+
+                // Set up real-time listeners
+                setupBillsListener();
                 loadMembersForBilling();
                 loadUnreadNotificationsCount(user.uid);
-
-                // Set up real-time listener for bills
-                setupBillsListener();
 
             } catch (error) {
                 console.error('Error checking user role:', error);
@@ -1355,7 +1390,12 @@
 
         // Set up real-time listener for bills
         function setupBillsListener() {
-            return db.collection('bills')
+            // Clear any existing listener
+            if (billsListener) {
+                billsListener();
+            }
+
+            billsListener = db.collection('bills')
                 .orderBy('dueDate', 'desc')
                 .onSnapshot((querySnapshot) => {
                     const bills = [];
@@ -1417,55 +1457,6 @@
                 });
         }
 
-        // Load billing summary data
-        function loadBillingSummary() {
-            const today = new Date();
-            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-            
-            // Total paid
-            db.collection('bills').where('status', '==', 'paid').get()
-                .then((querySnapshot) => {
-                    let totalPaid = 0;
-                    querySnapshot.forEach((doc) => {
-                        totalPaid += doc.data().amount || 0;
-                    });
-                    document.getElementById('totalPaid').textContent = '$' + totalPaid.toFixed(2);
-                });
-            
-            // Total pending
-            db.collection('bills').where('status', '==', 'pending').get()
-                .then((querySnapshot) => {
-                    let totalPending = 0;
-                    querySnapshot.forEach((doc) => {
-                        totalPending += doc.data().amount || 0;
-                    });
-                    document.getElementById('totalPending').textContent = '$' + totalPending.toFixed(2);
-                });
-            
-            // Total overdue
-            db.collection('bills').where('status', '==', 'overdue').get()
-                .then((querySnapshot) => {
-                    let totalOverdue = 0;
-                    querySnapshot.forEach((doc) => {
-                        totalOverdue += doc.data().amount || 0;
-                    });
-                    document.getElementById('totalOverdue').textContent = '$' + totalOverdue.toFixed(2);
-                });
-            
-            // This month's revenue
-            db.collection('bills')
-                .where('paymentDate', '>=', firstDayOfMonth)
-                .where('status', '==', 'paid')
-                .get()
-                .then((querySnapshot) => {
-                    let totalThisMonth = 0;
-                    querySnapshot.forEach((doc) => {
-                        totalThisMonth += doc.data().amount || 0;
-                    });
-                    document.getElementById('totalThisMonth').textContent = '$' + totalThisMonth.toFixed(2);
-                });
-        }
-
         // Update billing summary from bills array
         function updateBillingSummary(bills) {
             const today = new Date();
@@ -1500,85 +1491,6 @@
             document.getElementById('totalThisMonth').textContent = '$' + totalThisMonth.toFixed(2);
         }
 
-        // Load bills with filters
-        function loadBills(statusFilter = 'all', dateFilter = 'all', startDate = null, endDate = null) {
-            const tableBody = document.getElementById('billsTable');
-            tableBody.innerHTML = '<tr><td colspan="7">Loading bills...</td></tr>';
-            
-            let query = db.collection('bills').orderBy('dueDate', 'desc');
-            
-            // Apply status filter
-            if (statusFilter !== 'all') {
-                query = query.where('status', '==', statusFilter);
-            }
-            
-            // Apply date filter
-            if (dateFilter === 'current') {
-                const today = new Date();
-                const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-                query = query.where('dueDate', '>=', firstDayOfMonth);
-            } else if (dateFilter === 'last') {
-                const today = new Date();
-                const firstDayOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-                const lastDayOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
-                query = query.where('dueDate', '>=', firstDayOfLastMonth)
-                            .where('dueDate', '<=', lastDayOfLastMonth);
-            } else if (dateFilter === 'custom' && startDate && endDate) {
-                query = query.where('dueDate', '>=', startDate)
-                            .where('dueDate', '<=', endDate);
-            }
-            
-            query.get()
-                .then((querySnapshot) => {
-                    const bills = [];
-                    const memberPromises = [];
-                    
-                    querySnapshot.forEach((doc) => {
-                        const billData = doc.data();
-                        billData.id = doc.id;
-                        bills.push(billData);
-                        
-                        // Get member data for each bill
-                        memberPromises.push(
-                            db.collection('users').doc(billData.userId).get()
-                                .then((memberDoc) => {
-                                    return {
-                                        billId: doc.id,
-                                        memberName: memberDoc.data()?.fullName || 'Member',
-                                        memberEmail: memberDoc.data()?.email || 'N/A'
-                                    };
-                                })
-                        );
-                    });
-                    
-                    // Wait for all member lookups to complete
-                    return Promise.all(memberPromises)
-                        .then((memberResults) => {
-                            // Create a map of billId to member info
-                            const memberMap = {};
-                            memberResults.forEach(result => {
-                                memberMap[result.billId] = {
-                                    name: result.memberName,
-                                    email: result.memberEmail
-                                };
-                            });
-                            
-                            // Render the table
-                            renderBillsTable(bills, memberMap);
-                        });
-                })
-                .catch((error) => {
-                    console.error('Error loading bills:', error);
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="7" style="text-align: center; color: var(--danger);">
-                                Error loading bills. Please refresh the page.
-                            </td>
-                        </tr>
-                    `;
-                });
-        }
-
         // Render bills table
         function renderBillsTable(bills, memberMap) {
             if (bills.length === 0) {
@@ -1601,6 +1513,8 @@
                 
                 const row = document.createElement('tr');
                 row.setAttribute('data-id', bill.id);
+                row.setAttribute('data-search', `${memberInfo.name} ${memberInfo.email} ${bill.billNumber || ''}`.toLowerCase());
+                
                 row.innerHTML = `
                     <td>
                         <div class="bill-info">
@@ -1633,9 +1547,6 @@
                             <button class="btn btn-sm btn-danger delete-bill" data-id="${bill.id}">
                                 <i class="fas fa-trash"></i> Delete
                             </button>
-                            <button class="btn btn-sm btn-info print-bill" data-id="${bill.id}">
-                                <i class="fas fa-print"></i> Print
-                            </button>
                         </div>
                     </td>
                 `;
@@ -1643,8 +1554,7 @@
                 
                 // Add event listeners to buttons
                 row.querySelector('.edit-bill').addEventListener('click', () => editBill(bill.id));
-                row.querySelector('.delete-bill').addEventListener('click', () => showDeleteModal(bill.id));
-                row.querySelector('.print-bill').addEventListener('click', () => printBill(bill.id));
+                row.querySelector('.delete-bill').addEventListener('click', () => showDeleteModal(bill.id, memberInfo.name));
             });
         }
 
@@ -1666,6 +1576,54 @@
                 .catch((error) => {
                     console.error('Error loading members:', error);
                 });
+        }
+
+        // Clear validation errors
+        function clearValidationErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.textContent = '';
+                el.style.display = 'none';
+            });
+        }
+
+        // Validate bill form
+        function validateBillForm() {
+            let isValid = true;
+            clearValidationErrors();
+
+            // Member validation
+            const memberId = document.getElementById('billMember').value;
+            if (!memberId) {
+                document.getElementById('memberError').textContent = 'Please select a member';
+                document.getElementById('memberError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Package validation
+            const package = document.getElementById('billPackage').value;
+            if (!package) {
+                document.getElementById('packageError').textContent = 'Please select a package';
+                document.getElementById('packageError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Amount validation
+            const amount = parseFloat(document.getElementById('billAmount').value);
+            if (isNaN(amount) || amount <= 0) {
+                document.getElementById('amountError').textContent = 'Please enter a valid amount';
+                document.getElementById('amountError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Date validation
+            const dueDate = document.getElementById('billDate').value;
+            if (!dueDate) {
+                document.getElementById('dateError').textContent = 'Please select a due date';
+                document.getElementById('dateError').style.display = 'block';
+                isValid = false;
+            }
+
+            return isValid;
         }
 
         // Edit bill function
@@ -1695,6 +1653,9 @@
                         document.getElementById('billNotes').value = billData.notes || '';
                     }
                     
+                    // Clear validation errors
+                    clearValidationErrors();
+                    
                     // Show modal
                     billModal.style.display = 'flex';
                 })
@@ -1706,6 +1667,11 @@
 
         // Save bill function
         async function saveBill() {
+            // Validate form first
+            if (!validateBillForm()) {
+                return;
+            }
+
             const billId = document.getElementById('billId').value;
             const memberId = document.getElementById('billMember').value;
             const package = document.getElementById('billPackage').value;
@@ -1714,24 +1680,12 @@
             const status = document.getElementById('billStatus').value;
             const notes = document.getElementById('billNotes').value;
             
-            // Validate form
-            if (!memberId || !package || !amount || !dueDate || !status) {
-                showToast('Please fill all required fields', 'error');
-                return;
-            }
-            
-            if (isNaN(amount) ){
-                showToast('Please enter a valid amount', 'error');
-                return;
-            }
-            
             // Show loading state
             saveButtonText.textContent = 'Saving...';
             saveButtonSpinner.style.display = 'inline-block';
             saveBillButton.disabled = true;
             
             try {
-                const currentUser = auth.currentUser;
                 const billData = {
                     userId: memberId,
                     package: package,
@@ -1819,8 +1773,11 @@
         }
 
         // Show delete confirmation modal
-        function showDeleteModal(billId) {
+        function showDeleteModal(billId, memberName = '') {
             deleteBillId.value = billId;
+            document.querySelector('#deleteModal .modal-title').textContent = `Delete Bill?`;
+            document.querySelector('#deleteModal .modal-body p').textContent = 
+                `Are you sure you want to delete ${memberName ? `the bill for ${memberName}` : 'this bill'}? This action cannot be undone.`;
             deleteModal.style.display = 'flex';
         }
 
@@ -1838,8 +1795,6 @@
             deleteButtonSpinner.style.display = 'inline-block';
             
             try {
-                const currentUser = auth.currentUser;
-                
                 // First get the bill to log member info
                 const billDoc = await db.collection('bills').doc(billId).get();
                 if (!billDoc.exists) {
@@ -1876,39 +1831,16 @@
             }
         }
 
-        // Print bill function
-        function printBill(billId) {
-            window.open(`print-bill.html?id=${billId}`, '_blank');
-        }
-
-        // Event listeners
-        addBillButton.addEventListener('click', () => {
-            document.getElementById('billModalTitle').textContent = 'Create New Bill';
-            document.getElementById('billForm').reset();
-            document.getElementById('billId').value = '';
-            document.getElementById('billDate').value = new Date().toISOString().split('T')[0];
-            billModal.style.display = 'flex';
+        // Search functionality
+        billSearch.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#billsTable tr');
+            
+            rows.forEach(row => {
+                const searchText = row.getAttribute('data-search') || '';
+                row.style.display = searchText.includes(searchTerm) ? '' : 'none';
+            });
         });
-        
-        saveBillButton.addEventListener('click', saveBill);
-        
-        billModalClose.addEventListener('click', () => {
-            billModal.style.display = 'none';
-        });
-        
-        cancelBillButton.addEventListener('click', () => {
-            billModal.style.display = 'none';
-        });
-        
-        deleteModalClose.addEventListener('click', () => {
-            deleteModal.style.display = 'none';
-        });
-        
-        cancelDeleteButton.addEventListener('click', () => {
-            deleteModal.style.display = 'none';
-        });
-        
-        confirmDeleteButton.addEventListener('click', deleteBill);
 
         // Filter event listeners
         billStatusFilter.addEventListener('change', (e) => {
@@ -1959,16 +1891,35 @@
             }
         });
 
-        // Search functionality
-        billSearch.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#billsTable tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
+        // Event listeners
+        addBillButton.addEventListener('click', () => {
+            document.getElementById('billModalTitle').textContent = 'Create New Bill';
+            document.getElementById('billForm').reset();
+            document.getElementById('billId').value = '';
+            document.getElementById('billDate').value = new Date().toISOString().split('T')[0];
+            clearValidationErrors();
+            billModal.style.display = 'flex';
         });
+        
+        saveBillButton.addEventListener('click', saveBill);
+        
+        billModalClose.addEventListener('click', () => {
+            billModal.style.display = 'none';
+        });
+        
+        cancelBillButton.addEventListener('click', () => {
+            billModal.style.display = 'none';
+        });
+        
+        deleteModalClose.addEventListener('click', () => {
+            deleteModal.style.display = 'none';
+        });
+        
+        cancelDeleteButton.addEventListener('click', () => {
+            deleteModal.style.display = 'none';
+        });
+        
+        confirmDeleteButton.addEventListener('click', deleteBill);
 
         // Close modals when clicking outside
         window.addEventListener('click', (e) => {
@@ -2013,7 +1964,3 @@
     </script>
 </body>
 </html>
-
-
-<!-- All Done --><!-- All Done --><!-- All Done -->
-<!-- All Done --><!-- All Done --><!-- All Done -->

@@ -773,10 +773,21 @@
             .members-table {
                 display: block;
                 overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .members-table th, 
+            .members-table td {
+                min-width: 150px;
             }
 
             .form-row {
                 grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
             }
         }
 
@@ -934,26 +945,28 @@
                     </div>
                 </div>
                 <div class="members-body">
-                    <table class="members-table">
-                        <thead>
-                            <tr>
-                                <th>Member</th>
-                                <th>Contact</th>
-                                <th>Membership</th>
-                                <th>Status</th>
-                                <th>Join Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="membersTable">
-                            <!-- Members will be loaded here -->
-                            <tr>
-                                <td colspan="6" style="text-align: center; padding: 2rem;">
-                                    <div class="skeleton" style="width: 100%; height: 20px;"></div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="members-table">
+                            <thead>
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Contact</th>
+                                    <th>Membership</th>
+                                    <th>Status</th>
+                                    <th>Join Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="membersTable">
+                                <!-- Members will be loaded here -->
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 2rem;">
+                                        <div class="skeleton" style="width: 100%; height: 20px;"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -971,25 +984,29 @@
                     <input type="hidden" id="memberId">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="firstName">First Name</label>
+                            <label for="firstName">First Name <span class="required">*</span></label>
                             <input type="text" id="firstName" required>
+                            <div class="error-message" id="firstNameError"></div>
                         </div>
                         <div class="form-group">
-                            <label for="lastName">Last Name</label>
+                            <label for="lastName">Last Name <span class="required">*</span></label>
                             <input type="text" id="lastName" required>
+                            <div class="error-message" id="lastNameError"></div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="email">Email</label>
+                        <label for="email">Email <span class="required">*</span></label>
                         <input type="email" id="email" required>
+                        <div class="error-message" id="emailError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="phone">Phone</label>
+                        <label for="phone">Phone <span class="required">*</span></label>
                         <input type="tel" id="phone" required>
+                        <div class="error-message" id="phoneError"></div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="membershipPlan">Membership Plan</label>
+                            <label for="membershipPlan">Membership Plan <span class="required">*</span></label>
                             <select id="membershipPlan" required>
                                 <option value="">Select Plan</option>
                                 <option value="Basic">Basic</option>
@@ -997,25 +1014,29 @@
                                 <option value="Premium">Premium</option>
                                 <option value="VIP">VIP</option>
                             </select>
+                            <div class="error-message" id="planError"></div>
                         </div>
                         <div class="form-group">
-                            <label for="membershipStatus">Status</label>
+                            <label for="membershipStatus">Status <span class="required">*</span></label>
                             <select id="membershipStatus" required>
                                 <option value="active">Active</option>
                                 <option value="pending">Pending</option>
                                 <option value="expired">Expired</option>
                                 <option value="inactive">Inactive</option>
                             </select>
+                            <div class="error-message" id="statusError"></div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="startDate">Start Date</label>
+                            <label for="startDate">Start Date <span class="required">*</span></label>
                             <input type="date" id="startDate" required>
+                            <div class="error-message" id="startDateError"></div>
                         </div>
                         <div class="form-group">
-                            <label for="endDate">End Date</label>
+                            <label for="endDate">End Date <span class="required">*</span></label>
                             <input type="date" id="endDate" required>
+                            <div class="error-message" id="endDateError"></div>
                         </div>
                     </div>
                 </form>
@@ -1112,6 +1133,10 @@
         const toastMessage = document.getElementById('toastMessage');
         const toastClose = document.getElementById('toastClose');
 
+        // Current user data
+        let currentUser = null;
+        let membersListener = null;
+
         // Show loading state
         function showLoading() {
             document.body.classList.add('loading');
@@ -1145,11 +1170,13 @@
 
         // Check authentication state and user role
         auth.onAuthStateChanged(async (user) => {
-            if (!user) {
+                        if (!user) {
                 window.location.href = 'login.html';
                 return;
             }
 
+            currentUser = user;
+            
             try {
                 // Check if user is admin
                 const userDoc = await db.collection('users').doc(user.uid).get();
@@ -1165,12 +1192,13 @@
                     return;
                 }
 
-                // User is admin, load members
-                loadMembers();
-                loadUnreadNotificationsCount(user.uid);
+                // Update UI with admin data
+                document.getElementById('userProfileImage').src = userData.photoURL || 'https://randomuser.me/api/portraits/men/32.jpg';
+                document.querySelector('.user-name').textContent = userData.fullName || 'Admin';
 
-                // Set up real-time listener for members
+                // Set up real-time listeners
                 setupMembersListener();
+                loadUnreadNotificationsCount(user.uid);
 
             } catch (error) {
                 console.error('Error checking user role:', error);
@@ -1208,7 +1236,12 @@
 
         // Set up real-time listener for members
         function setupMembersListener() {
-            return db.collection('users')
+            // Clear any existing listener
+            if (membersListener) {
+                membersListener();
+            }
+
+            membersListener = db.collection('users')
                 .where('role', '==', 'member')
                 .onSnapshot(async (querySnapshot) => {
                     const members = [];
@@ -1249,7 +1282,7 @@
                 });
         }
 
-        // Render members table
+        // Render members table with real-time search
         function renderMembersTable(members) {
             if (members.length === 0) {
                 membersTable.innerHTML = `
@@ -1273,6 +1306,8 @@
                 
                 const row = document.createElement('tr');
                 row.setAttribute('data-id', member.id);
+                row.setAttribute('data-search', `${member.fullName || ''} ${member.email || ''}`.toLowerCase());
+                
                 row.innerHTML = `
                     <td>
                         <div class="member-info">
@@ -1349,6 +1384,9 @@
                 document.getElementById('endDate').value = '';
             }
             
+            // Clear validation errors
+            clearValidationErrors();
+            
             // Show modal
             memberModal.style.display = 'flex';
         }
@@ -1366,16 +1404,92 @@
             return [year, month, day].join('-');
         }
 
+        // Clear validation errors
+        function clearValidationErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.textContent = '';
+            });
+        }
+
+        // Validate member form
+        function validateMemberForm() {
+            let isValid = true;
+            clearValidationErrors();
+
+            // First Name validation
+            const firstName = document.getElementById('firstName').value.trim();
+            if (!firstName) {
+                document.getElementById('firstNameError').textContent = 'First name is required';
+                isValid = false;
+            }
+
+            // Last Name validation
+            const lastName = document.getElementById('lastName').value.trim();
+            if (!lastName) {
+                document.getElementById('lastNameError').textContent = 'Last name is required';
+                isValid = false;
+            }
+
+            // Email validation
+            const email = document.getElementById('email').value.trim();
+            if (!email) {
+                document.getElementById('emailError').textContent = 'Email is required';
+                isValid = false;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email';
+                isValid = false;
+            }
+
+            // Phone validation
+            const phone = document.getElementById('phone').value.trim();
+            if (!phone) {
+                document.getElementById('phoneError').textContent = 'Phone number is required';
+                isValid = false;
+            }
+
+            // Membership Plan validation
+            const membershipPlan = document.getElementById('membershipPlan').value;
+            if (!membershipPlan) {
+                document.getElementById('planError').textContent = 'Membership plan is required';
+                isValid = false;
+            }
+
+            // Start Date validation
+            const startDate = document.getElementById('startDate').value;
+            if (!startDate) {
+                document.getElementById('startDateError').textContent = 'Start date is required';
+                isValid = false;
+            }
+
+            // End Date validation
+            const endDate = document.getElementById('endDate').value;
+            if (!endDate) {
+                document.getElementById('endDateError').textContent = 'End date is required';
+                isValid = false;
+            } else if (startDate && new Date(endDate) < new Date(startDate)) {
+                document.getElementById('endDateError').textContent = 'End date must be after start date';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
         // Add new member
         addMemberButton.addEventListener('click', () => {
             document.getElementById('modalTitle').textContent = 'Add New Member';
             document.getElementById('memberForm').reset();
             document.getElementById('memberId').value = '';
+            clearValidationErrors();
             memberModal.style.display = 'flex';
         });
 
         // Save member function
         async function saveMember() {
+            // Validate form first
+            if (!validateMemberForm()) {
+                return;
+            }
+
             const memberId = document.getElementById('memberId').value;
             const firstName = document.getElementById('firstName').value.trim();
             const lastName = document.getElementById('lastName').value.trim();
@@ -1387,18 +1501,6 @@
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
             
-            // Validate form
-            if (!firstName || !lastName || !email || !phone || !membershipPlan || !membershipStatus || !startDate || !endDate) {
-                showToast('Please fill all required fields', 'error');
-                return;
-            }
-            
-            // Validate email format
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                showToast('Please enter a valid email address', 'error');
-                return;
-            }
-            
             // Show loading state
             saveButtonText.textContent = 'Saving...';
             saveButtonSpinner.style.display = 'inline-block';
@@ -1406,7 +1508,6 @@
             
             try {
                 const batch = db.batch();
-                const currentUser = auth.currentUser;
                 
                 if (memberId) {
                     // Update existing member
@@ -1496,7 +1597,6 @@
             
             try {
                 const batch = db.batch();
-                const currentUser = auth.currentUser;
                 
                 // Delete user document
                 const userRef = db.collection('users').doc(memberId);
@@ -1536,14 +1636,14 @@
             }
         }
 
-        // Search functionality
+        // Real-time search functionality
         memberSearch.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
             const rows = document.querySelectorAll('#membersTable tr');
             
             rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
+                const searchText = row.getAttribute('data-search') || '';
+                row.style.display = searchText.includes(searchTerm) ? '' : 'none';
             });
         });
 
@@ -1611,8 +1711,3 @@
     </script>
 </body>
 </html>
-
-
-
-<!-- All Done --><!-- All Done --><!-- All Done -->
-<!-- All Done --><!-- All Done --><!-- All Done -->

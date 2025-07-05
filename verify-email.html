@@ -70,6 +70,9 @@
             background-color: var(--lighter);
             box-shadow: var(--shadow-sm);
             padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .logo {
@@ -189,6 +192,18 @@
 
         .btn-secondary:hover {
             background-color: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-danger {
+            background-color: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: rgba(239, 35, 60, 0.1);
             transform: translateY(-3px);
             box-shadow: var(--shadow-sm);
         }
@@ -351,6 +366,10 @@
             <i class="fas fa-dumbbell"></i>
             <span>PowerFit Pro</span>
         </a>
+        <button id="logout-btn" class="btn btn-danger">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </button>
     </header>
 
     <!-- Main Content -->
@@ -428,6 +447,7 @@
         const userEmailSpan = document.getElementById('user-email');
         const resendBtn = document.getElementById('resend-btn');
         const continueBtn = document.getElementById('continue-btn');
+        const logoutBtn = document.getElementById('logout-btn');
         const alertMessage = document.getElementById('alert-message');
         const alertText = document.getElementById('alert-text');
 
@@ -609,6 +629,19 @@
             }
         });
 
+        // Logout button
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                showLoading();
+                await auth.signOut();
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+                hideLoading();
+                showAlert('Failed to logout. Please try again.', 'danger');
+            }
+        });
+
         // Add loading state to all navigation links
         document.querySelectorAll('a[href]').forEach(link => {
             link.addEventListener('click', (e) => {
@@ -623,7 +656,3 @@
     </script>
 </body>
 </html>
-
-
-<!-- All Done --><!-- All Done --><!-- All Done -->
-<!-- All Done --><!-- All Done --><!-- All Done -->

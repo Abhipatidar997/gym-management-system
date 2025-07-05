@@ -584,6 +584,92 @@
             padding: 1.5rem;
         }
 
+        /* ====== System Logs ====== */
+        .logs-container {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .log-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .log-content {
+            flex: 1;
+        }
+
+        .log-message {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .log-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        .log-timestamp {
+            font-size: 0.7rem;
+        }
+
+        .log-type {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .log-type.info {
+            background-color: rgba(58, 134, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .log-type.warning {
+            background-color: rgba(255, 190, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .log-type.error {
+            background-color: rgba(239, 35, 60, 0.1);
+            color: var(--danger);
+        }
+
+        .logs-empty {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
         /* ====== Loading States ====== */
         .loading-spinner {
             display: inline-block;
@@ -855,7 +941,7 @@
 
                 <div class="card" data-aos="fade-up" data-aos-delay="150">
                     <div class="card-header">
-                        <h3 class="card-title">Total Revenue</h3>
+                        <h3 class="card-title">Monthly Revenue</h3>
                         <div class="card-icon revenue">
                             <i class="fas fa-dollar-sign"></i>
                         </div>
@@ -920,10 +1006,9 @@
                                 </tr>
                             </thead>
                             <tbody id="recentMembersTable">
-                                <!-- Recent members will be inserted here by JavaScript -->
                                 <tr>
-                                    <td colspan="4" style="text-align: center;">
-                                        <div class="skeleton" style="width: 100%; height: 20px;"></div>
+                                    <td colspan="4" style="text-align: center; color: var(--gray);">
+                                        Loading members...
                                     </td>
                                 </tr>
                             </tbody>
@@ -967,14 +1052,26 @@
                             </tr>
                         </thead>
                         <tbody id="recentBillsTable">
-                            <!-- Recent bills will be inserted here by JavaScript -->
                             <tr>
-                                <td colspan="5" style="text-align: center;">
-                                    <div class="skeleton" style="width: 100%; height: 20px;"></div>
+                                <td colspan="5" style="text-align: center; color: var(--gray);">
+                                    Loading transactions...
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- System Logs -->
+            <div class="logs-container" data-aos="fade-up" data-aos-delay="450">
+                <div class="activity-header">
+                    <h3 class="activity-title">System Logs</h3>
+                    <a href="logs.html" class="activity-link">View All</a>
+                </div>
+                <div id="systemLogs">
+                    <div class="logs-empty">
+                        Loading system logs...
+                    </div>
                 </div>
             </div>
         </div>
@@ -1040,6 +1137,8 @@
             }
 
             try {
+                showLoading();
+                
                 // Check if user is admin
                 const userDoc = await db.collection('users').doc(user.uid).get();
                 
@@ -1050,24 +1149,251 @@
                 const userData = userDoc.data();
                 
                 if (userData.role !== 'admin') {
-                    // User is not admin, redirect to member dashboard
-                    window.location.href = 'member-dashboard.html';
+                    // User is not admin, redirect to 404
+                    window.location.href = '404.html';
                     return;
                 }
 
                 // User is admin, load dashboard data
                 updateUserProfile(userData);
-                loadDashboardData();
-                loadRecentMembers();
-                loadRecentBills();
-                renderRevenueChart();
+                setupRealtimeListeners();
 
             } catch (error) {
                 console.error('Error checking user role:', error);
                 auth.signOut();
                 window.location.href = 'login.html';
+            } finally {
+                hideLoading();
             }
         });
+
+        // Set up realtime listeners for all data
+        function setupRealtimeListeners() {
+            // Members count
+            db.collection('users')
+                .where('role', '==', 'member')
+                .onSnapshot((snapshot) => {
+                    document.getElementById('totalMembers').textContent = snapshot.size;
+                    // Calculate percentage change (mock for now)
+                    document.getElementById('memberChange').textContent = '12';
+                }, (error) => {
+                    console.error('Error listening to members:', error);
+                });
+
+            // Monthly revenue
+            const currentDate = new Date();
+            const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            
+            db.collection('bills')
+                .where('paymentDate', '>=', firstDayOfMonth)
+                .where('status', '==', 'paid')
+                .onSnapshot((snapshot) => {
+                    let totalRevenue = 0;
+                    snapshot.forEach((doc) => {
+                        totalRevenue += doc.data().amount || 0;
+                    });
+                    document.getElementById('totalRevenue').textContent = '$' + totalRevenue.toFixed(2);
+                    // Calculate percentage change (mock for now)
+                    document.getElementById('revenueChange').textContent = '8';
+                }, (error) => {
+                    console.error('Error listening to revenue:', error);
+                });
+
+            // Active packages
+            db.collection('memberships')
+                .where('status', '==', 'active')
+                .onSnapshot((snapshot) => {
+                    document.getElementById('activePackages').textContent = snapshot.size;
+                    // Calculate new packages this week (mock for now)
+                    document.getElementById('packageChange').textContent = '5';
+                }, (error) => {
+                    console.error('Error listening to active packages:', error);
+                });
+
+            // Expiring soon memberships
+            const today = new Date();
+            const sevenDaysLater = new Date();
+            sevenDaysLater.setDate(today.getDate() + 7);
+            
+            db.collection('memberships')
+                .where('endDate', '>=', today)
+                .where('endDate', '<=', sevenDaysLater)
+                .onSnapshot((snapshot) => {
+                    document.getElementById('expiringSoon').textContent = snapshot.size;
+                    // Calculate need renewal (mock for now)
+                    document.getElementById('expiringChange').textContent = '3';
+                }, (error) => {
+                    console.error('Error listening to expiring memberships:', error);
+                });
+
+            // Recent members
+            db.collection('users')
+                .where('role', '==', 'member')
+                .orderBy('createdAt', 'desc')
+                .limit(5)
+                .onSnapshot((snapshot) => {
+                    const tableBody = document.getElementById('recentMembersTable');
+                    tableBody.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: var(--gray);">
+                                    No members found
+                                </td>
+                            </tr>
+                        `;
+                        return;
+                    }
+                    
+                    snapshot.forEach((doc) => {
+                        const userData = doc.data();
+                        const joinDate = userData.createdAt ? userData.createdAt.toDate() : new Date();
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>
+                                <div class="member-info">
+                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(userData.fullName || 'Member')}&background=random" alt="${userData.fullName}" class="member-img">
+                                    <div>
+                                        <div class="member-name">${userData.fullName || 'Member'}</div>
+                                        <div class="member-email">${userData.email}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>${joinDate.toLocaleDateString()}</td>
+                            <td>${userData.package || 'Basic'}</td>
+                            <td><span class="status-badge active">Active</span></td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }, (error) => {
+                    console.error('Error listening to recent members:', error);
+                    const tableBody = document.getElementById('recentMembersTable');
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: var(--danger);">
+                                Error loading members
+                            </td>
+                        </tr>
+                    `;
+                });
+
+            // Recent bills
+            db.collection('bills')
+                .orderBy('paymentDate', 'desc')
+                .limit(5)
+                .onSnapshot(async (snapshot) => {
+                    const tableBody = document.getElementById('recentBillsTable');
+                    tableBody.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--gray);">
+                                    No recent transactions
+                                </td>
+                            </tr>
+                        `;
+                        return;
+                    }
+                    
+                    // Process bills and get member names
+                    const billsWithMembers = await Promise.all(
+                        snapshot.docs.map(async (doc) => {
+                            const billData = doc.data();
+                            const userDoc = await db.collection('users').doc(billData.userId).get();
+                            const userData = userDoc.data();
+                            
+                            return {
+                                ...billData,
+                                memberName: userData ? userData.fullName : 'Member',
+                                paymentDate: billData.paymentDate ? billData.paymentDate.toDate() : new Date()
+                            };
+                        })
+                    );
+                    
+                    // Render the bills
+                    billsWithMembers.forEach((bill) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${bill.billNumber || 'N/A'}</td>
+                            <td>${bill.memberName}</td>
+                            <td>${bill.paymentDate.toLocaleDateString()}</td>
+                            <td>$${bill.amount?.toFixed(2) || '0.00'}</td>
+                            <td><span class="status-badge ${bill.status === 'paid' ? 'active' : 'pending'}">${bill.status || 'pending'}</span></td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }, (error) => {
+                    console.error('Error listening to recent bills:', error);
+                    const tableBody = document.getElementById('recentBillsTable');
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--danger);">
+                                Error loading transactions
+                            </td>
+                        </tr>
+                    `;
+                });
+
+            // System logs
+            db.collection('logs')
+                .orderBy('timestamp', 'desc')
+                .limit(10)
+                .onSnapshot((snapshot) => {
+                    const logsContainer = document.getElementById('systemLogs');
+                    logsContainer.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        logsContainer.innerHTML = `
+                            <div class="logs-empty">
+                                No system logs available
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    snapshot.forEach((doc) => {
+                        const logData = doc.data();
+                        const logDate = logData.timestamp ? logData.timestamp.toDate() : new Date();
+                        
+                        const logItem = document.createElement('div');
+                        logItem.className = 'log-item';
+                        
+                        // Determine icon based on log type
+                        let iconClass = 'fa-info-circle';
+                        if (logData.type === 'warning') iconClass = 'fa-exclamation-triangle';
+                        if (logData.type === 'error') iconClass = 'fa-times-circle';
+                        
+                        logItem.innerHTML = `
+                            <div class="log-icon">
+                                <i class="fas ${iconClass}"></i>
+                            </div>
+                            <div class="log-content">
+                                <div class="log-message">${logData.message || 'No message'}</div>
+                                <div class="log-meta">
+                                    <span class="log-type ${logData.type || 'info'}">${logData.type || 'info'}</span>
+                                    <span class="log-timestamp">${logDate.toLocaleString()}</span>
+                                </div>
+                            </div>
+                        `;
+                        
+                        logsContainer.appendChild(logItem);
+                    });
+                }, (error) => {
+                    console.error('Error listening to system logs:', error);
+                    const logsContainer = document.getElementById('systemLogs');
+                    logsContainer.innerHTML = `
+                        <div class="logs-empty" style="color: var(--danger);">
+                            Error loading system logs
+                        </div>
+                    `;
+                });
+
+            // Render revenue chart
+            renderRevenueChart();
+        }
 
         // Update user profile in topbar
         function updateUserProfile(userData) {
@@ -1082,192 +1408,6 @@
                 // Generate avatar from name
                 const name = userData.fullName || 'Admin';
                 userImgElement.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=3a86ff&color=fff`;
-            }
-        }
-
-        // Load dashboard statistics
-        async function loadDashboardData() {
-            try {
-                showLoading();
-                
-                // Get total members count
-                const membersQuery = await db.collection('users')
-                    .where('role', '==', 'member')
-                    .get();
-                
-                document.getElementById('totalMembers').textContent = membersQuery.size;
-                
-                // Calculate total revenue (this month)
-                const currentDate = new Date();
-                const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-                
-                const revenueQuery = await db.collection('bills')
-                    .where('paymentDate', '>=', firstDayOfMonth)
-                    .where('status', '==', 'paid')
-                    .get();
-                
-                let totalRevenue = 0;
-                revenueQuery.forEach((doc) => {
-                    totalRevenue += doc.data().amount || 0;
-                });
-                document.getElementById('totalRevenue').textContent = '$' + totalRevenue.toFixed(2);
-                
-                // Get active packages count
-                const packagesQuery = await db.collection('memberships')
-                    .where('status', '==', 'active')
-                    .get();
-                
-                document.getElementById('activePackages').textContent = packagesQuery.size;
-                
-                // Get memberships expiring soon (within 7 days)
-                const today = new Date();
-                const sevenDaysLater = new Date();
-                sevenDaysLater.setDate(today.getDate() + 7);
-                
-                const expiringQuery = await db.collection('memberships')
-                    .where('endDate', '>=', today)
-                    .where('endDate', '<=', sevenDaysLater)
-                    .get();
-                
-                document.getElementById('expiringSoon').textContent = expiringQuery.size;
-                
-                // Calculate percentage changes (mock data - would be real in production)
-                document.getElementById('memberChange').textContent = '12';
-                document.getElementById('revenueChange').textContent = '8';
-                document.getElementById('packageChange').textContent = '5';
-                document.getElementById('expiringChange').textContent = '3';
-                
-            } catch (error) {
-                console.error('Error loading dashboard data:', error);
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Load recent members
-        async function loadRecentMembers() {
-            const tableBody = document.getElementById('recentMembersTable');
-            tableBody.innerHTML = '';
-            
-            try {
-                showLoading();
-                
-                const querySnapshot = await db.collection('users')
-                    .where('role', '==', 'member')
-                    .orderBy('createdAt', 'desc')
-                    .limit(5)
-                    .get();
-                
-                if (querySnapshot.empty) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="4" style="text-align: center; color: var(--gray);">
-                                No members found
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                querySnapshot.forEach((doc) => {
-                    const userData = doc.data();
-                    const joinDate = userData.createdAt ? userData.createdAt.toDate() : new Date();
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>
-                            <div class="member-info">
-                                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(userData.fullName || 'Member')}&background=random" alt="${userData.fullName}" class="member-img">
-                                <div>
-                                    <div class="member-name">${userData.fullName || 'Member'}</div>
-                                    <div class="member-email">${userData.email}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>${joinDate.toLocaleDateString()}</td>
-                        <td>${userData.package || 'Basic'}</td>
-                        <td><span class="status-badge active">Active</span></td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-                
-            } catch (error) {
-                console.error('Error loading recent members:', error);
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="4" style="text-align: center; color: var(--danger);">
-                            Error loading members
-                        </td>
-                    </tr>
-                `;
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Load recent bills
-        async function loadRecentBills() {
-            const tableBody = document.getElementById('recentBillsTable');
-            tableBody.innerHTML = '';
-            
-            try {
-                showLoading();
-                
-                const querySnapshot = await db.collection('bills')
-                    .orderBy('paymentDate', 'desc')
-                    .limit(5)
-                    .get();
-                
-                if (querySnapshot.empty) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="5" style="text-align: center; color: var(--gray);">
-                                No recent transactions
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                // Process bills and get member names
-                const billsWithMembers = await Promise.all(
-                    querySnapshot.docs.map(async (doc) => {
-                        const billData = doc.data();
-                        const userDoc = await db.collection('users').doc(billData.userId).get();
-                        const userData = userDoc.data();
-                        
-                        return {
-                            ...billData,
-                            memberName: userData ? userData.fullName : 'Member',
-                            paymentDate: billData.paymentDate ? billData.paymentDate.toDate() : new Date()
-                        };
-                    })
-                );
-                
-                // Render the bills
-                billsWithMembers.forEach((bill) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${bill.billNumber || 'N/A'}</td>
-                        <td>${bill.memberName}</td>
-                        <td>${bill.paymentDate.toLocaleDateString()}</td>
-                        <td>$${bill.amount?.toFixed(2) || '0.00'}</td>
-                        <td><span class="status-badge ${bill.status === 'paid' ? 'active' : 'pending'}">${bill.status || 'pending'}</span></td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-                
-            } catch (error) {
-                console.error('Error loading recent bills:', error);
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="5" style="text-align: center; color: var(--danger);">
-                            Error loading transactions
-                        </td>
-                    </tr>
-                `;
-            } finally {
-                hideLoading();
             }
         }
 
@@ -1359,8 +1499,3 @@
     </script>
 </body>
 </html>
-
-
-
-<!-- All Done --><!-- All Done --><!-- All Done -->
-<!-- All Done --><!-- All Done --><!-- All Done -->
