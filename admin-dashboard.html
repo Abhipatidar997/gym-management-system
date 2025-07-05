@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | PowerFit Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        /* ====== CSS Variables ====== */
+        :root {
+            --primary: #3a86ff;
+            --primary-dark: #2667cc;
+            --primary-light: rgba(58, 134, 255, 0.1);
+            --secondary: #ff006e;
+            --secondary-dark: #cc0058;
+            --dark: #2b2d42;
+            --darker: #1a1b28;
+            --light: #f8f9fa;
+            --lighter: #ffffff;
+            --success: #38b000;
+            --warning: #ffbe0b;
+            --danger: #ef233c;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --sidebar-width: 280px;
+            --topbar-height: 70px;
+        }
+
+        /* ====== Base Styles ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ====== Scrollbar ====== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--gray-light);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ====== Sidebar ====== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+            position: fixed;
+            height: 100vh;
+            transition: var(--transition);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: var(--topbar-height);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .sidebar-logo:hover {
+            transform: translateX(3px);
+        }
+
+        .sidebar-logo i {
+            font-size: 1.8rem;
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+
+        .menu-title {
+            padding: 0 1.5rem 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--gray);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.5rem;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .menu-link:hover {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .menu-link.active {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .menu-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: var(--primary);
+        }
+
+        .menu-link i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* ====== Main Content ====== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ====== Topbar ====== */
+        .topbar {
+            height: var(--topbar-height);
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-toggle {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-right: 1.5rem;
+            cursor: pointer;
+            display: none;
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            color: var(--primary);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--gray-light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            width: 250px;
+            background-color: var(--light);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-item {
+            margin-left: 1.5rem;
+            position: relative;
+        }
+
+        .topbar-link {
+            color: var(--dark);
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .topbar-link:hover {
+            color: var(--primary);
+        }
+
+        .topbar-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: var(--lighter);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: 50px;
+        }
+
+        .user-profile:hover {
+            background-color: var(--primary-light);
+        }
+
+        .user-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 0.75rem;
+            border: 2px solid var(--primary-light);
+        }
+
+        .user-name {
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+
+        /* ====== Content Area ====== */
+        .content-area {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .content-title h2 {
+            font-size: 1.75rem;
+            color: var(--darker);
+            margin-bottom: 0.5rem;
+        }
+
+        .content-title p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--lighter);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ====== Dashboard Cards ====== */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 0.95rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--lighter);
+            background-color: var(--primary);
+        }
+
+        .card-icon.members {
+            background-color: #3a86ff;
+        }
+
+        .card-icon.revenue {
+            background-color: #38b000;
+        }
+
+        .card-icon.packages {
+            background-color: #ffbe0b;
+        }
+
+        .card-icon.expiring {
+            background-color: #ef233c;
+        }
+
+        .card-body h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.25rem;
+            color: var(--darker);
+            font-weight: 600;
+        }
+
+        .card-body p {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        .card-footer {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+        }
+
+        .card-footer i {
+            margin-right: 0.5rem;
+            font-size: 0.7rem;
+        }
+
+        /* ====== Recent Activity ====== */
+        .recent-activity {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .activity-card {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .activity-title {
+            font-size: 1.25rem;
+            color: var(--darker);
+            font-weight: 600;
+        }
+
+        .activity-link {
+            color: var(--primary);
+            font-size: 0.9rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .activity-link:hover {
+            text-decoration: underline;
+        }
+
+        .activity-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .activity-table th {
+            text-align: left;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-light);
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .activity-table td {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-light);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        .activity-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .member-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .member-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            border: 2px solid var(--gray-light);
+        }
+
+        .member-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .member-email {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.active {
+            background-color: rgba(56, 176, 0, 0.1);
+            color: var(--success);
+        }
+
+        .status-badge.pending {
+            background-color: rgba(255, 190, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-badge.expired {
+            background-color: rgba(239, 35, 60, 0.1);
+            color: var(--danger);
+        }
+
+        /* ====== Revenue Chart ====== */
+        .revenue-chart {
+            height: 250px;
+            background-color: var(--light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--light);
+            z-index: 1;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* ====== Recent Bills ====== */
+        .recent-bills {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+        }
+
+        /* ====== Loading States ====== */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .skeleton {
+            background-color: var(--gray-light);
+            border-radius: 4px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ====== Page Loading Overlay ====== */
+        body.loading {
+            cursor: wait;
+            position: relative;
+        }
+
+        body.loading::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 9999;
+        }
+
+        body.loading::before {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--primary-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 10000;
+        }
+
+        /* ====== Responsive Design ====== */
+        @media (max-width: 1200px) {
+            .recent-activity {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .topbar {
+                padding: 0 1.5rem;
+            }
+
+            .search-box input {
+                width: 180px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .content-area {
+                padding: 1.5rem;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .topbar {
+                padding: 0 1rem;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" data-aos="fade-right">
+        <div class="sidebar-header">
+            <a href="admin-dashboard.html" class="sidebar-logo">
+                <i class="fas fa-dumbbell"></i>
+                <span>PowerFit Pro</span>
+            </a>
+        </div>
+        <div class="sidebar-menu">
+            <h3 class="menu-title">Menu</h3>
+            <ul>
+                <li class="menu-item">
+                    <a href="admin-dashboard.html" class="menu-link active">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="members.html" class="menu-link">
+                        <i class="fas fa-users"></i>
+                        <span>Members</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="bills.html" class="menu-link">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Billing</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="diet.html" class="menu-link">
+                        <i class="fas fa-utensils"></i>
+                        <span>Diet Plans</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="notifications.html" class="menu-link">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="topbar-badge">3</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="supplements.html" class="menu-link">
+                        <i class="fas fa-pills"></i>
+                        <span>Supplements</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="logs.html" class="menu-link">
+                        <i class="fas fa-history"></i>
+                        <span>Activity Logs</span>
+                    </a>
+                </li>
+            </ul>
+
+            <h3 class="menu-title">Settings</h3>
+            <ul>
+                <li class="menu-item">
+                    <a href="admin-profile.html" class="menu-link">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="dashboard-settings.html" class="menu-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="topbar" data-aos="fade-down">
+            <div class="topbar-left">
+                <div class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search members, bills...">
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-item">
+                    <a href="notifications.html" class="topbar-link">
+                        <i class="fas fa-bell"></i>
+                        <span class="topbar-badge">3</span>
+                    </a>
+                </div>
+                <div class="topbar-item">
+                    <div class="user-profile" id="userProfile">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Admin" class="user-img">
+                        <span class="user-name">Admin</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <div class="content-header">
+                <div class="content-title">
+                    <h2>Dashboard Overview</h2>
+                    <p>Welcome back! Here's what's happening with your gym today.</p>
+                </div>
+                <div class="content-actions">
+                    <button class="btn btn-primary" onclick="window.location.href='members.html'">
+                        <i class="fas fa-plus"></i> Add Member
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="dashboard-cards">
+                <div class="card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-header">
+                        <h3 class="card-title">Total Members</h3>
+                        <div class="card-icon members">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 id="totalMembers">0</h3>
+                        <p>All registered members</p>
+                    </div>
+                    <div class="card-footer">
+                        <i class="fas fa-arrow-up"></i> <span id="memberChange">0</span>% from last month
+                    </div>
+                </div>
+
+                <div class="card" data-aos="fade-up" data-aos-delay="150">
+                    <div class="card-header">
+                        <h3 class="card-title">Total Revenue</h3>
+                        <div class="card-icon revenue">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 id="totalRevenue">$0</h3>
+                        <p>This month's earnings</p>
+                    </div>
+                    <div class="card-footer">
+                        <i class="fas fa-arrow-up"></i> <span id="revenueChange">0</span>% from last month
+                    </div>
+                </div>
+
+                <div class="card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-header">
+                        <h3 class="card-title">Active Packages</h3>
+                        <div class="card-icon packages">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 id="activePackages">0</h3>
+                        <p>Currently active memberships</p>
+                    </div>
+                    <div class="card-footer">
+                        <i class="fas fa-arrow-up"></i> <span id="packageChange">0</span> new this week
+                    </div>
+                </div>
+
+                <div class="card" data-aos="fade-up" data-aos-delay="250">
+                    <div class="card-header">
+                        <h3 class="card-title">Expiring Soon</h3>
+                        <div class="card-icon expiring">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 id="expiringSoon">0</h3>
+                        <p>Memberships ending in 7 days</p>
+                    </div>
+                    <div class="card-footer">
+                        <i class="fas fa-arrow-up"></i> <span id="expiringChange">0</span> need renewal
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="recent-activity">
+                <div class="activity-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="activity-header">
+                        <h3 class="activity-title">Recent Members</h3>
+                        <a href="members.html" class="activity-link">View All</a>
+                    </div>
+                    <div class="activity-body">
+                        <table class="activity-table">
+                            <thead>
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Join Date</th>
+                                    <th>Package</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentMembersTable">
+                                <!-- Recent members will be inserted here by JavaScript -->
+                                <tr>
+                                    <td colspan="4" style="text-align: center;">
+                                        <div class="skeleton" style="width: 100%; height: 20px;"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="activity-card" data-aos="fade-up" data-aos-delay="350">
+                    <div class="activity-header">
+                        <h3 class="activity-title">Revenue Overview</h3>
+                        <a href="bills.html" class="activity-link">View Details</a>
+                    </div>
+                    <div class="activity-body">
+                        <div class="revenue-chart">
+                            <div class="chart-placeholder">
+                                Loading revenue chart...
+                            </div>
+                            <div class="chart-container" id="revenueChart">
+                                <!-- Chart will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Bills -->
+            <div class="activity-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="activity-header">
+                    <h3 class="activity-title">Recent Transactions</h3>
+                    <a href="bills.html" class="activity-link">View All</a>
+                </div>
+                <div class="activity-body">
+                    <table class="activity-table">
+                        <thead>
+                            <tr>
+                                <th>Bill No.</th>
+                                <th>Member</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentBillsTable">
+                            <!-- Recent bills will be inserted here by JavaScript -->
+                            <tr>
+                                <td colspan="5" style="text-align: center;">
+                                    <div class="skeleton" style="width: 100%; height: 20px;"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Initialize AOS animation library
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-quad',
+            once: true
+        });
+
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMU_xXHhZdrR9cA3fPcZDSJeg4SQZBD7M",
+            authDomain: "gym-management-system-f06fd.firebaseapp.com",
+            projectId: "gym-management-system-f06fd",
+            storageBucket: "gym-management-system-f06fd.appspot.com",
+            messagingSenderId: "1061387303589",
+            appId: "1:1061387303589:web:bcdf5ea3bd3efb027f6b4c",
+            measurementId: "G-5YTGPJE3JP"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // DOM Elements
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const logoutButton = document.getElementById('logoutButton');
+        const userProfile = document.getElementById('userProfile');
+
+        // Show loading state
+        function showLoading() {
+            document.body.classList.add('loading');
+        }
+
+        // Hide loading state
+        function hideLoading() {
+            document.body.classList.remove('loading');
+        }
+
+        // Toggle sidebar on mobile
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+
+        // Check authentication state and user role
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                // No user logged in, redirect to login
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                // Check if user is admin
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    throw new Error('User data not found');
+                }
+
+                const userData = userDoc.data();
+                
+                if (userData.role !== 'admin') {
+                    // User is not admin, redirect to member dashboard
+                    window.location.href = 'member-dashboard.html';
+                    return;
+                }
+
+                // User is admin, load dashboard data
+                updateUserProfile(userData);
+                loadDashboardData();
+                loadRecentMembers();
+                loadRecentBills();
+                renderRevenueChart();
+
+            } catch (error) {
+                console.error('Error checking user role:', error);
+                auth.signOut();
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Update user profile in topbar
+        function updateUserProfile(userData) {
+            const userNameElement = document.querySelector('.user-name');
+            const userImgElement = document.querySelector('.user-img');
+            
+            userNameElement.textContent = userData.fullName || 'Admin';
+            
+            if (userData.photoURL) {
+                userImgElement.src = userData.photoURL;
+            } else {
+                // Generate avatar from name
+                const name = userData.fullName || 'Admin';
+                userImgElement.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=3a86ff&color=fff`;
+            }
+        }
+
+        // Load dashboard statistics
+        async function loadDashboardData() {
+            try {
+                showLoading();
+                
+                // Get total members count
+                const membersQuery = await db.collection('users')
+                    .where('role', '==', 'member')
+                    .get();
+                
+                document.getElementById('totalMembers').textContent = membersQuery.size;
+                
+                // Calculate total revenue (this month)
+                const currentDate = new Date();
+                const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+                
+                const revenueQuery = await db.collection('bills')
+                    .where('paymentDate', '>=', firstDayOfMonth)
+                    .where('status', '==', 'paid')
+                    .get();
+                
+                let totalRevenue = 0;
+                revenueQuery.forEach((doc) => {
+                    totalRevenue += doc.data().amount || 0;
+                });
+                document.getElementById('totalRevenue').textContent = '$' + totalRevenue.toFixed(2);
+                
+                // Get active packages count
+                const packagesQuery = await db.collection('memberships')
+                    .where('status', '==', 'active')
+                    .get();
+                
+                document.getElementById('activePackages').textContent = packagesQuery.size;
+                
+                // Get memberships expiring soon (within 7 days)
+                const today = new Date();
+                const sevenDaysLater = new Date();
+                sevenDaysLater.setDate(today.getDate() + 7);
+                
+                const expiringQuery = await db.collection('memberships')
+                    .where('endDate', '>=', today)
+                    .where('endDate', '<=', sevenDaysLater)
+                    .get();
+                
+                document.getElementById('expiringSoon').textContent = expiringQuery.size;
+                
+                // Calculate percentage changes (mock data - would be real in production)
+                document.getElementById('memberChange').textContent = '12';
+                document.getElementById('revenueChange').textContent = '8';
+                document.getElementById('packageChange').textContent = '5';
+                document.getElementById('expiringChange').textContent = '3';
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Load recent members
+        async function loadRecentMembers() {
+            const tableBody = document.getElementById('recentMembersTable');
+            tableBody.innerHTML = '';
+            
+            try {
+                showLoading();
+                
+                const querySnapshot = await db.collection('users')
+                    .where('role', '==', 'member')
+                    .orderBy('createdAt', 'desc')
+                    .limit(5)
+                    .get();
+                
+                if (querySnapshot.empty) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: var(--gray);">
+                                No members found
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                querySnapshot.forEach((doc) => {
+                    const userData = doc.data();
+                    const joinDate = userData.createdAt ? userData.createdAt.toDate() : new Date();
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <div class="member-info">
+                                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(userData.fullName || 'Member')}&background=random" alt="${userData.fullName}" class="member-img">
+                                <div>
+                                    <div class="member-name">${userData.fullName || 'Member'}</div>
+                                    <div class="member-email">${userData.email}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${joinDate.toLocaleDateString()}</td>
+                        <td>${userData.package || 'Basic'}</td>
+                        <td><span class="status-badge active">Active</span></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error loading recent members:', error);
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: var(--danger);">
+                            Error loading members
+                        </td>
+                    </tr>
+                `;
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Load recent bills
+        async function loadRecentBills() {
+            const tableBody = document.getElementById('recentBillsTable');
+            tableBody.innerHTML = '';
+            
+            try {
+                showLoading();
+                
+                const querySnapshot = await db.collection('bills')
+                    .orderBy('paymentDate', 'desc')
+                    .limit(5)
+                    .get();
+                
+                if (querySnapshot.empty) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--gray);">
+                                No recent transactions
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Process bills and get member names
+                const billsWithMembers = await Promise.all(
+                    querySnapshot.docs.map(async (doc) => {
+                        const billData = doc.data();
+                        const userDoc = await db.collection('users').doc(billData.userId).get();
+                        const userData = userDoc.data();
+                        
+                        return {
+                            ...billData,
+                            memberName: userData ? userData.fullName : 'Member',
+                            paymentDate: billData.paymentDate ? billData.paymentDate.toDate() : new Date()
+                        };
+                    })
+                );
+                
+                // Render the bills
+                billsWithMembers.forEach((bill) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${bill.billNumber || 'N/A'}</td>
+                        <td>${bill.memberName}</td>
+                        <td>${bill.paymentDate.toLocaleDateString()}</td>
+                        <td>$${bill.amount?.toFixed(2) || '0.00'}</td>
+                        <td><span class="status-badge ${bill.status === 'paid' ? 'active' : 'pending'}">${bill.status || 'pending'}</span></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error loading recent bills:', error);
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--danger);">
+                            Error loading transactions
+                        </td>
+                    </tr>
+                `;
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Render revenue chart
+        function renderRevenueChart() {
+            try {
+                // This is mock data - in a real app, you would fetch this from Firestore
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                
+                // Hide placeholder
+                document.querySelector('.chart-placeholder').style.display = 'none';
+                
+                // Sample data for the chart
+                const revenueChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                        datasets: [{
+                            label: 'Monthly Revenue',
+                            data: [2500, 3200, 4000, 3800, 4200, 4500, 5000],
+                            backgroundColor: 'rgba(58, 134, 255, 0.1)',
+                            borderColor: 'rgba(58, 134, 255, 1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error rendering chart:', error);
+                document.querySelector('.chart-placeholder').textContent = 'Error loading chart';
+            }
+        }
+
+        // Logout functionality
+        logoutButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            showLoading();
+            
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Logout error:', error);
+                hideLoading();
+                alert('Logout failed. Please try again.');
+            });
+        });
+
+        // User profile dropdown (would be implemented in production)
+        userProfile.addEventListener('click', function() {
+            // This would toggle a dropdown menu in a production app
+            window.location.href = 'admin-profile.html';
+        });
+
+        // Add loading state to all navigation links
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                // Only show loading for internal links
+                if (link.href.startsWith(window.location.origin) || 
+                    link.href.startsWith('/') || 
+                    !link.href.startsWith('http')) {
+                    showLoading();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+<!-- All Done --><!-- All Done --><!-- All Done -->
+<!-- All Done --><!-- All Done --><!-- All Done -->

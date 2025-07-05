@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - PowerFit Gym</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ====== CSS Variables ====== */
+        :root {
+            --primary: #3a86ff;
+            --primary-dark: #2667cc;
+            --primary-light: rgba(58, 134, 255, 0.1);
+            --secondary: #ff006e;
+            --secondary-dark: #cc0058;
+            --dark: #2b2d42;
+            --darker: #1a1b28;
+            --light: #f8f9fa;
+            --lighter: #ffffff;
+            --success: #38b000;
+            --warning: #ffbe0b;
+            --danger: #ef233c;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --sidebar-width: 280px;
+            --topbar-height: 70px;
+        }
+
+        /* ====== Base Styles ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ====== Toast Notifications ====== */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            transform: translateX(150%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background-color: var(--success);
+        }
+
+        .toast.error {
+            background-color: var(--danger);
+        }
+
+        .toast i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        /* ====== Scrollbar ====== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--gray-light);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ====== Sidebar ====== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+            position: fixed;
+            height: 100vh;
+            transition: var(--transition);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: var(--topbar-height);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .sidebar-logo:hover {
+            transform: translateX(3px);
+        }
+
+        .sidebar-logo i {
+            font-size: 1.8rem;
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+
+        .menu-title {
+            padding: 0 1.5rem 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--gray);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.5rem;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .menu-link:hover {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .menu-link.active {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .menu-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: var(--primary);
+        }
+
+        .menu-link i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* ====== Main Content ====== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ====== Topbar ====== */
+        .topbar {
+            height: var(--topbar-height);
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-toggle {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-right: 1.5rem;
+            cursor: pointer;
+            display: none;
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            color: var(--primary);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--gray-light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            width: 250px;
+            background-color: var(--light);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-item {
+            margin-left: 1.5rem;
+            position: relative;
+        }
+
+        .topbar-link {
+            color: var(--dark);
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .topbar-link:hover {
+            color: var(--primary);
+        }
+
+        .topbar-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: var(--lighter);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: 50px;
+        }
+
+        .user-profile:hover {
+            background-color: var(--primary-light);
+        }
+
+        .user-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 0.75rem;
+            border: 2px solid var(--primary-light);
+        }
+
+        .user-name {
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+
+        /* ====== Content Area ====== */
+        .content-area {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .content-title h2 {
+            font-size: 1.75rem;
+            color: var(--darker);
+            margin-bottom: 0.5rem;
+        }
+
+        .content-title p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--lighter);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ====== Profile specific styles ====== */
+        .profile-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .profile-sidebar {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            height: fit-content;
+            animation: slideInLeft 0.5s ease-in-out;
+        }
+        
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .profile-image-container {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--light);
+            margin: 0 auto 1rem;
+            transition: var(--transition);
+        }
+        
+        .profile-image:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .profile-upload {
+            display: none;
+        }
+        
+        .profile-upload-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .profile-upload-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .profile-info {
+            margin-top: 1.5rem;
+        }
+        
+        .profile-info-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-light);
+            animation: fadeIn 0.5s ease-in-out;
+            animation-fill-mode: both;
+        }
+        
+        .profile-info-item:nth-child(1) { animation-delay: 0.1s; }
+        .profile-info-item:nth-child(2) { animation-delay: 0.2s; }
+        .profile-info-item:nth-child(3) { animation-delay: 0.3s; }
+        
+        .profile-info-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 0.25rem;
+        }
+        
+        .profile-info-value {
+            font-weight: 500;
+        }
+        
+        .profile-content {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            animation: slideInRight 0.5s ease-in-out;
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .profile-section {
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease-in-out;
+            animation-fill-mode: both;
+        }
+        
+        .profile-section:nth-child(1) { animation-delay: 0.2s; }
+        .profile-section:nth-child(2) { animation-delay: 0.3s; }
+        .profile-section:nth-child(3) { animation-delay: 0.4s; }
+        
+        .profile-section-title {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-light);
+            color: var(--darker);
+            display: flex;
+            align-items: center;
+        }
+        
+        .profile-section-title i {
+            margin-right: 0.75rem;
+            color: var(--primary);
+        }
+        
+        .profile-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 576px) {
+            .profile-form {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        
+        .form-control:disabled {
+            background-color: var(--gray-light);
+            cursor: not-allowed;
+        }
+        
+        .form-actions {
+            grid-column: span 2;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--gray-light);
+            margin-right: 1rem;
+            color: var(--dark);
+            transition: var(--transition);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--gray-light);
+        }
+        
+        .password-toggle {
+            position: relative;
+        }
+        
+        .password-toggle-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .password-toggle-btn:hover {
+            color: var(--primary);
+        }
+        
+        .membership-card {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+        
+        .membership-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .membership-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .membership-title {
+            font-weight: 600;
+            color: var(--darker);
+        }
+        
+        .membership-status {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .membership-status.active {
+            background-color: rgba(56, 176, 0, 0.1);
+            color: var(--success);
+        }
+        
+        .membership-status.pending {
+            background-color: rgba(255, 190, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        .membership-status.expired {
+            background-color: rgba(239, 35, 60, 0.1);
+            color: var(--danger);
+        }
+        
+        .membership-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        @media (max-width: 480px) {
+            .membership-details {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .membership-detail-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .membership-detail-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        .membership-detail-value {
+            font-weight: 500;
+        }
+        
+        /* Loading states */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--lighter);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+        
+            .sidebar.active {
+                transform: translateX(0);
+            }
+        
+            .main-content {
+                margin-left: 0;
+            }
+        
+            .menu-toggle {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .topbar {
+                padding: 0 1.5rem;
+            }
+        
+            .search-box input {
+                width: 180px;
+            }
+        
+            .user-name {
+                display: none;
+            }
+        
+            .content-area {
+                padding: 1.5rem;
+            }
+        
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .search-box {
+                display: none;
+            }
+        
+            .topbar {
+                padding: 0 1rem;
+            }
+        
+            .content-area {
+                padding: 1rem;
+            }
+        }
+
+        /* Loading overlay */
+        body.loading {
+            cursor: wait;
+            position: relative;
+        }
+
+        body.loading::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 9999;
+        }
+
+        body.loading::before {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--primary-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 10000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="member-dashboard.html" class="sidebar-logo">
+                <i class="fas fa-dumbbell"></i> PowerFit
+            </a>
+        </div>
+        <div class="sidebar-menu">
+            <h3 class="menu-title">Menu</h3>
+            <ul>
+                <li class="menu-item">
+                    <a href="member-dashboard.html" class="menu-link">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="profile.html" class="menu-link active">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="bills.html" class="menu-link">
+                        <i class="fas fa-receipt"></i>
+                        <span>My Bills</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="diet.html" class="menu-link">
+                        <i class="fas fa-utensils"></i>
+                        <span>My Diet Plan</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="notifications.html" class="menu-link">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="supplements.html" class="menu-link">
+                        <i class="fas fa-pills"></i>
+                        <span>Supplements</span>
+                    </a>
+                </li>
+            </ul>
+
+            <h3 class="menu-title">Settings</h3>
+            <ul>
+                <li class="menu-item">
+                    <a href="dashboard-settings.html" class="menu-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <div class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-item">
+                    <a href="notifications.html" class="topbar-link">
+                        <i class="fas fa-bell"></i>
+                        <span class="topbar-badge">3</span>
+                    </a>
+                </div>
+                <div class="topbar-item">
+                    <div class="user-profile">
+                        <img id="userProfileImage" src="https://ui-avatars.com/api/?name=Member&background=random" alt="Member" class="user-img">
+                        <span id="userName" class="user-name">Member</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+            <div class="content-header">
+                <div class="content-title">
+                    <h2>My Profile</h2>
+                    <p>Manage your account information and settings</p>
+                </div>
+            </div>
+            
+            <div class="profile-container">
+                <div class="profile-sidebar">
+                    <div class="profile-image-container">
+                        <img src="https://ui-avatars.com/api/?name=Member&background=random" 
+                             alt="Profile" class="profile-image" id="profileImage">
+                        <input type="file" id="profileUpload" class="profile-upload" accept="image/*">
+                        <button class="profile-upload-btn" id="uploadBtn">
+                            <i class="fas fa-camera"></i> Change Photo
+                        </button>
+                    </div>
+                    
+                    <div class="profile-info">
+                        <div class="profile-info-item">
+                            <div class="profile-info-label">Membership ID</div>
+                            <div class="profile-info-value" id="membershipId">Loading...</div>
+                        </div>
+                        <div class="profile-info-item">
+                            <div class="profile-info-label">Member Since</div>
+                            <div class="profile-info-value" id="memberSince">Loading...</div>
+                        </div>
+                        <div class="profile-info-item">
+                            <div class="profile-info-label">Last Login</div>
+                            <div class="profile-info-value" id="lastLogin">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-content">
+                    <div class="profile-section">
+                        <h3 class="profile-section-title"><i class="fas fa-user-circle"></i> Personal Information</h3>
+                        <form id="personalInfoForm">
+                            <div class="profile-form">
+                                <div class="form-group">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="firstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="lastName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Address</label>
+                                    <input type="text" class="form-control" id="address">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">City</label>
+                                    <input type="text" class="form-control" id="city">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">State</label>
+                                    <input type="text" class="form-control" id="state">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Zip Code</label>
+                                    <input type="text" class="form-control" id="zipCode">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-outline" id="cancelPersonalInfo">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-primary" id="savePersonalInfo">
+                                        <i class="fas fa-save"></i> Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h3 class="profile-section-title"><i class="fas fa-key"></i> Change Password</h3>
+                        <form id="passwordForm">
+                            <div class="profile-form">
+                                <div class="form-group password-toggle">
+                                    <label class="form-label">Current Password</label>
+                                    <input type="password" class="form-control" id="currentPassword" required>
+                                    <button type="button" class="password-toggle-btn" data-target="currentPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="form-group password-toggle">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" class="form-control" id="newPassword" required>
+                                    <button type="button" class="password-toggle-btn" data-target="newPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="form-group password-toggle">
+                                    <label class="form-label">Confirm New Password</label>
+                                    <input type="password" class="form-control" id="confirmPassword" required>
+                                    <button type="button" class="password-toggle-btn" data-target="confirmPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-outline" id="cancelPassword">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-primary" id="changePasswordBtn">
+                                        <i class="fas fa-key"></i> Change Password
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h3 class="profile-section-title"><i class="fas fa-id-card"></i> Membership Information</h3>
+                        <div class="membership-card">
+                            <div class="membership-header">
+                                <h4 class="membership-title" id="membershipPlan">Basic Membership</h4>
+                                <span class="membership-status active" id="membershipStatus">Active</span>
+                            </div>
+                            <div class="membership-details">
+                                <div class="membership-detail-item">
+                                    <div class="membership-detail-label">Start Date</div>
+                                    <div class="membership-detail-value" id="membershipStart">Loading...</div>
+                                </div>
+                                <div class="membership-detail-item">
+                                    <div class="membership-detail-label">End Date</div>
+                                    <div class="membership-detail-value" id="membershipEnd">Loading...</div>
+                                </div>
+                                <div class="membership-detail-item">
+                                    <div class="membership-detail-label">Payment Method</div>
+                                    <div class="membership-detail-value" id="paymentMethod">Credit Card</div>
+                                </div>
+                                <div class="membership-detail-item">
+                                    <div class="membership-detail-label">Next Billing</div>
+                                    <div class="membership-detail-value" id="nextBilling">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-storage-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMU_xXHhZdrR9cA3fPcZDSJeg4SQZBD7M",
+            authDomain: "gym-management-system-f06fd.firebaseapp.com",
+            projectId: "gym-management-system-f06fd",
+            storageBucket: "gym-management-system-f06fd.appspot.com",
+            messagingSenderId: "1061387303589",
+            appId: "1:1061387303589:web:bcdf5ea3bd3efb027f6b4c",
+            measurementId: "G-5YTGPJE3JP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            
+            // Add icon based on type
+            const icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+            toast.innerHTML = `<i class="${icon}"></i> ${message}`;
+            
+            toast.classList.add('show');
+            
+            // Animate with GSAP
+            gsap.fromTo(toast, 
+                { opacity: 0, y: -20 },
+                { opacity: 1, y: 0, duration: 0.3 }
+            );
+            
+            setTimeout(() => {
+                gsap.to(toast, {
+                    opacity: 0,
+                    y: -20,
+                    duration: 0.3,
+                    onComplete: () => toast.classList.remove('show')
+                });
+            }, 3000);
+        }
+
+        // Toggle sidebar on mobile
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        // Check authentication state
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                // User is not logged in, redirect to login page
+                window.location.href = 'login.html';
+            } else {
+                // User is logged in, load their data
+                loadUserData(user);
+                loadMembershipData(user.uid);
+                
+                // Update user profile in topbar
+                db.collection('users').doc(user.uid).get()
+                    .then((doc) => {
+                        if (doc.exists) {
+                            const userData = doc.data();
+                            document.querySelector('.user-name').textContent = userData.fullName || 'Member';
+                            if (userData.photoURL) {
+                                document.querySelector('.user-img').src = userData.photoURL;
+                            }
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error loading user data:', error);
+                    });
+            }
+        });
+        
+        // Load user data
+        function loadUserData(user) {
+            db.collection('users').doc(user.uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        
+                        // Set profile image
+                        if (userData.photoURL) {
+                            document.getElementById('profileImage').src = userData.photoURL;
+                            document.getElementById('userProfileImage').src = userData.photoURL;
+                        } else {
+                            const name = userData.fullName || 'Member';
+                            document.getElementById('profileImage').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
+                        }
+                        
+                        // Set personal info
+                        const fullName = userData.fullName || '';
+                        const nameParts = fullName.split(' ');
+                        
+                        document.getElementById('firstName').value = nameParts[0] || '';
+                        document.getElementById('lastName').value = nameParts.slice(1).join(' ') || '';
+                        document.getElementById('email').value = user.email;
+                        document.getElementById('phone').value = userData.phone || '';
+                        document.getElementById('address').value = userData.address || '';
+                        document.getElementById('city').value = userData.city || '';
+                        document.getElementById('state').value = userData.state || '';
+                        document.getElementById('zipCode').value = userData.zipCode || '';
+                        
+                        // Set member info
+                        document.getElementById('membershipId').textContent = user.uid.substring(0, 8).toUpperCase();
+                        document.getElementById('memberSince').textContent = userData.createdAt ? 
+                            userData.createdAt.toDate().toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            }) : 'N/A';
+                            
+                        document.getElementById('lastLogin').textContent = userData.lastLogin ? 
+                            userData.lastLogin.toDate().toLocaleString('en-US', { 
+                                year: 'numeric', 
+                                month: 'short', 
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }) : 'N/A';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error loading user data:', error);
+                    showToast('Failed to load user data', 'error');
+                });
+        }
+        
+        // Load membership data
+        function loadMembershipData(userId) {
+            db.collection('memberships').where('userId', '==', userId).get()
+                .then((querySnapshot) => {
+                    if (!querySnapshot.empty) {
+                        const membershipData = querySnapshot.docs[0].data();
+                        
+                        document.getElementById('membershipPlan').textContent = membershipData.plan || 'Basic Membership';
+                        
+                        // Set membership status
+                        const statusElement = document.getElementById('membershipStatus');
+                        statusElement.textContent = membershipData.status || 'Active';
+                        statusElement.className = 'membership-status ' + (membershipData.status || 'active').toLowerCase();
+                        
+                        // Format dates
+                        const formatDate = (date) => {
+                            return date.toDate().toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            });
+                        };
+                        
+                        document.getElementById('membershipStart').textContent = membershipData.startDate ? 
+                            formatDate(membershipData.startDate) : 'N/A';
+                            
+                        document.getElementById('membershipEnd').textContent = membershipData.endDate ? 
+                            formatDate(membershipData.endDate) : 'N/A';
+                        
+                        // Calculate next billing date (1 month from end date)
+                        if (membershipData.endDate) {
+                            const nextBillingDate = new Date(membershipData.endDate.toDate());
+                            nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
+                            document.getElementById('nextBilling').textContent = nextBillingDate.toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            });
+                        } else {
+                            document.getElementById('nextBilling').textContent = 'N/A';
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error loading membership data:', error);
+                    showToast('Failed to load membership information', 'error');
+                });
+        }
+        
+        // Upload profile image
+        document.getElementById('uploadBtn').addEventListener('click', function() {
+            document.getElementById('profileUpload').click();
+        });
+        
+        document.getElementById('profileUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const user = auth.currentUser;
+            if (!user) return;
+            
+            // Validate file type
+            if (!file.type.match('image.*')) {
+                showToast('Please select an image file', 'error');
+                return;
+            }
+            
+            // Validate file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('Image must be less than 2MB', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const uploadBtn = document.getElementById('uploadBtn');
+            const originalText = uploadBtn.innerHTML;
+            uploadBtn.innerHTML = '<span class="loading-spinner"></span> Uploading...';
+            uploadBtn.disabled = true;
+            
+            const storageRef = storage.ref(`profile_images/${user.uid}`);
+            const uploadTask = storageRef.put(file);
+            
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    // Progress monitoring could be added here
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                },
+                (error) => {
+                    console.error('Upload failed:', error);
+                    showToast('Failed to upload image. Please try again.', 'error');
+                    uploadBtn.innerHTML = originalText;
+                    uploadBtn.disabled = false;
+                },
+                () => {
+                    // Upload completed successfully
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        // Update user profile with new photo URL
+                        db.collection('users').doc(user.uid).update({
+                            photoURL: downloadURL,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        }).then(() => {
+                            // Update image display
+                            document.getElementById('profileImage').src = downloadURL;
+                            document.getElementById('userProfileImage').src = downloadURL;
+                            
+                            // Log the profile picture update
+                            db.collection('logs').add({
+                                action: 'profile_picture_update',
+                                userId: user.uid,
+                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                details: {
+                                    newPhotoURL: downloadURL
+                                }
+                            });
+                            
+                            showToast('Profile image updated successfully!');
+                            uploadBtn.innerHTML = originalText;
+                            uploadBtn.disabled = false;
+                        }).catch((error) => {
+                            console.error('Error updating profile:', error);
+                            showToast('Failed to update profile. Please try again.', 'error');
+                            uploadBtn.innerHTML = originalText;
+                            uploadBtn.disabled = false;
+                        });
+                    });
+                }
+            );
+        });
+        
+        // Update personal info
+        document.getElementById('personalInfoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const user = auth.currentUser;
+            if (!user) return;
+            
+            // Show loading state
+            const saveBtn = document.getElementById('savePersonalInfo');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<span class="loading-spinner"></span> Saving...';
+            saveBtn.disabled = true;
+            
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const state = document.getElementById('state').value.trim();
+            const zipCode = document.getElementById('zipCode').value.trim();
+            const fullName = `${firstName} ${lastName}`;
+            
+            db.collection('users').doc(user.uid).update({
+                fullName: fullName,
+                phone: phone,
+                address: address,
+                city: city,
+                state: state,
+                zipCode: zipCode,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                // Update UI
+                document.querySelector('.user-name').textContent = fullName;
+                
+                // Log the profile update
+                db.collection('logs').add({
+                    action: 'profile_update',
+                    userId: user.uid,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    details: {
+                        fullName: fullName,
+                        phone: phone,
+                        address: address,
+                        city: city,
+                        state: state,
+                        zipCode: zipCode
+                    }
+                });
+                
+                showToast('Personal information updated successfully!');
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+            }).catch((error) => {
+                console.error('Error updating personal info:', error);
+                showToast('Failed to update personal information. Please try again.', 'error');
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+            });
+        });
+        
+        // Change password
+        document.getElementById('passwordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const user = auth.currentUser;
+            if (!user) return;
+            
+            // Show loading state
+            const changeBtn = document.getElementById('changePasswordBtn');
+            const originalText = changeBtn.innerHTML;
+            changeBtn.innerHTML = '<span class="loading-spinner"></span> Changing...';
+            changeBtn.disabled = true;
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validate passwords
+            if (newPassword !== confirmPassword) {
+                showToast('New passwords do not match!', 'error');
+                changeBtn.innerHTML = originalText;
+                changeBtn.disabled = false;
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showToast('Password must be at least 6 characters long', 'error');
+                changeBtn.innerHTML = originalText;
+                changeBtn.disabled = false;
+                return;
+            }
+            
+            // Reauthenticate user
+            const credential = firebase.auth.EmailAuthProvider.credential(
+                user.email, 
+                currentPassword
+            );
+            
+            user.reauthenticateWithCredential(credential)
+                .then(() => {
+                    // Change password
+                    return user.updatePassword(newPassword);
+                })
+                .then(() => {
+                    // Log the password change
+                    db.collection('logs').add({
+                        action: 'password_change',
+                        userId: user.uid,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    showToast('Password changed successfully!');
+                    document.getElementById('passwordForm').reset();
+                    changeBtn.innerHTML = originalText;
+                    changeBtn.disabled = false;
+                })
+                .catch((error) => {
+                    console.error('Error changing password:', error);
+                    
+                    let errorMessage = 'Failed to change password. Please try again.';
+                    if (error.code === 'auth/wrong-password') {
+                        errorMessage = 'Current password is incorrect';
+                    } else if (error.code === 'auth/weak-password') {
+                        errorMessage = 'Password is too weak';
+                    }
+                    
+                    showToast(errorMessage, 'error');
+                    changeBtn.innerHTML = originalText;
+                    changeBtn.disabled = false;
+                });
+        });
+        
+        // Cancel buttons
+        document.getElementById('cancelPersonalInfo').addEventListener('click', function() {
+            const user = auth.currentUser;
+            if (user) {
+                loadUserData(user);
+            }
+        });
+        
+        document.getElementById('cancelPassword').addEventListener('click', function() {
+            document.getElementById('passwordForm').reset();
+        });
+        
+        // Toggle password visibility
+        document.querySelectorAll('.password-toggle-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                const icon = this.querySelector('i');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.className = 'fas fa-eye-slash';
+                } else {
+                    input.type = 'password';
+                    icon.className = 'fas fa-eye';
+                }
+            });
+        });
+        
+        // Logout functionality
+        document.getElementById('logoutButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            document.body.classList.add('loading');
+            
+            // Log the logout action
+            const user = auth.currentUser;
+            if (user) {
+                db.collection('logs').add({
+                    action: 'logout',
+                    userId: user.uid,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+            
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Logout failed:', error);
+                showToast('Logout failed. Please try again.', 'error');
+                document.body.classList.remove('loading');
+            });
+        });
+
+        // Initialize animations with GSAP
+        gsap.from(".profile-sidebar", { 
+            duration: 0.5, 
+            x: -50, 
+            opacity: 0, 
+            ease: "power2.out" 
+        });
+        
+        gsap.from(".profile-content", { 
+            duration: 0.5, 
+            x: 50, 
+            opacity: 0, 
+            ease: "power2.out",
+            delay: 0.2
+        });
+        
+        gsap.from(".profile-section", { 
+            duration: 0.3, 
+            y: 20, 
+            opacity: 0, 
+            stagger: 0.1,
+            ease: "power1.out",
+            delay: 0.4
+        });
+    </script>
+</body>
+</html>
+
+
+<!-- All Done --><!-- All Done --><!-- All Done -->
+<!-- All Done --><!-- All Done --><!-- All Done -->

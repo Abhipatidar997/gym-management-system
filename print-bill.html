@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Bill - PowerFit Gym</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --dark: #2b2d42;
+            --light: #f8f9fa;
+            --lighter: #ffffff;
+            --gray: #6c757d;
+            --gray-light: #dee2e6;
+            --success: #38b000;
+            --danger: #ef233c;
+            --warning: #ffbe0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: var(--light);
+            min-height: 100vh;
+        }
+
+        .bill-container {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bill-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+            position: relative;
+        }
+
+        .gym-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .bill-title {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .bill-subtitle {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .bill-info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+
+        .bill-from, .bill-to {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .bill-info-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .bill-details {
+            margin-bottom: 2rem;
+        }
+
+        .bill-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        .bill-table th {
+            text-align: left;
+            padding: 0.75rem;
+            background-color: var(--light);
+            border-bottom: 2px solid var(--gray-light);
+            font-weight: 500;
+        }
+
+        .bill-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .bill-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .bill-total {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 2rem;
+        }
+
+        .total-box {
+            width: 300px;
+            border: 1px solid var(--gray-light);
+            border-radius: 5px;
+            padding: 1rem;
+            background-color: var(--light);
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .total-row.total {
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-top: 1px solid var(--gray-light);
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .bill-footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .print-actions {
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .print-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .print-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .print-btn.secondary {
+            background-color: var(--gray);
+        }
+
+        .print-btn.secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.paid {
+            background-color: rgba(56, 176, 0, 0.1);
+            color: var(--success);
+        }
+
+        .status-badge.pending {
+            background-color: rgba(255, 190, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-badge.overdue {
+            background-color: rgba(239, 35, 60, 0.1);
+            color: var(--danger);
+        }
+
+        /* Loading state */
+        .loading-spinner {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin: 2rem auto;
+            display: block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Animation for bill entry */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bill-container {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                padding: 0;
+                background-color: white;
+                font-size: 12pt;
+            }
+
+            .print-actions {
+                display: none;
+            }
+
+            .bill-container {
+                box-shadow: none;
+                padding: 0;
+                border-radius: 0;
+            }
+
+            .bill-header {
+                margin-top: 0;
+            }
+
+            @page {
+                size: auto;
+                margin: 10mm;
+            }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .bill-container {
+                padding: 1.5rem;
+            }
+
+            .bill-info {
+                flex-direction: column;
+            }
+
+            .bill-from, .bill-to {
+                min-width: 100%;
+            }
+
+            .total-box {
+                width: 100%;
+            }
+        }
+
+        /* Error state */
+        .error-message {
+            background-color: rgba(239, 35, 60, 0.1);
+            color: var(--danger);
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 2rem 0;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .error-message i {
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="print-actions">
+        <button class="print-btn" onclick="window.print()">
+            <i class="fas fa-print"></i> Print Bill
+        </button>
+        <button class="print-btn secondary" onclick="window.close()">
+            <i class="fas fa-times"></i> Close
+        </button>
+    </div>
+    
+    <div class="bill-container">
+        <div class="bill-header">
+            <div class="gym-logo">
+                <i class="fas fa-dumbbell"></i>
+            </div>
+            <h1 class="bill-title">PowerFit Gym</h1>
+            <p class="bill-subtitle">123 Fitness Street, Workout City, WC 10001</p>
+            <p class="bill-subtitle">Phone: (123) 456-7890 | Email: info@powerfitgym.com</p>
+        </div>
+        
+        <div class="bill-info">
+            <div class="bill-from">
+                <h3 class="bill-info-title">Bill From:</h3>
+                <p>PowerFit Gym</p>
+                <p>123 Fitness Street</p>
+                <p>Workout City, WC 10001</p>
+                <p>Tax ID: 123456789</p>
+            </div>
+            
+            <div class="bill-to">
+                <h3 class="bill-info-title">Bill To:</h3>
+                <p id="memberName">Loading...</p>
+                <p id="memberEmail">Loading...</p>
+                <p id="memberPhone">Loading...</p>
+                <p>Bill Date: <span id="billDate">Loading...</span></p>
+                <p>Due Date: <span id="dueDate">Loading...</span></p>
+                <p>Status: <span id="paymentStatus">Loading...</span></p>
+                <p>Bill Number: <span id="billNumber">Loading...</span></p>
+            </div>
+        </div>
+        
+        <div class="bill-details">
+            <table class="bill-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Package</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="billItems">
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            <div class="loading-spinner"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="bill-total">
+            <div class="total-box">
+                <div class="total-row">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">$0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Tax (10%):</span>
+                    <span id="tax">$0.00</span>
+                </div>
+                <div class="total-row total">
+                    <span>Total:</span>
+                    <span id="total">$0.00</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bill-footer">
+            <p>Thank you for your membership! Please pay this bill by the due date.</p>
+            <p>For any questions, please contact our billing department at billing@powerfitgym.com</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMU_xXHhZdrR9cA3fPcZDSJeg4SQZBD7M",
+            authDomain: "gym-management-system-f06fd.firebaseapp.com",
+            projectId: "gym-management-system-f06fd",
+            storageBucket: "gym-management-system-f06fd.appspot.com",
+            messagingSenderId: "1061387303589",
+            appId: "1:1061387303589:web:bcdf5ea3bd3efb027f6b4c",
+            measurementId: "G-5YTGPJE3JP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // Check authentication state
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                // Get bill ID from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const billId = urlParams.get('id');
+                
+                if (billId) {
+                    loadBillData(billId, user.uid);
+                } else {
+                    showError("No bill ID provided in URL");
+                }
+            }
+        });
+
+        function showError(message) {
+            const billItems = document.getElementById('billItems');
+            billItems.innerHTML = `
+                <tr>
+                    <td colspan="5">
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>${message}</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function loadBillData(billId, userId) {
+            db.collection('bills').doc(billId).get()
+                .then((billDoc) => {
+                    if (!billDoc.exists) {
+                        showError("Bill not found");
+                        return;
+                    }
+
+                    const billData = billDoc.data();
+                    
+                    // Verify this bill belongs to the logged-in user
+                    if (billData.userId !== userId) {
+                        showError("You are not authorized to view this bill");
+                        return;
+                    }
+
+                    // Set bill header info
+                    const billDate = billData.paymentDate.toDate();
+                    const dueDate = billData.dueDate ? billData.dueDate.toDate() : new Date(billDate.getTime() + 7 * 24 * 60 * 60 * 1000); // Default 7 days from bill date
+                    
+                    document.getElementById('billDate').textContent = billDate.toLocaleDateString();
+                    document.getElementById('dueDate').textContent = dueDate.toLocaleDateString();
+                    document.getElementById('billNumber').textContent = billData.billNumber || billId;
+                    
+                    // Set payment status
+                    const statusElement = document.getElementById('paymentStatus');
+                    let statusClass = 'pending';
+                    let statusText = 'Pending';
+                    
+                    if (billData.paid) {
+                        statusClass = 'paid';
+                        statusText = 'Paid';
+                    } else if (new Date() > dueDate) {
+                        statusClass = 'overdue';
+                        statusText = 'Overdue';
+                    }
+                    
+                    statusElement.innerHTML = `<span class="status-badge ${statusClass}">${statusText}</span>`;
+                    
+                    // Get member data
+                    db.collection('users').doc(userId).get()
+                        .then((userDoc) => {
+                            const userData = userDoc.data();
+                            
+                            document.getElementById('memberName').textContent = userData.fullName || 'Member';
+                            document.getElementById('memberEmail').textContent = userData.email;
+                            document.getElementById('memberPhone').textContent = userData.phone || 'N/A';
+                        })
+                        .catch((error) => {
+                            console.error('Error loading user data:', error);
+                        });
+                    
+                    // Populate bill items
+                    const billItems = document.getElementById('billItems');
+                    billItems.innerHTML = '';
+                    
+                    let subtotal = 0;
+                    
+                    if (!billData.items || billData.items.length === 0) {
+                        billItems.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="text-center">No items in this bill</td>
+                            </tr>
+                        `;
+                        return;
+                    }
+                    
+                    billData.items.forEach((item) => {
+                        const row = document.createElement('tr');
+                        const itemTotal = item.price * (item.quantity || 1);
+                        
+                        row.innerHTML = `
+                            <td>${item.description}</td>
+                            <td>${item.packageName || 'N/A'}</td>
+                            <td>${item.quantity || 1}</td>
+                            <td>$${item.price.toFixed(2)}</td>
+                            <td>$${itemTotal.toFixed(2)}</td>
+                        `;
+                        billItems.appendChild(row);
+                        
+                        subtotal += itemTotal;
+                    });
+                    
+                    // Calculate totals
+                    const taxRate = billData.taxRate || 0.1; // Default 10% tax
+                    const tax = subtotal * taxRate;
+                    const total = subtotal + tax;
+                    
+                    document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
+                    document.getElementById('tax').textContent = '$' + tax.toFixed(2);
+                    document.getElementById('total').textContent = '$' + total.toFixed(2);
+                })
+                .catch((error) => {
+                    console.error('Error loading bill:', error);
+                    showError("Error loading bill data. Please try again.");
+                });
+        }
+    </script>
+</body>
+</html>
+
+
+
+<!-- All Done --><!-- All Done --><!-- All Done -->
+<!-- All Done --><!-- All Done --><!-- All Done -->

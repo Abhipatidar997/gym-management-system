@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email | PowerFit Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        /* ====== CSS Variables ====== */
+        :root {
+            --primary: #3a86ff;
+            --primary-dark: #2667cc;
+            --primary-light: rgba(58, 134, 255, 0.1);
+            --secondary: #ff006e;
+            --secondary-dark: #cc0058;
+            --dark: #2b2d42;
+            --darker: #1a1b28;
+            --light: #f8f9fa;
+            --lighter: #ffffff;
+            --success: #38b000;
+            --warning: #ffbe0b;
+            --danger: #ef233c;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            --gradient-secondary: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+            --gradient-dual: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        /* ====== Base Styles ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ====== Scrollbar ====== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--gray-light);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ====== Header ====== */
+        header {
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem 5%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            color: var(--primary-dark);
+            transform: translateX(-3px);
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        /* ====== Main Content ====== */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 5%;
+        }
+
+        .verification-card {
+            background-color: var(--lighter);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            width: 100%;
+            max-width: 500px;
+            padding: 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .verification-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-dual);
+        }
+
+        .verification-icon {
+            font-size: 5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .verification-title h2 {
+            font-size: 2rem;
+            color: var(--darker);
+            margin-bottom: 1rem;
+        }
+
+        .verification-title p {
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+
+        .verification-email {
+            font-weight: 600;
+            color: var(--primary);
+            word-break: break-all;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 0.9rem 1.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--lighter);
+        }
+
+        .btn-primary:hover {
+            background: var(--gradient-secondary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ====== Loading State ====== */
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            color: transparent !important;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1.2rem;
+            height: 1.2rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* ====== Alert Messages ====== */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            transition: all 0.5s ease-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .alert.show {
+            max-height: 100px;
+            opacity: 1;
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+        }
+
+        .alert-danger {
+            background-color: rgba(239, 35, 60, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 35, 60, 0.2);
+        }
+
+        .alert-success {
+            background-color: rgba(56, 176, 0, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(56, 176, 0, 0.2);
+        }
+
+        .alert-warning {
+            background-color: rgba(255, 190, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(255, 190, 11, 0.2);
+        }
+
+        /* ====== Page Loading Overlay ====== */
+        body.loading {
+            cursor: wait;
+            position: relative;
+        }
+
+        body.loading::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 9999;
+        }
+
+        body.loading::before {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--primary-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 10000;
+        }
+
+        /* ====== Footer ====== */
+        footer {
+            background-color: var(--darker);
+            color: var(--lighter);
+            padding: 1.5rem 5%;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            color: var(--gray-light);
+        }
+
+        /* ====== Animations ====== */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ====== Responsive Design ====== */
+        @media (max-width: 768px) {
+            .verification-card {
+                padding: 2rem;
+            }
+            
+            .verification-icon {
+                font-size: 4rem;
+            }
+            
+            .verification-title h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .verification-card {
+                padding: 1.5rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                gap: 0.7rem;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header data-aos="fade-down">
+        <a href="index.html" class="logo">
+            <i class="fas fa-dumbbell"></i>
+            <span>PowerFit Pro</span>
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="verification-card" data-aos="fade-up" data-aos-duration="800">
+            <div class="verification-icon">
+                <i class="fas fa-envelope"></i>
+            </div>
+            
+            <div class="verification-title">
+                <h2>Verify Your Email</h2>
+                <p>We've sent a verification link to <span class="verification-email" id="user-email">your email</span>. Please check your inbox and click the link to verify your account.</p>
+                <p>Didn't receive the email? Check your spam folder or request a new verification email below.</p>
+            </div>
+            
+            <!-- Alert Messages -->
+            <div id="alert-message" class="alert alert-warning">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="alert-text">Please verify your email address to continue.</span>
+            </div>
+            
+            <div class="btn-group">
+                <button id="resend-btn" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Resend Verification</span>
+                </button>
+                <button id="continue-btn" class="btn btn-secondary">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>Continue to Dashboard</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer data-aos="fade-up" data-aos-delay="200">
+        <div class="copyright">
+            &copy; <span id="current-year"></span> PowerFit Pro. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS animation library
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-quad',
+            once: true
+        });
+
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMU_xXHhZdrR9cA3fPcZDSJeg4SQZBD7M",
+            authDomain: "gym-management-system-f06fd.firebaseapp.com",
+            projectId: "gym-management-system-f06fd",
+            storageBucket: "gym-management-system-f06fd.appspot.com",
+            messagingSenderId: "1061387303589",
+            appId: "1:1061387303589:web:bcdf5ea3bd3efb027f6b4c",
+            measurementId: "G-5YTGPJE3JP"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // DOM Elements
+        const userEmailSpan = document.getElementById('user-email');
+        const resendBtn = document.getElementById('resend-btn');
+        const continueBtn = document.getElementById('continue-btn');
+        const alertMessage = document.getElementById('alert-message');
+        const alertText = document.getElementById('alert-text');
+
+        // Show alert message
+        function showAlert(message, type = 'warning') {
+            alertText.textContent = message;
+            alertMessage.className = `alert alert-${type}`;
+            alertMessage.classList.add('show');
+            
+            // Hide alert after 5 seconds (except for warning)
+            if (type !== 'warning') {
+                setTimeout(() => {
+                    alertMessage.classList.remove('show');
+                    setTimeout(() => {
+                        alertMessage.className = 'alert';
+                    }, 500);
+                }, 5000);
+            }
+        }
+
+        // Show loading state
+        function showLoading() {
+            document.body.classList.add('loading');
+        }
+
+        // Hide loading state
+        function hideLoading() {
+            document.body.classList.remove('loading');
+        }
+
+        // Redirect to appropriate dashboard based on user role
+        async function redirectToDashboard(uid) {
+            try {
+                showLoading();
+                
+                const userDoc = await db.collection('users').doc(uid).get();
+                
+                if (!userDoc.exists) {
+                    throw new Error('User data not found. Please contact support.');
+                }
+
+                const userData = userDoc.data();
+                const role = userData.role || 'member';
+
+                // Log verification success
+                await db.collection('logs').add({
+                    action: 'email_verified',
+                    userId: uid,
+                    userEmail: auth.currentUser.email,
+                    userRole: role,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    details: {
+                        device: navigator.userAgent
+                    }
+                });
+
+                // Redirect based on role
+                setTimeout(() => {
+                    if (role === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'member-dashboard.html';
+                    }
+                }, 1000);
+
+            } catch (error) {
+                console.error('Error redirecting:', error);
+                showAlert('Error loading user data. Please try again.', 'danger');
+                hideLoading();
+            }
+        }
+
+        // Check auth state and verify email status
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                // No user logged in, redirect to login
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Display user's email
+            userEmailSpan.textContent = user.email;
+            
+            // Check if email is verified
+            await user.reload();
+            
+            if (user.emailVerified) {
+                // Email is verified, redirect to dashboard
+                redirectToDashboard(user.uid);
+            } else {
+                // Email not verified, show the verification page
+                hideLoading();
+                showAlert('Please verify your email address to continue.', 'warning');
+            }
+        });
+
+        // Resend verification email
+        resendBtn.addEventListener('click', async () => {
+            const user = auth.currentUser;
+            
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                // Show loading state
+                resendBtn.disabled = true;
+                resendBtn.classList.add('btn-loading');
+                showLoading();
+                
+                // Send verification email
+                await user.sendEmailVerification();
+                
+                // Log the action
+                await db.collection('logs').add({
+                    action: 'verification_email_resent',
+                    userId: user.uid,
+                    userEmail: user.email,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    details: {
+                        device: navigator.userAgent
+                    }
+                });
+
+                // Show success message
+                showAlert('Verification email sent successfully! Please check your inbox.', 'success');
+                
+            } catch (error) {
+                console.error('Error resending verification email:', error);
+                
+                let errorMessage = 'Failed to send verification email. Please try again.';
+                
+                switch (error.code) {
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Too many requests. Please wait before trying again.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'Network error. Please check your internet connection.';
+                        break;
+                }
+                
+                showAlert(errorMessage, 'danger');
+            } finally {
+                // Hide loading state
+                resendBtn.disabled = false;
+                resendBtn.classList.remove('btn-loading');
+                hideLoading();
+            }
+        });
+
+        // Continue to dashboard button
+        continueBtn.addEventListener('click', async () => {
+            const user = auth.currentUser;
+            
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                showLoading();
+                
+                // Reload user to check verification status
+                await user.reload();
+                
+                if (user.emailVerified) {
+                    // Email is verified, redirect to dashboard
+                    redirectToDashboard(user.uid);
+                } else {
+                    // Email not verified, show message
+                    hideLoading();
+                    showAlert('Please verify your email first. Check your inbox (and spam folder) for the verification link.', 'warning');
+                }
+            } catch (error) {
+                console.error('Error checking verification status:', error);
+                hideLoading();
+                showAlert('An error occurred. Please try again.', 'danger');
+            }
+        });
+
+        // Add loading state to all navigation links
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                // Only show loading for internal links
+                if (link.href.startsWith(window.location.origin) || 
+                    link.href.startsWith('/') || 
+                    !link.href.startsWith('http')) {
+                    showLoading();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+<!-- All Done --><!-- All Done --><!-- All Done -->
+<!-- All Done --><!-- All Done --><!-- All Done -->

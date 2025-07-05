@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Settings - PowerFit Gym</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: rgba(67, 97, 238, 0.1);
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --white: #ffffff;
+            --gray: #6c757d;
+            --gray-dark: #343a40;
+            --body-font: 'Poppins', sans-serif;
+            --sidebar-width: 250px;
+            --topbar-height: 70px;
+            --transition: all 0.3s ease;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Dark mode variables */
+        [data-theme="dark"] {
+            --light: #212529;
+            --dark: #f8f9fa;
+            --white: #343a40;
+            --gray: #adb5bd;
+            --gray-dark: #dee2e6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--body-font);
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+            display: flex;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--white);
+            box-shadow: var(--shadow-sm);
+            position: fixed;
+            height: 100vh;
+            transition: var(--transition);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar-logo i {
+            margin-right: 0.5rem;
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+
+        .menu-title {
+            padding: 0 1.5rem 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--gray);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--gray-dark);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .menu-link:hover, .menu-link.active {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .menu-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: var(--primary);
+        }
+
+        .menu-link i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+        }
+
+        /* Topbar */
+        .topbar {
+            height: var(--topbar-height);
+            background-color: var(--white);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-toggle {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-right: 1.5rem;
+            cursor: pointer;
+            display: none;
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            color: var(--primary);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--gray-light);
+            font-family: var(--body-font);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            width: 250px;
+            background-color: var(--light);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-item {
+            margin-left: 1.5rem;
+            position: relative;
+        }
+
+        .topbar-link {
+            color: var(--dark);
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .topbar-link:hover {
+            color: var(--primary);
+        }
+
+        .topbar-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: var(--white);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: 50px;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background-color: var(--primary-light);
+        }
+
+        .user-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 0.75rem;
+            border: 2px solid var(--primary-light);
+        }
+
+        .user-name {
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            width: 200px;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: var(--transition);
+        }
+
+        .profile-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .dropdown-item i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 2rem;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .content-title h2 {
+            font-size: 1.75rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .content-title p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Settings specific styles */
+        .settings-container {
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+        
+        .settings-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .settings-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .settings-title {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        .settings-title i {
+            margin-right: 0.75rem;
+            color: var(--primary);
+        }
+        
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .settings-card {
+            background-color: var(--light);
+            border-radius: 8px;
+            padding: 1.25rem;
+            transition: var(--transition);
+        }
+        
+        .settings-card-title {
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .settings-card-description {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+        
+        /* Theme Selector */
+        .theme-selector {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .theme-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+        
+        .theme-option:hover {
+            transform: scale(1.05);
+        }
+        
+        .theme-option.selected {
+            border-color: var(--primary);
+        }
+        
+        .theme-option.selected::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: var(--primary);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+        
+        .theme-light {
+            background-color: #f8f9fa;
+            box-shadow: inset 0 0 0 2px #dee2e6;
+        }
+        
+        .theme-dark {
+            background-color: #212529;
+            box-shadow: inset 0 0 0 2px #495057;
+        }
+        
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray);
+            transition: var(--transition);
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: var(--white);
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .toggle-text {
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+        
+        /* Buttons */
+        .settings-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            font-family: var(--body-font);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--gray-light);
+            color: var(--dark);
+            margin-right: 1rem;
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--light);
+        }
+
+        /* Loading Overlay */
+        body.loading {
+            cursor: wait;
+            position: relative;
+        }
+
+        body.loading::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 9999;
+        }
+
+        body.loading::before {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--primary-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 10000;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .topbar {
+                padding: 0 1rem;
+            }
+
+            .search-box input {
+                width: 180px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .content-area {
+                padding: 1.5rem 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .search-box {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="admin-dashboard.html" class="sidebar-logo">
+                <i class="fas fa-dumbbell"></i>
+                <span>PowerFit</span>
+            </a>
+        </div>
+        <div class="sidebar-menu">
+            <h3 class="menu-title">Menu</h3>
+            <ul>
+                <li class="menu-item">
+                    <a href="admin-dashboard.html" class="menu-link">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="members.html" class="menu-link">
+                        <i class="fas fa-users"></i>
+                        <span>Members</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="bills.html" class="menu-link">
+                        <i class="fas fa-receipt"></i>
+                        <span>Billing</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="diet.html" class="menu-link">
+                        <i class="fas fa-utensils"></i>
+                        <span>Diet Plans</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="notifications.html" class="menu-link">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="supplements.html" class="menu-link">
+                        <i class="fas fa-pills"></i>
+                        <span>Supplements</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="logs.html" class="menu-link">
+                        <i class="fas fa-history"></i>
+                        <span>Activity Logs</span>
+                    </a>
+                </li>
+            </ul>
+
+            <h3 class="menu-title">Settings</h3>
+            <ul>
+                <li class="menu-item">
+                    <a href="admin-profile.html" class="menu-link">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="dashboard-settings.html" class="menu-link active">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <div class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-item">
+                    <a href="notifications.html" class="topbar-link">
+                        <i class="fas fa-bell"></i>
+                        <span class="topbar-badge">3</span>
+                    </a>
+                </div>
+                <div class="topbar-item">
+                    <div class="user-profile" id="userProfile">
+                        <img id="userProfileImage" src="https://ui-avatars.com/api/?name=Admin&background=random" alt="Admin" class="user-img">
+                        <span id="userName" class="user-name">Admin</span>
+                        <i class="fas fa-chevron-down"></i>
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <a href="admin-profile.html" class="dropdown-item">
+                                <i class="fas fa-user"></i>
+                                <span>View Profile</span>
+                            </a>
+                            <a href="#" class="dropdown-item" id="logoutButton">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <div class="content-header">
+                <div class="content-title">
+                    <h2>Dashboard Settings</h2>
+                    <p>Customize your dashboard appearance and preferences</p>
+                </div>
+            </div>
+            
+            <div class="settings-container">
+                <div class="settings-section">
+                    <h3 class="settings-title"><i class="fas fa-palette"></i> Appearance</h3>
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h4 class="settings-card-title">Theme</h4>
+                            <p class="settings-card-description">Choose a color scheme for your dashboard</p>
+                            <div class="theme-selector">
+                                <div class="theme-option theme-light selected" data-theme="light"></div>
+                                <div class="theme-option theme-dark" data-theme="dark"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-card">
+                            <h4 class="settings-card-title">Layout</h4>
+                            <p class="settings-card-description">Adjust the dashboard layout to your preference</p>
+                            <div class="toggle-label">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="compactLayout">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-text">Compact Layout</span>
+                            </div>
+                            <div class="toggle-label">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="fixedSidebar">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-text">Fixed Sidebar</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3 class="settings-title"><i class="fas fa-bell"></i> Notifications</h3>
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h4 class="settings-card-title">Email Notifications</h4>
+                            <p class="settings-card-description">Receive email notifications for important events</p>
+                            <div class="toggle-label">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="emailNotifications" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-text">Enable Email Notifications</span>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-card">
+                            <h4 class="settings-card-title">Push Notifications</h4>
+                            <p class="settings-card-description">Get real-time updates in your browser</p>
+                            <div class="toggle-label">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="pushNotifications" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-text">Enable Push Notifications</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3 class="settings-title"><i class="fas fa-shield-alt"></i> Data & Privacy</h3>
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h4 class="settings-card-title">Auto Logout</h4>
+                            <p class="settings-card-description">Automatically logout after period of inactivity</p>
+                            <div class="toggle-label">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="autoLogout" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-text">Enable Auto Logout</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-actions">
+                    <button class="btn btn-outline" id="resetSettings">
+                        <i class="fas fa-undo"></i> Reset to Defaults
+                    </button>
+                    <button class="btn btn-primary" id="saveSettings">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMU_xXHhZdrR9cA3fPcZDSJeg4SQZBD7M",
+            authDomain: "gym-management-system-f06fd.firebaseapp.com",
+            projectId: "gym-management-system-f06fd",
+            storageBucket: "gym-management-system-f06fd.appspot.com",
+            messagingSenderId: "1061387303589",
+            appId: "1:1061387303589:web:bcdf5ea3bd3efb027f6b4c",
+            measurementId: "G-5YTGPJE3JP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // DOM Elements
+        const userProfile = document.getElementById('userProfile');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const logoutButton = document.getElementById('logoutButton');
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const themeOptions = document.querySelectorAll('.theme-option');
+        const saveSettingsBtn = document.getElementById('saveSettings');
+        const resetSettingsBtn = document.getElementById('resetSettings');
+
+        // Toggle sidebar on mobile
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+
+        // Toggle profile dropdown
+        userProfile.addEventListener('click', function(e) {
+            e.stopPropagation();
+            profileDropdown.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            profileDropdown.classList.remove('active');
+        });
+
+        // Load saved settings from localStorage
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('dashboardSettings')) || {
+                theme: 'light',
+                compactLayout: false,
+                fixedSidebar: false,
+                emailNotifications: true,
+                pushNotifications: true,
+                autoLogout: true
+            };
+
+            // Apply theme
+            document.documentElement.setAttribute('data-theme', settings.theme);
+            
+            // Update theme selector
+            document.querySelector(`.theme-option[data-theme="${settings.theme}"]`).classList.add('selected');
+            
+            // Update toggle switches
+            document.getElementById('compactLayout').checked = settings.compactLayout;
+            document.getElementById('fixedSidebar').checked = settings.fixedSidebar;
+            document.getElementById('emailNotifications').checked = settings.emailNotifications;
+            document.getElementById('pushNotifications').checked = settings.pushNotifications;
+            document.getElementById('autoLogout').checked = settings.autoLogout;
+
+            return settings;
+        }
+
+        // Initialize settings
+        const currentSettings = loadSettings();
+
+        // Theme selection
+        themeOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelector('.theme-option.selected').classList.remove('selected');
+                this.classList.add('selected');
+                const theme = this.getAttribute('data-theme');
+                document.documentElement.setAttribute('data-theme', theme);
+                currentSettings.theme = theme;
+            });
+        });
+
+        // Save settings
+        saveSettingsBtn.addEventListener('click', function() {
+            currentSettings.compactLayout = document.getElementById('compactLayout').checked;
+            currentSettings.fixedSidebar = document.getElementById('fixedSidebar').checked;
+            currentSettings.emailNotifications = document.getElementById('emailNotifications').checked;
+            currentSettings.pushNotifications = document.getElementById('pushNotifications').checked;
+            currentSettings.autoLogout = document.getElementById('autoLogout').checked;
+            
+            localStorage.setItem('dashboardSettings', JSON.stringify(currentSettings));
+            
+            alert('Settings saved successfully!');
+        });
+
+        // Reset settings
+        resetSettingsBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to reset all settings to defaults?')) {
+                const defaultSettings = {
+                    theme: 'light',
+                    compactLayout: false,
+                    fixedSidebar: false,
+                    emailNotifications: true,
+                    pushNotifications: true,
+                    autoLogout: true
+                };
+                
+                localStorage.setItem('dashboardSettings', JSON.stringify(defaultSettings));
+                loadSettings();
+                alert('Settings reset to defaults!');
+            }
+        });
+
+        // Logout functionality
+        logoutButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            document.body.classList.add('loading');
+            
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Logout failed:', error);
+                alert('Logout failed. Please try again.');
+                document.body.classList.remove('loading');
+            });
+        });
+
+        // Check authentication state
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                // Update user profile in topbar
+                document.getElementById('userName').textContent = 'Admin';
+            }
+        });
+
+        // Highlight current page in sidebar
+        function highlightCurrentPage() {
+            const currentPage = window.location.pathname.split('/').pop() || 'admin-dashboard.html';
+            const menuLinks = document.querySelectorAll('.menu-link');
+            
+            menuLinks.forEach(link => {
+                link.classList.remove('active');
+                const linkHref = link.getAttribute('href');
+                if (linkHref === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Initialize
+        highlightCurrentPage();
+    </script>
+</body>
+</html>
+
+
+<!-- All Done --><!-- All Done --><!-- All Done -->
+<!-- All Done --><!-- All Done --><!-- All Done -->

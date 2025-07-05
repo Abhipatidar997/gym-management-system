@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Management | PowerFit Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        /* ====== CSS Variables ====== */
+        :root {
+            --primary: #3a86ff;
+            --primary-dark: #2667cc;
+            --primary-light: rgba(58, 134, 255, 0.1);
+            --secondary: #ff006e;
+            --secondary-dark: #cc0058;
+            --dark: #2b2d42;
+            --darker: #1a1b28;
+            --light: #f8f9fa;
+            --lighter: #ffffff;
+            --success: #38b000;
+            --warning: #ffbe0b;
+            --danger: #ef233c;
+            --info: #4895ef;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --sidebar-width: 280px;
+            --topbar-height: 70px;
+        }
+
+        /* ====== Base Styles ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ====== Scrollbar ====== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--gray-light);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ====== Sidebar ====== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+            position: fixed;
+            height: 100vh;
+            transition: var(--transition);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: var(--topbar-height);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .sidebar-logo:hover {
+            transform: translateX(3px);
+        }
+
+        .sidebar-logo i {
+            font-size: 1.8rem;
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+
+        .menu-title {
+            padding: 0 1.5rem 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--gray);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.5rem;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .menu-link:hover {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .menu-link.active {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .menu-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: var(--primary);
+        }
+
+        .menu-link i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* ====== Main Content ====== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ====== Topbar ====== */
+        .topbar {
+            height: var(--topbar-height);
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-toggle {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-right: 1.5rem;
+            cursor: pointer;
+            display: none;
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            color: var(--primary);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--gray-light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            width: 250px;
+            background-color: var(--light);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-item {
+            margin-left: 1.5rem;
+            position: relative;
+        }
+
+        .topbar-link {
+            color: var(--dark);
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .topbar-link:hover {
+            color: var(--primary);
+        }
+
+        .topbar-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: var(--lighter);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: 50px;
+        }
+
+        .user-profile:hover {
+            background-color: var(--primary-light);
+        }
+
+        .user-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 0.75rem;
+            border: 2px solid var(--primary-light);
+        }
+
+        .user-name {
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+
+        /* ====== Content Area ====== */
+        .content-area {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .content-title h2 {
+            font-size: 1.75rem;
+            color: var(--darker);
+            margin-bottom: 0.5rem;
+        }
+
+        .content-title p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--lighter);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            border-radius: 6px;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: var(--lighter);
+        }
+
+        .btn-danger:hover {
+            background-color: #e11d48;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: var(--lighter);
+        }
+
+        .btn-success:hover {
+            background-color: #16a34a;
+        }
+
+        .btn-info {
+            background-color: var(--info);
+            color: var(--lighter);
+        }
+
+        .btn-info:hover {
+            background-color: #3b82f6;
+        }
+
+        /* ====== Billing Summary ====== */
+        .billing-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .summary-title {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--darker);
+        }
+
+        .summary-card.paid .summary-value {
+            color: var(--success);
+        }
+
+        .summary-card.pending .summary-value {
+            color: var(--warning);
+        }
+
+        .summary-card.overdue .summary-value {
+            color: var(--danger);
+        }
+
+        /* ====== Billing Filters ====== */
+        .billing-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: var(--darker);
+            white-space: nowrap;
+        }
+
+        .filter-group select, 
+        .filter-group input {
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--gray-light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .filter-group select:focus, 
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        /* ====== Bills Table ====== */
+        .bills-card {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+        }
+
+        .bills-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .bills-title {
+            font-size: 1.25rem;
+            color: var(--darker);
+            font-weight: 600;
+        }
+
+        .bills-search {
+            position: relative;
+            min-width: 250px;
+        }
+
+        .bills-search input {
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--gray-light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .bills-search input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .bills-search i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .bills-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bills-table th {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--gray-light);
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .bills-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-light);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        .bills-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .bills-table tr:hover td {
+            background-color: var(--primary-light);
+        }
+
+        .bill-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .bill-number {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .member-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .member-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            border: 2px solid var(--gray-light);
+        }
+
+        .member-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .member-email {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.active {
+            background-color: rgba(56, 176, 0, 0.1);
+            color: var(--success);
+        }
+
+        .status-badge.pending {
+            background-color: rgba(255, 190, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-badge.overdue {
+            background-color: rgba(239, 35, 60, 0.1);
+            color: var(--danger);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* ====== Modal Styles ====== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background-color: var(--lighter);
+            z-index: 1;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--darker);
+            font-weight: 600;
+        }
+
+        .modal-close {
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--darker);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            position: sticky;
+            bottom: 0;
+            background-color: var(--lighter);
+        }
+
+        /* ====== Loading States ====== */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .skeleton {
+            background-color: var(--gray-light);
+            border-radius: 4px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ====== Toast Notification ====== */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            background-color: var(--darker);
+            color: var(--lighter);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1001;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease-out;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-success {
+            background-color: var(--success);
+        }
+
+        .toast-error {
+            background-color: var(--danger);
+        }
+
+        .toast-icon {
+            font-size: 1.25rem;
+        }
+
+        .toast-close {
+            margin-left: 1rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+        }
+
+        /* ====== Page Loading Overlay ====== */
+        body.loading {
+            cursor: wait;
+            position: relative;
+        }
+
+        body.loading::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 9999;
+        }
+
+        body.loading::before {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--primary-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 10000;
+        }
+
+        /* ====== Responsive Design ====== */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .topbar {
+                padding: 0 1.5rem;
+            }
+
+            .search-box input {
+                width: 180px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .content-area {
+                padding: 1.5rem;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .bills-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .search-box {
+                display: none;
+            }
+
+            .topbar {
+                padding: 0 1rem;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                max-width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" data-aos="fade-right">
+        <div class="sidebar-header">
+            <a href="admin-dashboard.html" class="sidebar-logo">
+                <i class="fas fa-dumbbell"></i>
+                <span>PowerFit Pro</span>
+            </a>
+        </div>
+        <div class="sidebar-menu">
+            <h3 class="menu-title">Menu</h3>
+            <ul>
+                <li class="menu-item">
+                    <a href="admin-dashboard.html" class="menu-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="members.html" class="menu-link">
+                        <i class="fas fa-users"></i>
+                        <span>Members</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="bills.html" class="menu-link active">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Billing</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="diet.html" class="menu-link">
+                        <i class="fas fa-utensils"></i>
+                        <span>Diet Plans</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="notifications.html" class="menu-link">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="topbar-badge" id="notificationBadge">0</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="supplements.html" class="menu-link">
+                        <i class="fas fa-pills"></i>
+                        <span>Supplements</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="logs.html" class="menu-link">
+                        <i class="fas fa-history"></i>
+                        <span>Activity Logs</span>
+                    </a>
+                </li>
+            </ul>
+
+            <h3 class="menu-title">Settings</h3>
+            <ul>
+                <li class="menu-item">
+                    <a href="admin-profile.html" class="menu-link">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="dashboard-settings.html" class="menu-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="topbar" data-aos="fade-down">
+            <div class="topbar-left">
+                <div class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search members, bills...">
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-item">
+                    <a href="notifications.html" class="topbar-link">
+                        <i class="fas fa-bell"></i>
+                        <span class="topbar-badge" id="topbarNotificationBadge">0</span>
+                    </a>
+                </div>
+                <div class="topbar-item">
+                    <div class="user-profile" id="userProfile">
+                        <img id="userProfileImage" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Admin" class="user-img">
+                        <span class="user-name">Admin</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <div class="content-header">
+                <div class="content-title">
+                    <h2>Billing Management</h2>
+                    <p>Create, view and manage all gym bills and payments</p>
+                </div>
+                <div class="content-actions">
+                    <button class="btn btn-primary" id="addBillButton">
+                        <i class="fas fa-plus"></i> Create Bill
+                    </button>
+                </div>
+            </div>
+
+            <!-- Billing Summary -->
+            <div class="billing-summary" data-aos="fade-up">
+                <div class="summary-card paid">
+                    <div class="summary-title">Total Paid</div>
+                    <div class="summary-value" id="totalPaid">$0.00</div>
+                </div>
+                <div class="summary-card pending">
+                    <div class="summary-title">Pending Payments</div>
+                    <div class="summary-value" id="totalPending">$0.00</div>
+                </div>
+                <div class="summary-card overdue">
+                    <div class="summary-title">Overdue</div>
+                    <div class="summary-value" id="totalOverdue">$0.00</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">This Month</div>
+                    <div class="summary-value" id="totalThisMonth">$0.00</div>
+                </div>
+            </div>
+
+            <!-- Billing Filters -->
+            <div class="billing-filters" data-aos="fade-up">
+                <div class="filter-group">
+                    <label for="billStatusFilter">Status:</label>
+                    <select id="billStatusFilter">
+                        <option value="all">All</option>
+                        <option value="paid">Paid</option>
+                        <option value="pending">Pending</option>
+                        <option value="overdue">Overdue</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="billMonthFilter">Period:</label>
+                    <select id="billMonthFilter">
+                        <option value="all">All Time</option>
+                        <option value="current">Current Month</option>
+                        <option value="last">Last Month</option>
+                        <option value="custom">Custom Range</option>
+                    </select>
+                </div>
+                <div class="filter-group" id="customDateRange" style="display: none;">
+                    <label for="startDate">From:</label>
+                    <input type="date" id="startDate">
+                    <label for="endDate">To:</label>
+                    <input type="date" id="endDate">
+                </div>
+            </div>
+
+            <!-- Bills Table Card -->
+            <div class="bills-card" data-aos="fade-up">
+                <div class="bills-header">
+                    <h3 class="bills-title">All Bills</h3>
+                    <div class="bills-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="billSearch" placeholder="Search bills...">
+                    </div>
+                </div>
+                <div class="bills-body">
+                    <table class="bills-table">
+                        <thead>
+                            <tr>
+                                <th>Bill No.</th>
+                                <th>Member</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Package</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="billsTable">
+                            <!-- Bills will be loaded here -->
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 2rem;">
+                                    <div class="skeleton" style="width: 100%; height: 20px;"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Bill Modal -->
+    <div class="modal" id="billModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="billModalTitle">Create New Bill</h3>
+                <button class="modal-close" id="billModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="billForm">
+                    <input type="hidden" id="billId">
+                    <div class="form-group">
+                        <label for="billMember">Member</label>
+                        <select id="billMember" required>
+                            <option value="">Select Member</option>
+                            <!-- Members will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="billPackage">Package</label>
+                        <select id="billPackage" required>
+                            <option value="">Select Package</option>
+                            <option value="Basic">Basic ($30/month)</option>
+                            <option value="Standard">Standard ($50/month)</option>
+                            <option value="Premium">Premium ($80/month)</option>
+                            <option value="VIP">VIP ($120/month)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="billAmount">Amount ($)</label>
+                        <input type="number" id="billAmount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="billDate">Due Date</label>
+                        <input type="date" id="billDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="billStatus">Status</label>
+                        <select id="billStatus" required>
+                            <option value="pending">Pending</option>
+                            <option value="paid">Paid</option>
+                            <option value="overdue">Overdue</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="billNotes">Notes</label>
+                        <textarea id="billNotes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveBillButton">
+                    <span id="saveButtonText">Save Bill</span>
+                    <span class="loading-spinner" id="saveButtonSpinner" style="display: none;"></span>
+                </button>
+                <button class="btn btn-danger" id="cancelBillButton">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Delete</h3>
+                <button class="modal-close" id="deleteModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this bill? This action cannot be undone.</p>
+                <input type="hidden" id="deleteBillId">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="confirmDeleteButton">
+                    <span>Delete</span>
+                    <span class="loading-spinner" id="deleteButtonSpinner" style="display: none;"></span>
+                </button>
+                <button class="btn btn-primary" id="cancelDeleteButton">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check toast-icon"></i>
+        <span id="toastMessage">Operation completed successfully</span>
+        <span class="toast-close" id="toastClose">&times;</span>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-com pat .js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS animation library
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-quad',
+            once: true
+        });
+
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMU_xXHhZdrR9cA3fPcZDSJeg4SQZBD7M",
+            authDomain: "gym-management-system-f06fd.firebaseapp.com",
+            projectId: "gym-management-system-f06fd",
+            storageBucket: "gym-management-system-f06fd.appspot.com",
+            messagingSenderId: "1061387303589",
+            appId: "1:1061387303589:web:bcdf5ea3bd3efb027f6b4c",
+            measurementId: "G-5YTGPJE3JP"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // DOM Elements
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const logoutButton = document.getElementById('logoutButton');
+        const userProfile = document.getElementById('userProfile');
+        const addBillButton = document.getElementById('addBillButton');
+        const billModal = document.getElementById('billModal');
+        const billModalClose = document.getElementById('billModalClose');
+        const cancelBillButton = document.getElementById('cancelBillButton');
+        const saveBillButton = document.getElementById('saveBillButton');
+        const saveButtonText = document.getElementById('saveButtonText');
+        const saveButtonSpinner = document.getElementById('saveButtonSpinner');
+        const billForm = document.getElementById('billForm');
+        const billsTable = document.getElementById('billsTable');
+        const billSearch = document.getElementById('billSearch');
+        const deleteModal = document.getElementById('deleteModal');
+        const deleteModalClose = document.getElementById('deleteModalClose');
+        const cancelDeleteButton = document.getElementById('cancelDeleteButton');
+        const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+        const deleteButtonSpinner = document.getElementById('deleteButtonSpinner');
+        const deleteBillId = document.getElementById('deleteBillId');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastClose = document.getElementById('toastClose');
+        const billStatusFilter = document.getElementById('billStatusFilter');
+        const billMonthFilter = document.getElementById('billMonthFilter');
+        const customDateRange = document.getElementById('customDateRange');
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+
+        // Show loading state
+        function showLoading() {
+            document.body.classList.add('loading');
+        }
+
+        // Hide loading state
+        function hideLoading() {
+            document.body.classList.remove('loading');
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            toast.className = `toast toast-${type}`;
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
+        }
+
+        // Close toast
+        toastClose.addEventListener('click', () => {
+            toast.classList.remove('show');
+        });
+
+        // Toggle sidebar on mobile
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+
+        // Check authentication state and user role
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                // Check if user is admin
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    throw new Error('User data not found');
+                }
+
+                const userData = userDoc.data();
+                
+                if (userData.role !== 'admin') {
+                    window.location.href = userData.role === 'member' ? 'member-dashboard.html' : 'login.html';
+                    return;
+                }
+
+                // User is admin, load billing data
+                loadBillingSummary();
+                loadBills();
+                loadMembersForBilling();
+                loadUnreadNotificationsCount(user.uid);
+
+                // Set up real-time listener for bills
+                setupBillsListener();
+
+            } catch (error) {
+                console.error('Error checking user role:', error);
+                auth.signOut();
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Load unread notifications count
+        async function loadUnreadNotificationsCount(userId) {
+            try {
+                const querySnapshot = await db.collection('notifications')
+                    .where('adminId', '==', userId)
+                    .where('read', '==', false)
+                    .get();
+                
+                const count = querySnapshot.size;
+                document.getElementById('notificationBadge').textContent = count;
+                document.getElementById('topbarNotificationBadge').textContent = count;
+                
+                // Set up real-time listener for notifications
+                db.collection('notifications')
+                    .where('adminId', '==', userId)
+                    .where('read', '==', false)
+                    .onSnapshot((snapshot) => {
+                        const newCount = snapshot.size;
+                        document.getElementById('notificationBadge').textContent = newCount;
+                        document.getElementById('topbarNotificationBadge').textContent = newCount;
+                    });
+                
+            } catch (error) {
+                console.error('Error loading notifications count:', error);
+            }
+        }
+
+        // Set up real-time listener for bills
+        function setupBillsListener() {
+            return db.collection('bills')
+                .orderBy('dueDate', 'desc')
+                .onSnapshot((querySnapshot) => {
+                    const bills = [];
+                    const memberPromises = [];
+                    
+                    querySnapshot.forEach((doc) => {
+                        const billData = doc.data();
+                        billData.id = doc.id;
+                        bills.push(billData);
+                        
+                        // Get member data for each bill
+                        memberPromises.push(
+                            db.collection('users').doc(billData.userId).get()
+                                .then((memberDoc) => {
+                                    return {
+                                        billId: doc.id,
+                                        memberName: memberDoc.data()?.fullName || 'Member',
+                                        memberEmail: memberDoc.data()?.email || 'N/A'
+                                    };
+                                })
+                        );
+                    });
+                    
+                    // Wait for all member lookups to complete
+                    Promise.all(memberPromises)
+                        .then((memberResults) => {
+                            // Create a map of billId to member info
+                            const memberMap = {};
+                            memberResults.forEach(result => {
+                                memberMap[result.billId] = {
+                                    name: result.memberName,
+                                    email: result.memberEmail
+                                };
+                            });
+                            
+                            // Now render the table rows
+                            renderBillsTable(bills, memberMap);
+                            updateBillingSummary(bills);
+                        })
+                        .catch((error) => {
+                            console.error('Error loading member data:', error);
+                            billsTable.innerHTML = `
+                                <tr>
+                                    <td colspan="7" style="text-align: center; color: var(--danger);">
+                                        Error loading bills. Please refresh the page.
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                }, (error) => {
+                    console.error('Error listening to bills:', error);
+                    billsTable.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; color: var(--danger);">
+                                Error loading bills. Please refresh the page.
+                            </td>
+                        </tr>
+                    `;
+                });
+        }
+
+        // Load billing summary data
+        function loadBillingSummary() {
+            const today = new Date();
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            
+            // Total paid
+            db.collection('bills').where('status', '==', 'paid').get()
+                .then((querySnapshot) => {
+                    let totalPaid = 0;
+                    querySnapshot.forEach((doc) => {
+                        totalPaid += doc.data().amount || 0;
+                    });
+                    document.getElementById('totalPaid').textContent = '$' + totalPaid.toFixed(2);
+                });
+            
+            // Total pending
+            db.collection('bills').where('status', '==', 'pending').get()
+                .then((querySnapshot) => {
+                    let totalPending = 0;
+                    querySnapshot.forEach((doc) => {
+                        totalPending += doc.data().amount || 0;
+                    });
+                    document.getElementById('totalPending').textContent = '$' + totalPending.toFixed(2);
+                });
+            
+            // Total overdue
+            db.collection('bills').where('status', '==', 'overdue').get()
+                .then((querySnapshot) => {
+                    let totalOverdue = 0;
+                    querySnapshot.forEach((doc) => {
+                        totalOverdue += doc.data().amount || 0;
+                    });
+                    document.getElementById('totalOverdue').textContent = '$' + totalOverdue.toFixed(2);
+                });
+            
+            // This month's revenue
+            db.collection('bills')
+                .where('paymentDate', '>=', firstDayOfMonth)
+                .where('status', '==', 'paid')
+                .get()
+                .then((querySnapshot) => {
+                    let totalThisMonth = 0;
+                    querySnapshot.forEach((doc) => {
+                        totalThisMonth += doc.data().amount || 0;
+                    });
+                    document.getElementById('totalThisMonth').textContent = '$' + totalThisMonth.toFixed(2);
+                });
+        }
+
+        // Update billing summary from bills array
+        function updateBillingSummary(bills) {
+            const today = new Date();
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            
+            let totalPaid = 0;
+            let totalPending = 0;
+            let totalOverdue = 0;
+            let totalThisMonth = 0;
+            
+            bills.forEach(bill => {
+                if (bill.status === 'paid') {
+                    totalPaid += bill.amount || 0;
+                    
+                    // Check if payment was this month
+                    if (bill.paymentDate) {
+                        const paymentDate = bill.paymentDate.toDate();
+                        if (paymentDate >= firstDayOfMonth) {
+                            totalThisMonth += bill.amount || 0;
+                        }
+                    }
+                } else if (bill.status === 'pending') {
+                    totalPending += bill.amount || 0;
+                } else if (bill.status === 'overdue') {
+                    totalOverdue += bill.amount || 0;
+                }
+            });
+            
+            document.getElementById('totalPaid').textContent = '$' + totalPaid.toFixed(2);
+            document.getElementById('totalPending').textContent = '$' + totalPending.toFixed(2);
+            document.getElementById('totalOverdue').textContent = '$' + totalOverdue.toFixed(2);
+            document.getElementById('totalThisMonth').textContent = '$' + totalThisMonth.toFixed(2);
+        }
+
+        // Load bills with filters
+        function loadBills(statusFilter = 'all', dateFilter = 'all', startDate = null, endDate = null) {
+            const tableBody = document.getElementById('billsTable');
+            tableBody.innerHTML = '<tr><td colspan="7">Loading bills...</td></tr>';
+            
+            let query = db.collection('bills').orderBy('dueDate', 'desc');
+            
+            // Apply status filter
+            if (statusFilter !== 'all') {
+                query = query.where('status', '==', statusFilter);
+            }
+            
+            // Apply date filter
+            if (dateFilter === 'current') {
+                const today = new Date();
+                const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                query = query.where('dueDate', '>=', firstDayOfMonth);
+            } else if (dateFilter === 'last') {
+                const today = new Date();
+                const firstDayOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                const lastDayOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                query = query.where('dueDate', '>=', firstDayOfLastMonth)
+                            .where('dueDate', '<=', lastDayOfLastMonth);
+            } else if (dateFilter === 'custom' && startDate && endDate) {
+                query = query.where('dueDate', '>=', startDate)
+                            .where('dueDate', '<=', endDate);
+            }
+            
+            query.get()
+                .then((querySnapshot) => {
+                    const bills = [];
+                    const memberPromises = [];
+                    
+                    querySnapshot.forEach((doc) => {
+                        const billData = doc.data();
+                        billData.id = doc.id;
+                        bills.push(billData);
+                        
+                        // Get member data for each bill
+                        memberPromises.push(
+                            db.collection('users').doc(billData.userId).get()
+                                .then((memberDoc) => {
+                                    return {
+                                        billId: doc.id,
+                                        memberName: memberDoc.data()?.fullName || 'Member',
+                                        memberEmail: memberDoc.data()?.email || 'N/A'
+                                    };
+                                })
+                        );
+                    });
+                    
+                    // Wait for all member lookups to complete
+                    return Promise.all(memberPromises)
+                        .then((memberResults) => {
+                            // Create a map of billId to member info
+                            const memberMap = {};
+                            memberResults.forEach(result => {
+                                memberMap[result.billId] = {
+                                    name: result.memberName,
+                                    email: result.memberEmail
+                                };
+                            });
+                            
+                            // Render the table
+                            renderBillsTable(bills, memberMap);
+                        });
+                })
+                .catch((error) => {
+                    console.error('Error loading bills:', error);
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; color: var(--danger);">
+                                Error loading bills. Please refresh the page.
+                            </td>
+                        </tr>
+                    `;
+                });
+        }
+
+        // Render bills table
+        function renderBillsTable(bills, memberMap) {
+            if (bills.length === 0) {
+                billsTable.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem; color: var(--gray);">
+                            No bills found matching your criteria
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            billsTable.innerHTML = '';
+            
+            bills.forEach((bill) => {
+                const dueDate = bill.dueDate ? bill.dueDate.toDate() : new Date();
+                const paymentDate = bill.paymentDate ? bill.paymentDate.toDate() : null;
+                const memberInfo = memberMap[bill.id] || { name: 'Member', email: 'N/A' };
+                
+                const row = document.createElement('tr');
+                row.setAttribute('data-id', bill.id);
+                row.innerHTML = `
+                    <td>
+                        <div class="bill-info">
+                            <span class="bill-number">${bill.billNumber || 'N/A'}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="member-info">
+                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(memberInfo.name)}&background=3a86ff&color=fff" 
+                                 alt="${memberInfo.name}" class="member-img">
+                            <div>
+                                <div class="member-name">${memberInfo.name}</div>
+                                <div class="member-email">${memberInfo.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${dueDate.toLocaleDateString()}</td>
+                    <td>$${(bill.amount || 0).toFixed(2)}</td>
+                    <td>${bill.package || 'N/A'}</td>
+                    <td>
+                        <span class="status-badge ${bill.status === 'paid' ? 'active' : bill.status === 'pending' ? 'pending' : 'overdue'}">
+                            ${bill.status}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary edit-bill" data-id="${bill.id}">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-danger delete-bill" data-id="${bill.id}">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            <button class="btn btn-sm btn-info print-bill" data-id="${bill.id}">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                        </div>
+                    </td>
+                `;
+                billsTable.appendChild(row);
+                
+                // Add event listeners to buttons
+                row.querySelector('.edit-bill').addEventListener('click', () => editBill(bill.id));
+                row.querySelector('.delete-bill').addEventListener('click', () => showDeleteModal(bill.id));
+                row.querySelector('.print-bill').addEventListener('click', () => printBill(bill.id));
+            });
+        }
+
+        // Load members for bill creation dropdown
+        function loadMembersForBilling() {
+            const memberSelect = document.getElementById('billMember');
+            memberSelect.innerHTML = '<option value="">Select Member</option>';
+            
+            db.collection('users').where('role', '==', 'member').get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        const memberData = doc.data();
+                        const option = document.createElement('option');
+                        option.value = doc.id;
+                        option.textContent = `${memberData.fullName} (${memberData.email})`;
+                        memberSelect.appendChild(option);
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error loading members:', error);
+                });
+        }
+
+        // Edit bill function
+        function editBill(billId) {
+            const modalTitle = document.getElementById('billModalTitle');
+            modalTitle.textContent = 'Edit Bill';
+            
+            // Fill form with bill data
+            document.getElementById('billId').value = billId;
+            
+            // Get bill data
+            db.collection('bills').doc(billId).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const billData = doc.data();
+                        
+                        // Fill form with bill data
+                        document.getElementById('billMember').value = billData.userId;
+                        document.getElementById('billPackage').value = billData.package || '';
+                        document.getElementById('billAmount').value = billData.amount || '';
+                        
+                        // Format dates for input fields
+                        const dueDate = billData.dueDate ? billData.dueDate.toDate() : new Date();
+                        document.getElementById('billDate').value = dueDate.toISOString().split('T')[0];
+                        
+                        document.getElementById('billStatus').value = billData.status || 'pending';
+                        document.getElementById('billNotes').value = billData.notes || '';
+                    }
+                    
+                    // Show modal
+                    billModal.style.display = 'flex';
+                })
+                .catch((error) => {
+                    console.error('Error loading bill:', error);
+                    showToast('Error loading bill details', 'error');
+                });
+        }
+
+        // Save bill function
+        async function saveBill() {
+            const billId = document.getElementById('billId').value;
+            const memberId = document.getElementById('billMember').value;
+            const package = document.getElementById('billPackage').value;
+            const amount = parseFloat(document.getElementById('billAmount').value);
+            const dueDate = document.getElementById('billDate').value;
+            const status = document.getElementById('billStatus').value;
+            const notes = document.getElementById('billNotes').value;
+            
+            // Validate form
+            if (!memberId || !package || !amount || !dueDate || !status) {
+                showToast('Please fill all required fields', 'error');
+                return;
+            }
+            
+            if (isNaN(amount) ){
+                showToast('Please enter a valid amount', 'error');
+                return;
+            }
+            
+            // Show loading state
+            saveButtonText.textContent = 'Saving...';
+            saveButtonSpinner.style.display = 'inline-block';
+            saveBillButton.disabled = true;
+            
+            try {
+                const currentUser = auth.currentUser;
+                const billData = {
+                    userId: memberId,
+                    package: package,
+                    amount: amount,
+                    dueDate: new Date(dueDate),
+                    status: status,
+                    notes: notes,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                // Add payment date if status is paid
+                if (status === 'paid') {
+                    billData.paymentDate = firebase.firestore.FieldValue.serverTimestamp();
+                }
+                
+                let billPromise;
+                
+                if (billId) {
+                    // Update existing bill
+                    billPromise = db.collection('bills').doc(billId).update(billData);
+                } else {
+                    // Create new bill
+                    billData.billNumber = 'BILL-' + Math.floor(100000 + Math.random() * 900000);
+                    billData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    billPromise = db.collection('bills').add(billData);
+                }
+                
+                await billPromise;
+                
+                // Log the action
+                await db.collection('logs').add({
+                    action: billId ? 'bill_updated' : 'bill_created',
+                    adminId: currentUser.uid,
+                    memberId: memberId,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    details: {
+                        amount: amount,
+                        package: package,
+                        status: status
+                    }
+                });
+                
+                // Update membership if paid
+                if (status === 'paid') {
+                    const membershipSnapshot = await db.collection('memberships')
+                        .where('userId', '==', memberId)
+                        .limit(1)
+                        .get();
+                    
+                    if (!membershipSnapshot.empty) {
+                        const membershipRef = membershipSnapshot.docs[0].ref;
+                        const membershipData = membershipSnapshot.docs[0].data();
+                        
+                        // Calculate new end date (1 month from now or current end date, whichever is later)
+                        let newEndDate = new Date();
+                        newEndDate.setMonth(newEndDate.getMonth() + 1);
+                        
+                        if (membershipData.endDate) {
+                            const currentEndDate = membershipData.endDate.toDate();
+                            if (currentEndDate > newEndDate) {
+                                newEndDate = currentEndDate;
+                            }
+                        }
+                        
+                        await membershipRef.update({
+                            status: 'active',
+                            endDate: newEndDate,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                }
+                
+                showToast(`Bill ${billId ? 'updated' : 'created'} successfully`);
+                billModal.style.display = 'none';
+                
+            } catch (error) {
+                console.error('Error saving bill:', error);
+                showToast('Error saving bill: ' + error.message, 'error');
+            } finally {
+                // Reset button state
+                saveButtonText.textContent = 'Save Bill';
+                saveButtonSpinner.style.display = 'none';
+                saveBillButton.disabled = false;
+            }
+        }
+
+        // Show delete confirmation modal
+        function showDeleteModal(billId) {
+            deleteBillId.value = billId;
+            deleteModal.style.display = 'flex';
+        }
+
+        // Delete bill function
+        async function deleteBill() {
+            const billId = deleteBillId.value;
+            
+            if (!billId) {
+                showToast('No bill selected for deletion', 'error');
+                return;
+            }
+            
+            // Show loading state
+            confirmDeleteButton.disabled = true;
+            deleteButtonSpinner.style.display = 'inline-block';
+            
+            try {
+                const currentUser = auth.currentUser;
+                
+                // First get the bill to log member info
+                const billDoc = await db.collection('bills').doc(billId).get();
+                if (!billDoc.exists) {
+                    throw new Error('Bill not found');
+                }
+                
+                const billData = billDoc.data();
+                
+                // Delete the bill
+                await db.collection('bills').doc(billId).delete();
+                
+                // Log the action
+                await db.collection('logs').add({
+                    action: 'bill_deleted',
+                    adminId: currentUser.uid,
+                    memberId: billData.userId,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    details: {
+                        amount: billData.amount,
+                        package: billData.package
+                    }
+                });
+                
+                showToast('Bill deleted successfully');
+                deleteModal.style.display = 'none';
+                
+            } catch (error) {
+                console.error('Error deleting bill:', error);
+                showToast('Error deleting bill: ' + error.message, 'error');
+            } finally {
+                // Reset button state
+                confirmDeleteButton.disabled = false;
+                deleteButtonSpinner.style.display = 'none';
+            }
+        }
+
+        // Print bill function
+        function printBill(billId) {
+            window.open(`print-bill.html?id=${billId}`, '_blank');
+        }
+
+        // Event listeners
+        addBillButton.addEventListener('click', () => {
+            document.getElementById('billModalTitle').textContent = 'Create New Bill';
+            document.getElementById('billForm').reset();
+            document.getElementById('billId').value = '';
+            document.getElementById('billDate').value = new Date().toISOString().split('T')[0];
+            billModal.style.display = 'flex';
+        });
+        
+        saveBillButton.addEventListener('click', saveBill);
+        
+        billModalClose.addEventListener('click', () => {
+            billModal.style.display = 'none';
+        });
+        
+        cancelBillButton.addEventListener('click', () => {
+            billModal.style.display = 'none';
+        });
+        
+        deleteModalClose.addEventListener('click', () => {
+            deleteModal.style.display = 'none';
+        });
+        
+        cancelDeleteButton.addEventListener('click', () => {
+            deleteModal.style.display = 'none';
+        });
+        
+        confirmDeleteButton.addEventListener('click', deleteBill);
+
+        // Filter event listeners
+        billStatusFilter.addEventListener('change', (e) => {
+            const statusFilter = e.target.value;
+            const dateFilter = billMonthFilter.value;
+            
+            if (dateFilter === 'custom') {
+                const startDate = startDateInput.value;
+                const endDate = endDateInput.value;
+                
+                if (startDate && endDate) {
+                    loadBills(statusFilter, dateFilter, new Date(startDate), new Date(endDate));
+                }
+            } else {
+                loadBills(statusFilter, dateFilter);
+            }
+        });
+
+        billMonthFilter.addEventListener('change', (e) => {
+            const dateFilter = e.target.value;
+            const statusFilter = billStatusFilter.value;
+            
+            if (dateFilter === 'custom') {
+                customDateRange.style.display = 'flex';
+            } else {
+                customDateRange.style.display = 'none';
+                loadBills(statusFilter, dateFilter);
+            }
+        });
+
+        startDateInput.addEventListener('change', () => {
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+            
+            if (startDate && endDate) {
+                const statusFilter = billStatusFilter.value;
+                loadBills(statusFilter, 'custom', new Date(startDate), new Date(endDate));
+            }
+        });
+
+        endDateInput.addEventListener('change', () => {
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+            
+            if (startDate && endDate) {
+                const statusFilter = billStatusFilter.value;
+                loadBills(statusFilter, 'custom', new Date(startDate), new Date(endDate));
+            }
+        });
+
+        // Search functionality
+        billSearch.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#billsTable tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === billModal) {
+                billModal.style.display = 'none';
+            }
+            if (e.target === deleteModal) {
+                deleteModal.style.display = 'none';
+            }
+        });
+
+        // Logout functionality
+        logoutButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            showLoading();
+            
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Logout error:', error);
+                hideLoading();
+                showToast('Logout failed. Please try again.', 'error');
+            });
+        });
+
+        // User profile dropdown (would be implemented in production)
+        userProfile.addEventListener('click', function() {
+            window.location.href = 'admin-profile.html';
+        });
+
+        // Add loading state to all navigation links
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                // Only show loading for internal links
+                if (link.href.startsWith(window.location.origin) || 
+                    link.href.startsWith('/') || 
+                    !link.href.startsWith('http')) {
+                    showLoading();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+<!-- All Done --><!-- All Done --><!-- All Done -->
+<!-- All Done --><!-- All Done --><!-- All Done -->

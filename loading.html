@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading - PowerFit Gym</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-dark: #3a56d4;
+            --white: #ffffff;
+            --text-light: rgba(255, 255, 255, 0.8);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--primary-color);
+            color: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            line-height: 1.6;
+            padding: 1rem;
+            cursor: wait;
+            overflow: hidden;
+        }
+        
+        .loading-container {
+            max-width: 450px;
+            width: 100%;
+            padding: 2rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .loading-logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        .loading-animation {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2.5rem;
+        }
+        
+        .dumbbell {
+            position: absolute;
+            width: 100px;
+            height: 20px;
+            background-color: var(--white);
+            border-radius: 10px;
+            top: 50px;
+            left: 10px;
+            animation: lift 2s ease-in-out infinite;
+        }
+        
+        .dumbbell:before,
+        .dumbbell:after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: var(--white);
+            border-radius: 50%;
+            top: -5px;
+        }
+        
+        .dumbbell:before {
+            left: -15px;
+        }
+        
+        .dumbbell:after {
+            right: -15px;
+        }
+        
+        .loading-message {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+        
+        .loading-subtext {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--white);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes lift {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-30px) rotate(-5deg);
+            }
+            50% {
+                transform: translateY(0) rotate(0deg);
+            }
+            75% {
+                transform: translateY(-30px) rotate(5deg);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .loading-logo {
+                font-size: 2rem;
+                margin-bottom: 2rem;
+            }
+            
+            .loading-animation {
+                width: 100px;
+                height: 100px;
+                margin-bottom: 2rem;
+            }
+            
+            .dumbbell {
+                width: 80px;
+                height: 16px;
+                top: 42px;
+                left: 10px;
+            }
+            
+            .loading-message {
+                font-size: 1.1rem;
+            }
+            
+            .loading-subtext {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <div class="loading-logo">
+            <i class="fas fa-dumbbell"></i>
+            <span>PowerFit</span>
+        </div>
+        
+        <div class="loading-animation">
+            <div class="dumbbell"></div>
+        </div>
+        
+        <div class="loading-message" id="loadingMessage">Checking your session...</div>
+        <div class="loading-subtext">Please wait while we prepare your experience</div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <script>
+        // Simulate progress bar
+        const progressBar = document.getElementById('progressBar');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const messages = [
+            "Checking your session...",
+            "Loading your dashboard...",
+            "Almost there...",
+            "Preparing your workout data..."
+        ];
+        
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 10;
+            if (progress > 100) progress = 100;
+            progressBar.style.width = `${progress}%`;
+            
+            // Change message at certain intervals
+            if (progress > 25 && progress < 35) {
+                loadingMessage.textContent = messages[1];
+            } else if (progress > 50 && progress < 60) {
+                loadingMessage.textContent = messages[2];
+            } else if (progress > 75) {
+                loadingMessage.textContent = messages[3];
+            }
+            
+            if (progress >= 100) {
+                clearInterval(progressInterval);
+            }
+        }, 300);
+        
+        // In a real implementation, you would use Firebase auth state change:
+        /*
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in, redirect to dashboard
+                window.location.href = 'dashboard.html';
+            } else {
+                // No user is signed in, redirect to login
+                window.location.href = 'login.html';
+            }
+        });
+        */
+        
+        // For demo purposes, we'll redirect after 4 seconds
+        setTimeout(() => {
+            // This would be replaced with actual auth check
+            const isLoggedIn = false; // Simulate not logged in
+            window.location.href = isLoggedIn ? 'dashboard.html' : 'login.html';
+        }, 4000);
+        
+        // Prevent any interaction while loading
+        document.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    </script>
+</body>
+</html>

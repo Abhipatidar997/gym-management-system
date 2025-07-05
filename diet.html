@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Plans Management | PowerFit Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        /* ====== CSS Variables ====== */
+        :root {
+            --primary: #3a86ff;
+            --primary-dark: #2667cc;
+            --primary-light: rgba(58, 134, 255, 0.1);
+            --secondary: #ff006e;
+            --secondary-dark: #cc0058;
+            --dark: #2b2d42;
+            --darker: #1a1b28;
+            --light: #f8f9fa;
+            --lighter: #ffffff;
+            --success: #38b000;
+            --warning: #ffbe0b;
+            --danger: #ef233c;
+            --info: #4895ef;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --sidebar-width: 280px;
+            --topbar-height: 70px;
+        }
+
+        /* ====== Base Styles ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ====== Scrollbar ====== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--gray-light);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ====== Sidebar ====== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+            position: fixed;
+            height: 100vh;
+            transition: var(--transition);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: var(--topbar-height);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .sidebar-logo:hover {
+            transform: translateX(3px);
+        }
+
+        .sidebar-logo i {
+            font-size: 1.8rem;
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+
+        .menu-title {
+            padding: 0 1.5rem 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--gray);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.5rem;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .menu-link:hover {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .menu-link.active {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .menu-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: var(--primary);
+        }
+
+        .menu-link i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* ====== Main Content ====== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ====== Topbar ====== */
+        .topbar {
+            height: var(--topbar-height);
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-toggle {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-right: 1.5rem;
+            cursor: pointer;
+            display: none;
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            color: var(--primary);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--gray-light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            width: 250px;
+            background-color: var(--light);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-item {
+            margin-left: 1.5rem;
+            position: relative;
+        }
+
+        .topbar-link {
+            color: var(--dark);
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .topbar-link:hover {
+            color: var(--primary);
+        }
+
+        .topbar-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: var(--lighter);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: 50px;
+        }
+
+        .user-profile:hover {
+            background-color: var(--primary-light);
+        }
+
+        .user-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 0.75rem;
+            border: 2px solid var(--primary-light);
+        }
+
+        .user-name {
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+
+        /* ====== Content Area ====== */
+        .content-area {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .content-title h2 {
+            font-size: 1.75rem;
+            color: var(--darker);
+            margin-bottom: 0.5rem;
+        }
+
+        .content-title p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--lighter);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            border-radius: 6px;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: var(--lighter);
+        }
+
+        .btn-danger:hover {
+            background-color: #e11d48;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: var(--lighter);
+        }
+
+        .btn-success:hover {
+            background-color: #16a34a;
+        }
+
+        .btn-info {
+            background-color: var(--info);
+            color: var(--lighter);
+        }
+
+        .btn-info:hover {
+            background-color: #3b82f6;
+        }
+
+        /* ====== Diet Plans Layout ====== */
+        .diet-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 992px) {
+            .diet-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Members List */
+        .diet-members {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .diet-members-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .diet-members-title {
+            font-size: 1.25rem;
+            color: var(--darker);
+            font-weight: 600;
+        }
+
+        .diet-member-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .diet-member-item:hover {
+            background-color: var(--primary-light);
+        }
+
+        .diet-member-item.active {
+            background-color: var(--primary-light);
+            border-left: 3px solid var(--primary);
+        }
+
+        .diet-member-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .diet-member-email {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .diet-member-plan {
+            font-size: 0.75rem;
+            color: var(--success);
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        /* Diet Plan Details */
+        .diet-plan {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+        }
+
+        .diet-plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .diet-plan-title {
+            font-size: 1.5rem;
+            color: var(--darker);
+            font-weight: 600;
+        }
+
+        .diet-plan-type {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .diet-plan-type.weight-loss {
+            background-color: rgba(56, 176, 0, 0.1);
+            color: var(--success);
+        }
+
+        .diet-plan-type.muscle-gain {
+            background-color: rgba(239, 35, 60, 0.1);
+            color: var(--danger);
+        }
+
+        .diet-plan-type.maintenance {
+            background-color: rgba(255, 190, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .diet-plan-type.custom {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+
+        .diet-plan-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .diet-plan-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .diet-meal {
+            margin-bottom: 1.5rem;
+        }
+
+        .diet-meal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--darker);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .diet-meal-title i {
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+
+        .diet-meal-items {
+            list-style-type: none;
+        }
+
+        .diet-meal-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px dashed var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .diet-meal-item:last-child {
+            border-bottom: none;
+        }
+
+        .diet-meal-item-name {
+            font-weight: 500;
+        }
+
+        .diet-meal-item-calories {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        .diet-plan-notes {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .diet-plan-notes h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--darker);
+        }
+
+        .diet-plan-notes p {
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .no-diet-plan {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+        }
+
+        .no-diet-plan i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--gray-light);
+        }
+
+        /* Diet Plan Form */
+        .diet-plan-form {
+            margin-top: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--darker);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+        }
+
+        .meal-item-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .meal-item-container input {
+            flex: 1;
+        }
+
+        .add-meal-item {
+            background-color: var(--success);
+            color: var(--lighter);
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .add-meal-item:hover {
+            background-color: #16a34a;
+        }
+
+        .remove-meal-item {
+            background-color: var(--danger);
+            color: var(--lighter);
+            border: none;
+            border-radius: 6px;
+            width: 40px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .remove-meal-item:hover {
+            background-color: #e11d48;
+        }
+
+        .diet-plan-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* ====== Modal Styles ====== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background-color: var(--lighter);
+            z-index: 1;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--darker);
+            font-weight: 600;
+        }
+
+        .modal-close {
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            position: sticky;
+            bottom: 0;
+            background-color: var(--lighter);
+        }
+
+        /* ====== Toast Notification ====== */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            background-color: var(--darker);
+            color: var(--lighter);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1001;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease-out;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-success {
+            background-color: var(--success);
+        }
+
+        .toast-error {
+            background-color: var(--danger);
+        }
+
+        .toast-icon {
+            font-size: 1.25rem;
+        }
+
+        .toast-close {
+            margin-left: 1rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+        }
+
+        /* ====== Loading States ====== */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .skeleton {
+            background-color: var(--gray-light);
+            border-radius: 4px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ====== Page Loading Overlay ====== */
+        body.loading {
+            cursor: wait;
+            position: relative;
+        }
+
+        body.loading::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 9999;
+        }
+
+        body.loading::before {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--primary-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 10000;
+        }
+
+        /* ====== Responsive Design ====== */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .topbar {
+                padding: 0 1.5rem;
+            }
+
+            .search-box input {
+                width: 180px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .content-area {
+                padding: 1.5rem;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .search-box {
+                display: none;
+            }
+
+            .topbar {
+                padding: 0 1rem;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                max-width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" data-aos="fade-right">
+        <div class="sidebar-header">
+            <a href="admin-dashboard.html" class="sidebar-logo">
+                <i class="fas fa-dumbbell"></i>
+                <span>PowerFit Pro</span>
+            </a>
+        </div>
+        <div class="sidebar-menu">
+            <h3 class="menu-title">Menu</h3>
+            <ul>
+                <li class="menu-item">
+                    <a href="admin-dashboard.html" class="menu-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="members.html" class="menu-link">
+                        <i class="fas fa-users"></i>
+                        <span>Members</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="bills.html" class="menu-link">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Billing</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="diet.html" class="menu-link active">
+                        <i class="fas fa-utensils"></i>
+                        <span>Diet Plans</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="notifications.html" class="menu-link">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="topbar-badge" id="notificationBadge">0</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="supplements.html" class="menu-link">
+                        <i class="fas fa-pills"></i>
+                        <span>Supplements</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="logs.html" class="menu-link">
+                        <i class="fas fa-history"></i>
+                        <span>Activity Logs</span>
+                    </a>
+                </li>
+            </ul>
+
+            <h3 class="menu-title">Settings</h3>
+            <ul>
+                <li class="menu-item">
+                    <a href="admin-profile.html" class="menu-link">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="dashboard-settings.html" class="menu-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="topbar" data-aos="fade-down">
+            <div class="topbar-left">
+                <div class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search members, plans...">
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-item">
+                    <a href="notifications.html" class="topbar-link">
+                        <i class="fas fa-bell"></i>
+                        <span class="topbar-badge" id="topbarNotificationBadge">0</span>
+                    </a>
+                </div>
+                <div class="topbar-item">
+                    <div class="user-profile" id="userProfile">
+                        <img id="userProfileImage" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Admin" class="user-img">
+                        <span class="user-name">Admin</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <div class="content-header">
+                <div class="content-title">
+                    <h2>Diet Plans Management</h2>
+                    <p>Create and manage nutrition plans for gym members</p>
+                </div>
+                <div class="content-actions">
+                    <button class="btn btn-primary" id="addDietPlanButton">
+                        <i class="fas fa-plus"></i> New Diet Plan
+                    </button>
+                </div>
+            </div>
+
+            <div class="diet-container" data-aos="fade-up">
+                <!-- Members List -->
+                <div class="diet-members">
+                    <div class="diet-members-header">
+                        <h3 class="diet-members-title">Members</h3>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="memberSearch" placeholder="Search members...">
+                        </div>
+                    </div>
+                    <div id="membersList">
+                        <!-- Members will be loaded here -->
+                        <div class="skeleton" style="width: 100%; height: 60px; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton" style="width: 100%; height: 60px; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton" style="width: 100%; height: 60px; margin-bottom: 0.5rem;"></div>
+                    </div>
+                </div>
+
+                <!-- Diet Plan Details -->
+                <div class="diet-plan">
+                    <div id="dietPlanView">
+                        <div class="diet-plan-header">
+                            <h3 class="diet-plan-title" id="dietPlanName">No Diet Plan Selected</h3>
+                            <span class="diet-plan-type" id="dietPlanTypeBadge"></span>
+                        </div>
+
+                        <div id="dietPlanContent">
+                            <div class="no-diet-plan">
+                                <i class="fas fa-utensils"></i>
+                                <p>Select a member to view or create their diet plan</p>
+                            </div>
+
+                            <div class="diet-plan-content" id="dietPlanMeals" style="display: none;">
+                                <div>
+                                    <div class="diet-meal">
+                                        <h4 class="diet-meal-title"><i class="fas fa-sun"></i> Breakfast</h4>
+                                        <ul class="diet-meal-items" id="breakfastItems"></ul>
+                                    </div>
+                                    <div class="diet-meal">
+                                        <h4 class="diet-meal-title"><i class="fas fa-apple-alt"></i> Morning Snack</h4>
+                                        <ul class="diet-meal-items" id="morningSnackItems"></ul>
+                                    </div>
+                                    <div class="diet-meal">
+                                        <h4 class="diet-meal-title"><i class="fas fa-utensils"></i> Lunch</h4>
+                                        <ul class="diet-meal-items" id="lunchItems"></ul>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="diet-meal">
+                                        <h4 class="diet-meal-title"><i class="fas fa-apple-alt"></i> Afternoon Snack</h4>
+                                        <ul class="diet-meal-items" id="afternoonSnackItems"></ul>
+                                    </div>
+                                    <div class="diet-meal">
+                                        <h4 class="diet-meal-title"><i class="fas fa-moon"></i> Dinner</h4>
+                                        <ul class="diet-meal-items" id="dinnerItems"></ul>
+                                    </div>
+                                    <div class="diet-meal">
+                                        <h4 class="diet-meal-title"><i class="fas fa-bed"></i> Evening Snack</h4>
+                                        <ul class="diet-meal-items" id="eveningSnackItems"></ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="diet-plan-notes" id="dietPlanNotes" style="display: none;">
+                                <h4>Additional Notes</h4>
+                                <p id="dietNotesContent"></p>
+                            </div>
+                        </div>
+
+                        <div class="diet-plan-actions" id="dietPlanActions" style="display: none;">
+                            <button class="btn btn-primary" id="editDietPlanButton">
+                                <i class="fas fa-edit"></i> Edit Plan
+                            </button>
+                            <button class="btn btn-danger" id="deleteDietPlanButton">
+                                <i class="fas fa-trash"></i> Delete Plan
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Diet Plan Form (Hidden by default) -->
+                    <div id="dietPlanForm" style="display: none;">
+                        <div class="diet-plan-header">
+                            <h3 class="diet-plan-title" id="dietFormTitle">Create New Diet Plan</h3>
+                        </div>
+
+                        <form class="diet-plan-form" id="dietForm">
+                            <input type="hidden" id="dietPlanId">
+                            <input type="hidden" id="dietPlanUserId">
+
+                            <div class="form-group">
+                                <label for="dietPlanNameInput">Plan Name</label>
+                                <input type="text" id="dietPlanNameInput" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dietPlanTypeSelect">Plan Type</label>
+                                <select id="dietPlanTypeSelect" required>
+                                    <option value="">Select Type</option>
+                                    <option value="weight-loss">Weight Loss</option>
+                                    <option value="muscle-gain">Muscle Gain</option>
+                                    <option value="maintenance">Maintenance</option>
+                                    <option value="performance">Performance</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+
+                            <h4>Meal Plan</h4>
+
+                            <div class="form-group">
+                                <label>Breakfast</label>
+                                <div id="breakfastFormItems">
+                                    <!-- Breakfast items will be added here -->
+                                </div>
+                                <button type="button" class="add-meal-item" data-meal="breakfast">Add Item</button>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Morning Snack</label>
+                                <div id="morningSnackFormItems">
+                                    <!-- Morning snack items will be added here -->
+                                </div>
+                                <button type="button" class="add-meal-item" data-meal="morningSnack">Add Item</button>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Lunch</label>
+                                <div id="lunchFormItems">
+                                    <!-- Lunch items will be added here -->
+                                </div>
+                                <button type="button" class="add-meal-item" data-meal="lunch">Add Item</button>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Afternoon Snack</label>
+                                <div id="afternoonSnackFormItems">
+                                    <!-- Afternoon snack items will be added here -->
+                                </div>
+                                <button type="button" class="add-meal-item" data-meal="afternoonSnack">Add Item</button>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Dinner</label>
+                                <div id="dinnerFormItems">
+                                    <!-- Dinner items will be added here -->
+                                </div>
+                                <button type="button" class="add-meal-item" data-meal="dinner">Add Item</button>
+                            </div>
+
+                                                        <div class="form-group">
+                                <label>Evening Snack</label>
+                                <div id="eveningSnackFormItems">
+                                    <!-- Evening snack items will be added here -->
+                                </div>
+                                <button type="button" class="add-meal-item" data-meal="eveningSnack">Add Item</button>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dietPlanNotesInput">Additional Notes</label>
+                                <textarea id="dietPlanNotesInput" rows="4"></textarea>
+                            </div>
+
+                            <div class="diet-plan-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Save Plan
+                                </button>
+                                <button type="button" class="btn btn-danger" id="cancelDietForm">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Deletion</h3>
+                <button class="modal-close" id="closeDeleteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this diet plan? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="confirmDelete">Delete</button>
+                <button class="btn" id="cancelDelete">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toastNotification">
+        <div class="toast-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="toast-message" id="toastMessage">Operation completed successfully</div>
+        <div class="toast-close">
+            <i class="fas fa-times"></i>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS animation library
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMU_xXHhZdrR9cA3fPcZDSJeg4SQZBD7M",
+            authDomain: "gym-management-system-f06fd.firebaseapp.com",
+            projectId: "gym-management-system-f06fd",
+            storageBucket: "gym-management-system-f06fd.appspot.com",
+            messagingSenderId: "1061387303589",
+            appId: "1:1061387303589:web:bcdf5ea3bd3efb027f6b4c",
+            measurementId: "G-5YTGPJE3JP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // DOM Elements
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const logoutButton = document.getElementById('logoutButton');
+        const membersList = document.getElementById('membersList');
+        const memberSearch = document.getElementById('memberSearch');
+        const addDietPlanButton = document.getElementById('addDietPlanButton');
+        const editDietPlanButton = document.getElementById('editDietPlanButton');
+        const deleteDietPlanButton = document.getElementById('deleteDietPlanButton');
+        const cancelDietForm = document.getElementById('cancelDietForm');
+        const dietForm = document.getElementById('dietForm');
+        const dietPlanView = document.getElementById('dietPlanView');
+        const dietPlanForm = document.getElementById('dietPlanForm');
+        const deleteModal = document.getElementById('deleteModal');
+        const closeDeleteModal = document.getElementById('closeDeleteModal');
+        const cancelDelete = document.getElementById('cancelDelete');
+        const confirmDelete = document.getElementById('confirmDelete');
+        const toastNotification = document.getElementById('toastNotification');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastClose = document.querySelector('.toast-close');
+
+        // Global Variables
+        let currentUser = null;
+        let isAdmin = false;
+        let selectedMemberId = null;
+        let selectedDietPlanId = null;
+        let members = [];
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication state
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    currentUser = user;
+                    loadUserData();
+                } else {
+                    window.location.href = 'login.html';
+                }
+            });
+
+            // Setup event listeners
+            setupEventListeners();
+        });
+
+        // Load user data and check role
+        function loadUserData() {
+            db.collection('users').doc(currentUser.uid).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        isAdmin = userData.role === 'admin';
+                        
+                        if (!isAdmin) {
+                            // Redirect non-admin users
+                            window.location.href = 'member-dashboard.html';
+                        } else {
+                            // Load members for admin
+                            loadMembers();
+                            updateUserProfile(userData);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error("Error loading user data:", error);
+                    showToast('Error loading user data', 'error');
+                });
+        }
+
+        // Update user profile in topbar
+        function updateUserProfile(userData) {
+            const userProfileImage = document.getElementById('userProfileImage');
+            const userName = document.querySelector('.user-name');
+            
+            if (userData.profileImage) {
+                userProfileImage.src = userData.profileImage;
+            }
+            
+            if (userData.fullName) {
+                userName.textContent = userData.fullName;
+            }
+        }
+
+        // Load members from Firestore
+        function loadMembers() {
+            membersList.innerHTML = `
+                <div class="skeleton" style="width: 100%; height: 60px; margin-bottom: 0.5rem;"></div>
+                <div class="skeleton" style="width: 100%; height: 60px; margin-bottom: 0.5rem;"></div>
+                <div class="skeleton" style="width: 100%; height: 60px; margin-bottom: 0.5rem;"></div>
+            `;
+
+            db.collection('users')
+                .where('role', '==', 'member')
+                .orderBy('fullName')
+                .get()
+                .then(querySnapshot => {
+                    members = [];
+                    membersList.innerHTML = '';
+                    
+                    if (querySnapshot.empty) {
+                        membersList.innerHTML = '<p class="no-members">No members found</p>';
+                        return;
+                    }
+                    
+                    querySnapshot.forEach(doc => {
+                        const member = {
+                            id: doc.id,
+                            ...doc.data()
+                        };
+                        members.push(member);
+                        
+                        const memberItem = document.createElement('div');
+                        memberItem.className = 'diet-member-item';
+                        memberItem.dataset.id = doc.id;
+                        memberItem.innerHTML = `
+                            <div class="diet-member-name">${member.fullName || 'Member'}</div>
+                            <div class="diet-member-email">${member.email}</div>
+                            <div class="diet-member-plan" style="display: none;">Has Plan</div>
+                        `;
+                        membersList.appendChild(memberItem);
+                        
+                        // Check if member has a diet plan
+                        checkMemberHasDietPlan(doc.id, memberItem);
+                        
+                        // Add click event to load diet plan
+                        memberItem.addEventListener('click', function() {
+                            selectMember(doc.id, this);
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error("Error loading members:", error);
+                    showToast('Error loading members', 'error');
+                });
+        }
+
+        // Check if member has a diet plan
+        function checkMemberHasDietPlan(memberId, memberItem) {
+            db.collection('dietPlans')
+                .where('userId', '==', memberId)
+                .limit(1)
+                .get()
+                .then(querySnapshot => {
+                    if (!querySnapshot.empty) {
+                        const planBadge = memberItem.querySelector('.diet-member-plan');
+                        planBadge.style.display = 'block';
+                    }
+                });
+        }
+
+        // Select a member and load their diet plan
+        function selectMember(memberId, memberElement) {
+            // Update UI
+            document.querySelectorAll('.diet-member-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            memberElement.classList.add('active');
+            
+            selectedMemberId = memberId;
+            
+            // Show "Add Plan" button
+            addDietPlanButton.style.display = 'inline-flex';
+            
+            // Load diet plan
+            loadDietPlan(memberId);
+        }
+
+        // Load diet plan for selected member
+        function loadDietPlan(userId) {
+            // Show loading state
+            document.getElementById('dietPlanMeals').style.display = 'none';
+            document.getElementById('dietPlanNotes').style.display = 'none';
+            document.getElementById('dietPlanActions').style.display = 'none';
+            document.getElementById('dietPlanName').textContent = 'Loading...';
+            
+            db.collection('dietPlans')
+                .where('userId', '==', userId)
+                .limit(1)
+                .get()
+                .then(querySnapshot => {
+                    if (querySnapshot.empty) {
+                        // No diet plan found
+                        document.getElementById('dietPlanName').textContent = 'No Diet Plan Assigned';
+                        document.getElementById('dietPlanTypeBadge').textContent = '';
+                        document.getElementById('dietPlanMeals').style.display = 'none';
+                        document.getElementById('dietPlanNotes').style.display = 'none';
+                        document.getElementById('dietPlanActions').style.display = 'none';
+                        selectedDietPlanId = null;
+                        return;
+                    }
+                    
+                    // Diet plan found
+                    const doc = querySnapshot.docs[0];
+                    const dietPlan = doc.data();
+                    selectedDietPlanId = doc.id;
+                    
+                    // Update UI
+                    updateDietPlanUI(dietPlan);
+                    
+                    // Show actions for admin
+                    document.getElementById('dietPlanActions').style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error("Error loading diet plan:", error);
+                    showToast('Error loading diet plan', 'error');
+                });
+        }
+
+        // Update diet plan UI with data
+        function updateDietPlanUI(dietPlan) {
+            // Update header
+            document.getElementById('dietPlanName').textContent = dietPlan.name || 'Diet Plan';
+            
+            // Update type badge
+            const typeBadge = document.getElementById('dietPlanTypeBadge');
+            typeBadge.textContent = dietPlan.type || '';
+            typeBadge.className = 'diet-plan-type ' + (dietPlan.type ? dietPlan.type.toLowerCase().replace(' ', '-') : '');
+            
+            // Update meals
+            const mealTypes = ['breakfast', 'morningSnack', 'lunch', 'afternoonSnack', 'dinner', 'eveningSnack'];
+            mealTypes.forEach(meal => {
+                const mealItemsContainer = document.getElementById(`${meal}Items`);
+                mealItemsContainer.innerHTML = '';
+                
+                if (dietPlan[meal] && dietPlan[meal].length > 0) {
+                    dietPlan[meal].forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = 'diet-meal-item';
+                        li.innerHTML = `
+                            <span class="diet-meal-item-name">${item.name}</span>
+                            <span class="diet-meal-item-calories">${item.calories ? item.calories + ' cal' : ''}</span>
+                        `;
+                        mealItemsContainer.appendChild(li);
+                    });
+                } else {
+                    const li = document.createElement('li');
+                    li.className = 'diet-meal-item';
+                    li.textContent = 'No items specified';
+                    mealItemsContainer.appendChild(li);
+                }
+            });
+            
+            // Update notes
+            if (dietPlan.notes) {
+                document.getElementById('dietNotesContent').textContent = dietPlan.notes;
+                document.getElementById('dietPlanNotes').style.display = 'block';
+            } else {
+                document.getElementById('dietPlanNotes').style.display = 'none';
+            }
+            
+            // Show the content
+            document.getElementById('dietPlanMeals').style.display = 'grid';
+        }
+
+        // Show diet plan form
+        function showDietPlanForm(editMode = false, dietPlanData = null) {
+            // Reset form
+            dietForm.reset();
+            document.getElementById('dietPlanId').value = '';
+            document.getElementById('dietPlanUserId').value = selectedMemberId;
+            
+            // Clear all meal items
+            const mealTypes = ['breakfast', 'morningSnack', 'lunch', 'afternoonSnack', 'dinner', 'eveningSnack'];
+            mealTypes.forEach(meal => {
+                document.getElementById(`${meal}FormItems`).innerHTML = '';
+            });
+            
+            if (editMode && dietPlanData) {
+                // Edit mode - fill form with existing data
+                document.getElementById('dietFormTitle').textContent = 'Edit Diet Plan';
+                document.getElementById('dietPlanId').value = selectedDietPlanId;
+                document.getElementById('dietPlanNameInput').value = dietPlanData.name || '';
+                document.getElementById('dietPlanTypeSelect').value = dietPlanData.type || '';
+                document.getElementById('dietPlanNotesInput').value = dietPlanData.notes || '';
+                
+                // Add meal items
+                mealTypes.forEach(meal => {
+                    if (dietPlanData[meal] && dietPlanData[meal].length > 0) {
+                        dietPlanData[meal].forEach((item, index) => {
+                            addMealItemInput(meal, index, item.name, item.calories);
+                        });
+                    } else {
+                        addMealItemInput(meal, 0, '', '');
+                    }
+                });
+            } else {
+                // Create mode - empty form
+                document.getElementById('dietFormTitle').textContent = 'Create New Diet Plan';
+                
+                // Add one empty item for each meal type
+                mealTypes.forEach(meal => {
+                    addMealItemInput(meal, 0, '', '');
+                });
+            }
+            
+            // Show form and hide view
+            dietPlanView.style.display = 'none';
+            dietPlanForm.style.display = 'block';
+        }
+
+        // Add meal item input fields
+        function addMealItemInput(mealType, index, name, calories) {
+            const container = document.getElementById(`${mealType}FormItems`);
+            const div = document.createElement('div');
+            div.className = 'meal-item-container';
+            div.innerHTML = `
+                <input type="text" placeholder="Food item" value="${name}" 
+                       name="${mealType}[${index}][name]" required>
+                <input type="text" placeholder="Calories" value="${calories}" 
+                       name="${mealType}[${index}][calories]">
+                <button type="button" class="remove-meal-item">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            container.appendChild(div);
+        }
+
+        // Save diet plan
+        function saveDietPlan(e) {
+            e.preventDefault();
+            
+            const dietPlanId = document.getElementById('dietPlanId').value;
+            const userId = document.getElementById('dietPlanUserId').value;
+            const name = document.getElementById('dietPlanNameInput').value;
+            const type = document.getElementById('dietPlanTypeSelect').value;
+            const notes = document.getElementById('dietPlanNotesInput').value;
+            
+            if (!name || !type || !userId) {
+                showToast('Please fill all required fields', 'error');
+                return;
+            }
+            
+            // Collect meal items
+            const dietPlanData = {
+                userId: userId,
+                name: name,
+                type: type,
+                notes: notes,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            // Get all meal items
+            const mealTypes = ['breakfast', 'morningSnack', 'lunch', 'afternoonSnack', 'dinner', 'eveningSnack'];
+            mealTypes.forEach(meal => {
+                const items = [];
+                const containers = document.getElementById(`${meal}FormItems`).querySelectorAll('.meal-item-container');
+                
+                containers.forEach(container => {
+                    const inputs = container.querySelectorAll('input');
+                    const name = inputs[0].value.trim();
+                    const calories = inputs[1].value.trim();
+                    
+                    if (name) {
+                        items.push({
+                            name: name,
+                            calories: calories
+                        });
+                    }
+                });
+                
+                dietPlanData[meal] = items;
+            });
+            
+            // Show loading state
+            document.body.classList.add('loading');
+            
+            // Save to Firestore
+            let savePromise;
+            
+            if (dietPlanId) {
+                // Update existing plan
+                savePromise = db.collection('dietPlans').doc(dietPlanId).update(dietPlanData);
+            } else {
+                // Create new plan
+                dietPlanData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                savePromise = db.collection('dietPlans').add(dietPlanData);
+            }
+            
+            savePromise
+                .then(() => {
+                    // Log the action
+                    return db.collection('logs').add({
+                        action: dietPlanId ? 'diet_plan_updated' : 'diet_plan_created',
+                        adminId: currentUser.uid,
+                        memberId: userId,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        details: {
+                            planName: name,
+                            planType: type
+                        }
+                    });
+                })
+                .then(() => {
+                    showToast('Diet plan saved successfully', 'success');
+                    
+                    // Reload the plan
+                    loadDietPlan(userId);
+                    
+                    // Show view and hide form
+                    dietPlanView.style.display = 'block';
+                    dietPlanForm.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error("Error saving diet plan:", error);
+                    showToast('Error saving diet plan', 'error');
+                })
+                .finally(() => {
+                    document.body.classList.remove('loading');
+                });
+        }
+
+        // Delete diet plan
+        function deleteDietPlan() {
+            if (!selectedDietPlanId) return;
+            
+            // Show loading state
+            document.body.classList.add('loading');
+            
+            db.collection('dietPlans').doc(selectedDietPlanId).delete()
+                .then(() => {
+                    // Log the action
+                    return db.collection('logs').add({
+                        action: 'diet_plan_deleted',
+                        adminId: currentUser.uid,
+                        memberId: selectedMemberId,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        details: {
+                            dietPlanId: selectedDietPlanId
+                        }
+                    });
+                })
+                .then(() => {
+                    showToast('Diet plan deleted successfully', 'success');
+                    loadDietPlan(selectedMemberId);
+                })
+                .catch(error => {
+                    console.error("Error deleting diet plan:", error);
+                    showToast('Error deleting diet plan', 'error');
+                })
+                .finally(() => {
+                    document.body.classList.remove('loading');
+                    deleteModal.style.display = 'none';
+                });
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            toastMessage.textContent = message;
+            toastNotification.className = 'toast ' + type;
+            toastNotification.classList.add('show');
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                toastNotification.classList.remove('show');
+            }, 5000);
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Toggle sidebar
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+            
+            // Logout
+            logoutButton.addEventListener('click', () => {
+                auth.signOut().then(() => {
+                    window.location.href = 'login.html';
+                });
+            });
+            
+            // Search members
+            memberSearch.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const memberItems = document.querySelectorAll('.diet-member-item');
+                
+                memberItems.forEach(item => {
+                    const name = item.querySelector('.diet-member-name').textContent.toLowerCase();
+                    const email = item.querySelector('.diet-member-email').textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Add new diet plan
+            addDietPlanButton.addEventListener('click', () => {
+                if (!selectedMemberId) {
+                    showToast('Please select a member first', 'error');
+                    return;
+                }
+                showDietPlanForm();
+            });
+            
+            // Edit diet plan
+            editDietPlanButton.addEventListener('click', () => {
+                if (!selectedDietPlanId) return;
+                
+                // Get current diet plan data
+                db.collection('dietPlans').doc(selectedDietPlanId).get()
+                    .then(doc => {
+                        if (doc.exists) {
+                            showDietPlanForm(true, doc.data());
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error loading diet plan:", error);
+                        showToast('Error loading diet plan', 'error');
+                    });
+            });
+            
+            // Delete diet plan
+            deleteDietPlanButton.addEventListener('click', () => {
+                if (!selectedDietPlanId) return;
+                deleteModal.style.display = 'flex';
+            });
+            
+            // Cancel diet form
+            cancelDietForm.addEventListener('click', () => {
+                dietPlanView.style.display = 'block';
+                dietPlanForm.style.display = 'none';
+            });
+            
+            // Close delete modal
+            closeDeleteModal.addEventListener('click', () => {
+                deleteModal.style.display = 'none';
+            });
+            
+            cancelDelete.addEventListener('click', () => {
+                deleteModal.style.display = 'none';
+            });
+            
+            // Confirm delete
+            confirmDelete.addEventListener('click', deleteDietPlan);
+            
+            // Close toast
+            toastClose.addEventListener('click', () => {
+                toastNotification.classList.remove('show');
+            });
+            
+            // Add meal item buttons
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('add-meal-item')) {
+                    const mealType = e.target.dataset.meal;
+                    const container = document.getElementById(`${mealType}FormItems`);
+                    const itemCount = container.querySelectorAll('.meal-item-container').length;
+                    
+                    addMealItemInput(mealType, itemCount, '', '');
+                }
+                
+                // Remove meal item
+                if (e.target.classList.contains('remove-meal-item') || 
+                    e.target.closest('.remove-meal-item')) {
+                    const container = e.target.closest('.meal-item-container');
+                    if (container) container.remove();
+                }
+            });
+            
+            // Submit diet form
+            dietForm.addEventListener('submit', saveDietPlan);
+        }
+    </script>
+</body>
+</html>
+
+
+
+<!-- All Done --><!-- All Done --><!-- All Done -->
+<!-- All Done --><!-- All Done --><!-- All Done -->

@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Dashboard | PowerFit Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        /* ====== CSS Variables ====== */
+        :root {
+            --primary: #3a86ff;
+            --primary-dark: #2667cc;
+            --primary-light: rgba(58, 134, 255, 0.1);
+            --secondary: #ff006e;
+            --secondary-dark: #cc0058;
+            --dark: #2b2d42;
+            --darker: #1a1b28;
+            --light: #f8f9fa;
+            --lighter: #ffffff;
+            --success: #38b000;
+            --warning: #ffbe0b;
+            --danger: #ef233c;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --sidebar-width: 280px;
+            --topbar-height: 70px;
+        }
+
+        /* ====== Base Styles ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ====== Scrollbar ====== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--gray-light);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ====== Sidebar ====== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+            position: fixed;
+            height: 100vh;
+            transition: var(--transition);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: var(--topbar-height);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .sidebar-logo:hover {
+            transform: translateX(3px);
+        }
+
+        .sidebar-logo i {
+            font-size: 1.8rem;
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+
+        .menu-title {
+            padding: 0 1.5rem 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--gray);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.5rem;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .menu-link:hover {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .menu-link.active {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .menu-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: var(--primary);
+        }
+
+        .menu-link i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* ====== Main Content ====== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ====== Topbar ====== */
+        .topbar {
+            height: var(--topbar-height);
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-toggle {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-right: 1.5rem;
+            cursor: pointer;
+            display: none;
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            color: var(--primary);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--gray-light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            width: 250px;
+            background-color: var(--light);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-item {
+            margin-left: 1.5rem;
+            position: relative;
+        }
+
+        .topbar-link {
+            color: var(--dark);
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .topbar-link:hover {
+            color: var(--primary);
+        }
+
+        .topbar-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: var(--lighter);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: 50px;
+        }
+
+        .user-profile:hover {
+            background-color: var(--primary-light);
+        }
+
+        .user-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 0.75rem;
+            border: 2px solid var(--primary-light);
+        }
+
+        .user-name {
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+
+        /* ====== Content Area ====== */
+        .content-area {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .content-title h2 {
+            font-size: 1.75rem;
+            color: var(--darker);
+            margin-bottom: 0.5rem;
+        }
+
+        .content-title p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--lighter);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ====== Dashboard Cards ====== */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 0.95rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--lighter);
+            background-color: var(--primary);
+        }
+
+        .card-icon.membership {
+            background-color: #3a86ff;
+        }
+
+        .card-icon.diet {
+            background-color: #38b000;
+        }
+
+        .card-icon.workouts {
+            background-color: #ffbe0b;
+        }
+
+        .card-icon.bills {
+            background-color: #ef233c;
+        }
+
+        .card-body h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.25rem;
+            color: var(--darker);
+            font-weight: 600;
+        }
+
+        .card-body p {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        .card-footer {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+        }
+
+        .card-footer i {
+            margin-right: 0.5rem;
+            font-size: 0.7rem;
+        }
+
+        /* ====== Member Details ====== */
+        .member-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .detail-card {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-title {
+            font-size: 1.25rem;
+            color: var(--darker);
+            font-weight: 600;
+        }
+
+        .detail-link {
+            color: var(--primary);
+            font-size: 0.9rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .detail-link:hover {
+            text-decoration: underline;
+        }
+
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .detail-table th {
+            text-align: left;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-light);
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .detail-table td {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-light);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        .detail-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .member-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .member-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            border: 2px solid var(--gray-light);
+        }
+
+        .member-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .member-email {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.active {
+            background-color: rgba(56, 176, 0, 0.1);
+            color: var(--success);
+        }
+
+        .status-badge.pending {
+            background-color: rgba(255, 190, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-badge.expired {
+            background-color: rgba(239, 35, 60, 0.1);
+            color: var(--danger);
+        }
+
+        /* ====== Loading States ====== */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .skeleton {
+            background-color: var(--gray-light);
+            border-radius: 4px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ====== Page Loading Overlay ====== */
+        body.loading {
+            cursor: wait;
+            position: relative;
+        }
+
+        body.loading::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 9999;
+        }
+
+        body.loading::before {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--primary-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 10000;
+        }
+
+        /* ====== Responsive Design ====== */
+        @media (max-width: 1200px) {
+            .member-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .topbar {
+                padding: 0 1.5rem;
+            }
+
+            .search-box input {
+                width: 180px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .content-area {
+                padding: 1.5rem;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .topbar {
+                padding: 0 1rem;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" data-aos="fade-right">
+        <div class="sidebar-header">
+            <a href="member-dashboard.html" class="sidebar-logo">
+                <i class="fas fa-dumbbell"></i>
+                <span>PowerFit Pro</span>
+            </a>
+        </div>
+        <div class="sidebar-menu">
+            <h3 class="menu-title">Menu</h3>
+            <ul>
+                <li class="menu-item">
+                    <a href="member-dashboard.html" class="menu-link active">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="profile.html" class="menu-link">
+                        <i class="fas fa-user"></i>
+                        <span>My Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="bills.html" class="menu-link">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>My Bills</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="diet.html" class="menu-link">
+                        <i class="fas fa-utensils"></i>
+                        <span>Diet Plan</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="notifications.html" class="menu-link">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="topbar-badge" id="notificationBadge">0</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="supplements.html" class="menu-link">
+                        <i class="fas fa-pills"></i>
+                        <span>Supplements</span>
+                    </a>
+                </li>
+            </ul>
+
+            <h3 class="menu-title">Settings</h3>
+            <ul>
+                <li class="menu-item">
+                    <a href="dashboard-settings.html" class="menu-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="topbar" data-aos="fade-down">
+            <div class="topbar-left">
+                <div class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search workouts, bills...">
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-item">
+                    <a href="notifications.html" class="topbar-link">
+                        <i class="fas fa-bell"></i>
+                        <span class="topbar-badge" id="topbarNotificationBadge">0</span>
+                    </a>
+                </div>
+                <div class="topbar-item">
+                    <div class="user-profile" id="userProfile">
+                        <img id="userProfileImage" src="https://ui-avatars.com/api/?name=Member&background=random" alt="Member" class="user-img">
+                        <span class="user-name" id="userName">Member</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <div class="content-header">
+                <div class="content-title">
+                    <h2 id="welcomeTitle">Dashboard</h2>
+                    <p id="welcomeMessage">Welcome back! Here's your fitness overview.</p>
+                </div>
+                <div class="content-actions">
+                    <button class="btn btn-primary" onclick="window.location.href='profile.html'">
+                        <i class="fas fa-user-edit"></i> Update Profile
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="dashboard-cards">
+                <div class="card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-header">
+                        <h3 class="card-title">My Membership</h3>
+                        <div class="card-icon membership">
+                            <i class="fas fa-id-card"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 id="membershipPlan">Basic</h3>
+                        <p>Status: <span class="status-badge active" id="membershipStatus">Active</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <i class="fas fa-calendar-alt"></i> <span id="membershipExpiry">Expires in 30 days</span>
+                    </div>
+                </div>
+
+                <div class="card" data-aos="fade-up" data-aos-delay="150">
+                    <div class="card-header">
+                        <h3 class="card-title">My Diet Plan</h3>
+                        <div class="card-icon diet">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 id="dietPlan">Standard</h3>
+                        <p>Last updated: <span id="dietUpdate">2 days ago</span></p>
+                    </div>
+                    <div class="card-footer">
+                        <i class="fas fa-arrow-right"></i> <a href="diet.html">View Details</a>
+                    </div>
+                </div>
+
+                <div class="card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-header">
+                        <h3 class="card-title">Workouts</h3>
+                        <div class="card-icon workouts">
+                            <i class="fas fa-dumbbell"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 id="workoutCount">0</h3>
+                        <p>Workouts this month</p>
+                    </div>
+                    <div class="card-footer">
+                        <i class="fas fa-arrow-up"></i> <span id="workoutChange">0</span> more than last month
+                    </div>
+                </div>
+
+                <div class="card" data-aos="fade-up" data-aos-delay="250">
+                    <div class="card-header">
+                        <h3 class="card-title">Pending Bills</h3>
+                        <div class="card-icon bills">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 id="pendingBills">0</h3>
+                        <p>Bills to pay</p>
+                    </div>
+                    <div class="card-footer">
+                        <i class="fas fa-arrow-right"></i> <a href="bills.html">Pay Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member Details -->
+            <div class="member-details">
+                <div class="detail-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="detail-header">
+                        <h3 class="detail-title">Membership Details</h3>
+                        <a href="profile.html" class="detail-link">View All</a>
+                    </div>
+                    <div class="detail-body">
+                        <table class="detail-table">
+                            <tbody id="membershipDetails">
+                                <!-- Membership details will be inserted here by JavaScript -->
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="skeleton" style="width: 100%; height: 20px;"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="detail-card" data-aos="fade-up" data-aos-delay="350">
+                    <div class="detail-header">
+                        <h3 class="detail-title">Recent Bills</h3>
+                        <a href="bills.html" class="detail-link">View All</a>
+                    </div>
+                    <div class="detail-body">
+                        <table class="detail-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentBills">
+                                <!-- Recent bills will be inserted here by JavaScript -->
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="skeleton" style="width: 100%; height: 20px;"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Workouts -->
+            <div class="detail-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="detail-header">
+                    <h3 class="detail-title">Upcoming Workouts</h3>
+                    <a href="#" class="detail-link">View Schedule</a>
+                </div>
+                <div class="detail-body">
+                    <table class="detail-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Trainer</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody id="upcomingWorkouts">
+                            <!-- Upcoming workouts will be inserted here by JavaScript -->
+                            <tr>
+                                <td colspan="4">
+                                    <div class="skeleton" style="width: 100%; height: 20px;"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS animation library
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-quad',
+            once: true
+        });
+
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMU_xXHhZdrR9cA3fPcZDSJeg4SQZBD7M",
+            authDomain: "gym-management-system-f06fd.firebaseapp.com",
+            projectId: "gym-management-system-f06fd",
+            storageBucket: "gym-management-system-f06fd.appspot.com",
+            messagingSenderId: "1061387303589",
+            appId: "1:1061387303589:web:bcdf5ea3bd3efb027f6b4c",
+            measurementId: "G-5YTGPJE3JP"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // DOM Elements
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const logoutButton = document.getElementById('logoutButton');
+        const userProfile = document.getElementById('userProfile');
+        const userProfileImage = document.getElementById('userProfileImage');
+        const userName = document.getElementById('userName');
+        const welcomeTitle = document.getElementById('welcomeTitle');
+        const welcomeMessage = document.getElementById('welcomeMessage');
+        const notificationBadge = document.getElementById('notificationBadge');
+        const topbarNotificationBadge = document.getElementById('topbarNotificationBadge');
+
+        // Show loading state
+        function showLoading() {
+            document.body.classList.add('loading');
+        }
+
+        // Hide loading state
+        function hideLoading() {
+            document.body.classList.remove('loading');
+        }
+
+        // Toggle sidebar on mobile
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+
+        // Check authentication state and user role
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                // No user logged in, redirect to login
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                showLoading();
+                
+                // Check if user is member
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    throw new Error('User data not found');
+                }
+
+                const userData = userDoc.data();
+                
+                if (userData.role !== 'member') {
+                    // User is not member, redirect to appropriate dashboard
+                    window.location.href = userData.role === 'admin' ? 'admin-dashboard.html' : 'login.html';
+                    return;
+                }
+
+                // User is member, load dashboard data
+                updateUserProfile(userData);
+                loadMemberData(user.uid);
+                loadMembershipDetails(user.uid);
+                loadRecentBills(user.uid);
+                loadUpcomingWorkouts(user.uid);
+                loadUnreadNotificationsCount(user.uid);
+
+            } catch (error) {
+                console.error('Error checking user role:', error);
+                auth.signOut();
+                window.location.href = 'login.html';
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // Update user profile in topbar
+        function updateUserProfile(userData) {
+            userName.textContent = userData.fullName || 'Member';
+            welcomeTitle.textContent = `Welcome, ${userData.fullName || 'Member'}!`;
+            welcomeMessage.textContent = `Here's your fitness overview for today.`;
+            
+            if (userData.photoURL) {
+                userProfileImage.src = userData.photoURL;
+            } else {
+                // Generate avatar from name
+                const name = userData.fullName || 'Member';
+                userProfileImage.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=3a86ff&color=fff`;
+            }
+        }
+
+        // Load member data
+        async function loadMemberData(userId) {
+            try {
+                showLoading();
+                
+                // Get membership details
+                const membershipQuery = await db.collection('memberships')
+                    .where('userId', '==', userId)
+                    .limit(1)
+                    .get();
+                
+                if (!membershipQuery.empty) {
+                    const membershipData = membershipQuery.docs[0].data();
+                    document.getElementById('membershipPlan').textContent = membershipData.plan || 'Basic';
+                    
+                    // Calculate days remaining
+                    if (membershipData.endDate) {
+                        const endDate = membershipData.endDate.toDate();
+                        const today = new Date();
+                        const diffTime = endDate - today;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        
+                        if (diffDays > 0) {
+                            document.getElementById('membershipExpiry').textContent = `Expires in ${diffDays} days`;
+                            document.getElementById('membershipStatus').className = 'status-badge active';
+                            document.getElementById('membershipStatus').textContent = 'Active';
+                        } else {
+                            document.getElementById('membershipExpiry').textContent = `Expired`;
+                            document.getElementById('membershipStatus').className = 'status-badge expired';
+                            document.getElementById('membershipStatus').textContent = 'Expired';
+                        }
+                    }
+                }
+                
+                // Get diet plan details
+                const dietQuery = await db.collection('diets')
+                    .where('userId', '==', userId)
+                    .orderBy('updatedAt', 'desc')
+                    .limit(1)
+                    .get();
+                
+                if (!dietQuery.empty) {
+                    const dietData = dietQuery.docs[0].data();
+                    document.getElementById('dietPlan').textContent = dietData.planName || 'Standard';
+                    
+                    if (dietData.updatedAt) {
+                        const updatedDate = dietData.updatedAt.toDate();
+                        const today = new Date();
+                        const diffTime = today - updatedDate;
+                        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                        
+                        document.getElementById('dietUpdate').textContent = diffDays === 0 ? 'Today' : 
+                            diffDays === 1 ? 'Yesterday' : `${diffDays} days ago`;
+                    }
+                } else {
+                    document.getElementById('dietPlan').textContent = 'Not Assigned';
+                    document.getElementById('dietUpdate').textContent = 'N/A';
+                }
+                
+                // Get pending bills count
+                const pendingBillsQuery = await db.collection('bills')
+                    .where('userId', '==', userId)
+                    .where('status', '==', 'pending')
+                    .get();
+                
+                document.getElementById('pendingBills').textContent = pendingBillsQuery.size;
+                
+                // Get workout count (this month)
+                const currentDate = new Date();
+                const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+                
+                const workoutsQuery = await db.collection('workouts')
+                    .where('userId', '==', userId)
+                    .where('date', '>=', firstDayOfMonth)
+                    .get();
+                
+                document.getElementById('workoutCount').textContent = workoutsQuery.size;
+                
+                // Mock workout change (would be real in production)
+                document.getElementById('workoutChange').textContent = '3';
+                
+            } catch (error) {
+                console.error('Error loading member data:', error);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Load membership details
+        async function loadMembershipDetails(userId) {
+            const tableBody = document.getElementById('membershipDetails');
+            tableBody.innerHTML = '';
+            
+            try {
+                showLoading();
+                
+                const membershipQuery = await db.collection('memberships')
+                    .where('userId', '==', userId)
+                    .limit(1)
+                    .get();
+                
+                if (!membershipQuery.empty) {
+                    const membershipData = membershipQuery.docs[0].data();
+                    
+                    const rows = [
+                        { label: 'Membership Plan', value: membershipData.plan || 'Basic' },
+                        { label: 'Start Date', value: membershipData.startDate ? membershipData.startDate.toDate().toLocaleDateString() : 'N/A' },
+                        { label: 'End Date', value: membershipData.endDate ? membershipData.endDate.toDate().toLocaleDateString() : 'N/A' },
+                        { label: 'Payment Cycle', value: membershipData.paymentCycle || 'Monthly' },
+                        { label: 'Monthly Fee', value: membershipData.fee ? `$${membershipData.fee.toFixed(2)}` : '$0.00' }
+                    ];
+                    
+                    rows.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${row.label}</td>
+                            <td>${row.value}</td>
+                        `;
+                        tableBody.appendChild(tr);
+                    });
+                } else {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="2">No active membership found</td>
+                        </tr>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Error loading membership details:', error);
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="2">Error loading membership details</td>
+                    </tr>
+                `;
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Load recent bills
+        async function loadRecentBills(userId) {
+            const tableBody = document.getElementById('recentBills');
+            tableBody.innerHTML = '';
+            
+            try {
+                showLoading();
+                
+                const querySnapshot = await db.collection('bills')
+                    .where('userId', '==', userId)
+                    .orderBy('paymentDate', 'desc')
+                    .limit(3)
+                    .get();
+                
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((doc) => {
+                        const billData = doc.data();
+                        const paymentDate = billData.paymentDate ? billData.paymentDate.toDate().toLocaleDateString() : 'N/A';
+                        
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${paymentDate}</td>
+                            <td>$${billData.amount?.toFixed(2) || '0.00'}</td>
+                            <td><span class="status-badge ${billData.status === 'paid' ? 'active' : 'pending'}">${billData.status || 'pending'}</span></td>
+                        `;
+                        tableBody.appendChild(tr);
+                    });
+                } else {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="3">No bills found</td>
+                        </tr>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Error loading recent bills:', error);
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="3">Error loading bills</td>
+                    </tr>
+                `;
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Load upcoming workouts
+        async function loadUpcomingWorkouts(userId) {
+            const tableBody = document.getElementById('upcomingWorkouts');
+            tableBody.innerHTML = '';
+            
+            try {
+                showLoading();
+                
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const querySnapshot = await db.collection('workouts')
+                    .where('userId', '==', userId)
+                    .where('date', '>=', today)
+                    .orderBy('date')
+                    .limit(3)
+                    .get();
+                
+                if (!querySnapshot.empty) {
+                    // Get all trainer IDs first
+                    const trainerIds = [];
+                    const workoutsData = [];
+                    
+                    querySnapshot.forEach(doc => {
+                        const workoutData = doc.data();
+                        workoutsData.push(workoutData);
+                        
+                        if (workoutData.trainerId && !trainerIds.includes(workoutData.trainerId)) {
+                            trainerIds.push(workoutData.trainerId);
+                        }
+                    });
+                    
+                    // Get all trainers in one query
+                    const trainersQuery = await db.collection('users')
+                        .where(firebase.firestore.FieldPath.documentId(), 'in', trainerIds)
+                        .get();
+                    
+                    const trainers = {};
+                    trainersQuery.forEach(doc => {
+                        trainers[doc.id] = doc.data();
+                    });
+                    
+                    // Now render the table
+                    workoutsData.forEach(workout => {
+                        const workoutDate = workout.date ? workout.date.toDate() : new Date();
+                        const trainerName = workout.trainerId ? 
+                            (trainers[workout.trainerId]?.fullName || 'Trainer') : 'Trainer';
+                        
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${workoutDate.toLocaleDateString()}</td>
+                            <td>${workout.time || 'N/A'}</td>
+                            <td>${trainerName}</td>
+                            <td>${workout.type || 'Personal Training'}</td>
+                        `;
+                        tableBody.appendChild(tr);
+                    });
+                } else {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="4">No upcoming workouts scheduled</td>
+                        </tr>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Error loading upcoming workouts:', error);
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4">Error loading workouts</td>
+                    </tr>
+                `;
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Load unread notifications count
+        async function loadUnreadNotificationsCount(userId) {
+            try {
+                const querySnapshot = await db.collection('notifications')
+                    .where('userId', '==', userId)
+                    .where('read', '==', false)
+                    .get();
+                
+                const count = querySnapshot.size;
+                notificationBadge.textContent = count;
+                topbarNotificationBadge.textContent = count;
+                
+                // Set up real-time listener for notifications
+                db.collection('notifications')
+                    .where('userId', '==', userId)
+                    .where('read', '==', false)
+                    .onSnapshot((snapshot) => {
+                        const newCount = snapshot.size;
+                        notificationBadge.textContent = newCount;
+                        topbarNotificationBadge.textContent = newCount;
+                    });
+                
+            } catch (error) {
+                console.error('Error loading notifications count:', error);
+            }
+        }
+
+        // Logout functionality
+        logoutButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            showLoading();
+            
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Logout error:', error);
+                hideLoading();
+                alert('Logout failed. Please try again.');
+            });
+        });
+
+        // User profile dropdown (would be implemented in production)
+        userProfile.addEventListener('click', function() {
+            window.location.href = 'profile.html';
+        });
+
+        // Add loading state to all navigation links
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                // Only show loading for internal links
+                if (link.href.startsWith(window.location.origin) || 
+                    link.href.startsWith('/') || 
+                    !link.href.startsWith('http')) {
+                    showLoading();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+<!-- All Done --><!-- All Done --><!-- All Done -->
+<!-- All Done --><!-- All Done --><!-- All Done --> 

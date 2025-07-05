@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerFit Pro | Sign Up</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        /* ====== CSS Variables ====== */
+        :root {
+            --primary: #3a86ff;
+            --primary-dark: #2667cc;
+            --primary-light: rgba(58, 134, 255, 0.1);
+            --secondary: #ff006e;
+            --secondary-dark: #cc0058;
+            --dark: #2b2d42;
+            --darker: #1a1b28;
+            --light: #f8f9fa;
+            --lighter: #ffffff;
+            --success: #38b000;
+            --warning: #ffbe0b;
+            --danger: #ef233c;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            --gradient-secondary: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+            --gradient-dual: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        /* ====== Base Styles ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ====== Scrollbar ====== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--gray-light);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ====== Auth Container ====== */
+        .auth-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* ====== Auth Left Panel ====== */
+        .auth-left {
+            flex: 1;
+            background: var(--gradient-dual);
+            color: white;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-left::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/diagonal-striped-brick.png');
+            opacity: 0.05;
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            z-index: 1;
+            transition: var(--transition);
+        }
+
+        .auth-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .auth-logo i {
+            color: white;
+            font-size: 2rem;
+        }
+
+        .auth-left-content {
+            max-width: 500px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .auth-left h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-left p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2.5rem;
+        }
+
+        .auth-features {
+            text-align: left;
+            margin-bottom: 3rem;
+        }
+
+        .auth-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .auth-feature:hover {
+            transform: translateX(5px);
+        }
+
+        .auth-feature i {
+            font-size: 1.3rem;
+            margin-top: 0.2rem;
+            color: var(--warning);
+        }
+
+        .auth-feature h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .auth-feature p {
+            font-size: 0.95rem;
+            margin-bottom: 0;
+            opacity: 0.8;
+        }
+
+        .auth-left-footer {
+            margin-top: auto;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        .auth-left-footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .auth-left-footer a:hover {
+            text-decoration: underline;
+            color: var(--warning);
+        }
+
+        /* ====== Auth Right Panel ====== */
+        .auth-right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background-color: white;
+        }
+
+        .auth-form-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 2rem;
+        }
+
+        .auth-form-header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .auth-form-header h2 {
+            font-size: 2rem;
+            color: var(--darker);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-form-header p {
+            color: var(--gray);
+        }
+
+        .auth-form-header p a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .auth-form-header p a:hover {
+            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+
+        /* ====== Auth Form ====== */
+        .auth-form {
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--darker);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            transition: var(--transition);
+            background-color: var(--light);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .input-icon:hover {
+            color: var(--primary);
+        }
+
+        .role-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .role-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .role-option input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .role-option label {
+            display: block;
+            padding: 1rem;
+            background-color: var(--light);
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .role-option label:hover {
+            border-color: var(--primary);
+        }
+
+        .role-option input:checked + label {
+            background-color: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .role-option label i {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-check input {
+            margin-right: 0.7rem;
+            width: 1.1rem;
+            height: 1.1rem;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .form-check label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        .form-check a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .form-check a:hover {
+            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-btn:hover {
+            background: var(--gradient-secondary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .auth-btn:active {
+            transform: translateY(0);
+        }
+
+        .auth-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-dual);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .auth-btn:hover::after {
+            opacity: 1;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--gray-light);
+            margin: 0 1rem;
+        }
+
+        .social-auth {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--dark);
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: white;
+        }
+
+        .social-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .social-btn i {
+            font-size: 1.1rem;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+
+        /* ====== Form Validation ====== */
+        .is-invalid {
+            border-color: var(--danger) !important;
+        }
+
+        .is-invalid:focus {
+            box-shadow: 0 0 0 3px rgba(239, 35, 60, 0.2) !important;
+        }
+
+        .invalid-feedback {
+            color: var(--danger);
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .is-invalid + .invalid-feedback {
+            display: block;
+        }
+
+        /* ====== Alert Messages ====== */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            transition: all 0.5s ease-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .alert.show {
+            max-height: 100px;
+            opacity: 1;
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+        }
+
+        .alert-danger {
+            background-color: rgba(239, 35, 60, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 35, 60, 0.2);
+        }
+
+        .alert-success {
+            background-color: rgba(56, 176, 0, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(56, 176, 0, 0.2);
+        }
+
+        /* ====== Loading State ====== */
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            color: transparent !important;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1.2rem;
+            height: 1.2rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* ====== Page Loading Overlay ====== */
+        body.loading {
+            cursor: wait;
+            position: relative;
+        }
+
+        body.loading::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 9999;
+        }
+
+        body.loading::before {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--primary-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 10000;
+        }
+
+        /* ====== Responsive Design ====== */
+        @media (max-width: 992px) {
+            .auth-left {
+                display: none;
+            }
+            
+            .auth-right {
+                padding: 1.5rem;
+            }
+            
+            .auth-form-container {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .auth-form-header h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .auth-right {
+                padding: 1rem;
+            }
+            
+            .auth-form-container {
+                padding: 1rem;
+            }
+            
+            .role-selector {
+                flex-direction: column;
+                gap: 0.7rem;
+            }
+            
+            .social-auth {
+                flex-direction: column;
+                gap: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Left Panel -->
+        <div class="auth-left" data-aos="fade-right" data-aos-duration="800">
+            <div class="auth-logo">
+                <i class="fas fa-dumbbell"></i>
+                <span>PowerFit Pro</span>
+            </div>
+            
+            <div class="auth-left-content">
+                <h2>Join Our Fitness Community</h2>
+                <p>Manage your gym with the most powerful and intuitive platform designed for fitness professionals.</p>
+                
+                <div class="auth-features">
+                    <div class="auth-feature" data-aos="fade-up" data-aos-delay="100">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>Member Management</h4>
+                            <p>Track all your members in one place with advanced filtering and reporting.</p>
+                        </div>
+                    </div>
+                    <div class="auth-feature" data-aos="fade-up" data-aos-delay="200">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>Automated Billing</h4>
+                            <p>Process payments automatically and never miss a subscription renewal.</p>
+                        </div>
+                    </div>
+                    <div class="auth-feature" data-aos="fade-up" data-aos-delay="300">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>Class Scheduling</h4>
+                            <p>Easily manage classes, trainers, and member attendance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="auth-left-footer" data-aos="fade-up" data-aos-delay="400">
+                Already have an account? <a href="login.html">Sign in here</a>
+            </div>
+        </div>
+        
+        <!-- Right Panel -->
+        <div class="auth-right">
+            <div class="auth-form-container">
+                <div class="auth-form-header" data-aos="fade-up">
+                    <h2>Create Your Account</h2>
+                    <p>Join PowerFit Pro today or <a href="login.html">sign in to your account</a></p>
+                </div>
+                
+                <!-- Alert Messages -->
+                <div id="alert-message" class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="alert-text"></span>
+                </div>
+                
+                <form id="signup-form" class="auth-form" data-aos="fade-up" data-aos-delay="100">
+                    <div class="form-group">
+                        <label for="full-name" class="form-label">Full Name</label>
+                        <input type="text" id="full-name" class="form-control" placeholder="John Doe" required>
+                        <div class="invalid-feedback">Please enter your full name</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" id="phone" class="form-control" placeholder="+1 (555) 123-4567" required>
+                        <div class="invalid-feedback">Please enter a valid phone number</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" id="email" class="form-control" placeholder="your@email.com" required>
+                        <div class="invalid-feedback">Please enter a valid email address</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-with-icon">
+                            <input type="password" id="password" class="form-control" placeholder="At least 8 characters" required minlength="8">
+                            <i class="fas fa-eye input-icon" id="toggle-password"></i>
+                        </div>
+                        <div class="invalid-feedback">Password must be at least 8 characters</div>
+                    </div>
+                    
+                    <div class="form-group" data-aos="fade-up" data-aos-delay="150">
+                        <label class="form-label">I am a:</label>
+                        <div class="role-selector">
+                            <div class="role-option">
+                                <input type="radio" id="role-member" name="role" value="member" checked>
+                                <label for="role-member">
+                                    <i class="fas fa-user"></i>
+                                    Member
+                                </label>
+                            </div>
+                            <div class="role-option">
+                                <input type="radio" id="role-trainer" name="role" value="trainer">
+                                <label for="role-trainer">
+                                    <i class="fas fa-dumbbell"></i>
+                                    Trainer
+                                </label>
+                            </div>
+                            <div class="role-option">
+                                <input type="radio" id="role-admin" name="role" value="admin">
+                                <label for="role-admin">
+                                    <i class="fas fa-crown"></i>
+                                    Admin
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-check" data-aos="fade-up" data-aos-delay="200">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn" id="signup-btn" data-aos="fade-up" data-aos-delay="250">
+                        Create Account
+                    </button>
+                    
+                    <div class="divider" data-aos="fade-up" data-aos-delay="300">or</div>
+                    
+                    <div class="social-auth" data-aos="fade-up" data-aos-delay="350">
+                        <button type="button" class="social-btn">
+                            <i class="fab fa-google"></i> Google
+                        </button>
+                        <button type="button" class="social-btn">
+                            <i class="fab fa-apple"></i> Apple
+                        </button>
+                    </div>
+                    
+                    <div class="auth-footer" data-aos="fade-up" data-aos-delay="400">
+                        Already have an account? <a href="login.html">Sign in</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS animation library
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-quad',
+            once: true
+        });
+
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMU_xXHhZdrR9cA3fPcZDSJeg4SQZBD7M",
+            authDomain: "gym-management-system-f06fd.firebaseapp.com",
+            projectId: "gym-management-system-f06fd",
+            storageBucket: "gym-management-system-f06fd.appspot.com",
+            messagingSenderId: "1061387303589",
+            appId: "1:1061387303589:web:bcdf5ea3bd3efb027f6b4c",
+            measurementId: "G-5YTGPJE3JP"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // DOM Elements
+        const signupForm = document.getElementById('signup-form');
+        const fullNameInput = document.getElementById('full-name');
+        const phoneInput = document.getElementById('phone');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const togglePasswordBtn = document.getElementById('toggle-password');
+        const termsCheckbox = document.getElementById('terms');
+        const signupBtn = document.getElementById('signup-btn');
+        const alertMessage = document.getElementById('alert-message');
+        const alertText = document.getElementById('alert-text');
+
+        // Toggle password visibility
+        togglePasswordBtn.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // Enhanced phone number validation
+        phoneInput.addEventListener('input', function(e) {
+            // Remove non-numeric characters
+            let phone = e.target.value.replace(/\D/g, '');
+            
+            // Format phone number (simple US format)
+            if (phone.length > 3 && phone.length <= 6) {
+                phone = phone.replace(/(\d{3})(\d{1,3})/, '($1) $2');
+            } else if (phone.length > 6) {
+                phone = phone.replace(/(\d{3})(\d{3})(\d{1,4})/, '($1) $2-$3');
+            }
+            
+            e.target.value = phone;
+        });
+
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+            
+            // Validate full name
+            if (fullNameInput.value.trim() === '') {
+                fullNameInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                fullNameInput.classList.remove('is-invalid');
+            }
+            
+            // Validate phone (simple validation)
+            const phoneDigits = phoneInput.value.replace(/\D/g, '');
+            if (phoneDigits.length < 10) {
+                phoneInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                phoneInput.classList.remove('is-invalid');
+            }
+            
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailInput.value.trim())) {
+                emailInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                emailInput.classList.remove('is-invalid');
+            }
+            
+            // Validate password
+            if (passwordInput.value.length < 8) {
+                passwordInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                passwordInput.classList.remove('is-invalid');
+            }
+            
+            // Validate terms checkbox
+            if (!termsCheckbox.checked) {
+                termsCheckbox.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                termsCheckbox.classList.remove('is-invalid');
+            }
+            
+            return isValid;
+        }
+
+        // Show alert message
+        function showAlert(message, type = 'danger') {
+            alertText.textContent = message;
+            alertMessage.className = `alert alert-${type}`;
+            alertMessage.classList.add('show');
+            
+            // Hide alert after 5 seconds
+            setTimeout(() => {
+                alertMessage.classList.remove('show');
+                setTimeout(() => {
+                    alertMessage.className = 'alert';
+                }, 500);
+            }, 5000);
+        }
+
+        // Show loading state
+        function showLoading() {
+            document.body.classList.add('loading');
+        }
+
+        // Hide loading state
+        function hideLoading() {
+            document.body.classList.remove('loading');
+        }
+
+        // Handle form submission
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Validate form
+            if (!validateForm()) {
+                showAlert('Please fill all required fields correctly.');
+                return;
+            }
+            
+            // Get form values
+            const fullName = fullNameInput.value.trim();
+            const phone = phoneInput.value.trim();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            const role = document.querySelector('input[name="role"]:checked').value;
+            
+            try {
+                // Show loading state
+                signupBtn.disabled = true;
+                signupBtn.classList.add('btn-loading');
+                showLoading();
+                
+                // Create user with Firebase Auth
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Send email verification
+                await user.sendEmailVerification();
+                
+                // Save additional user data to Firestore
+                await db.collection('users').doc(user.uid).set({
+                    uid: user.uid,
+                    fullName,
+                    phone,
+                    email,
+                    role,
+                    emailVerified: false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'active'
+                });
+                
+                // Create a log entry for the new user
+                await db.collection('logs').add({
+                    action: 'user_signup',
+                    userId: user.uid,
+                    userEmail: email,
+                    userRole: role,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    details: {
+                        method: 'email/password',
+                        device: navigator.userAgent
+                    }
+                });
+                
+                // Show success message
+                showAlert('Account created successfully! Please check your email for verification.', 'success');
+                
+                // Redirect after a short delay
+                setTimeout(() => {
+                    if (role === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'member-dashboard.html';
+                    }
+                }, 3000);
+                
+            } catch (error) {
+                // Handle errors
+                signupBtn.disabled = false;
+                signupBtn.classList.remove('btn-loading');
+                hideLoading();
+                
+                let errorMessage = 'An error occurred during sign up. Please try again.';
+                
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'This email is already registered. Please use a different email or sign in.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Please enter a valid email address.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'Password should be at least 8 characters.';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        errorMessage = 'Email/password accounts are not enabled.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'Network error. Please check your internet connection.';
+                        break;
+                }
+                
+                showAlert(errorMessage);
+                console.error('Signup error:', error);
+            }
+        });
+
+        // Social login handlers (placeholder - would need proper implementation)
+        document.querySelectorAll('.social-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                showAlert('Social login would be implemented here in a production app.', 'success');
+            });
+        });
+
+        // Check if user is already logged in
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // User is signed in, redirect to appropriate dashboard
+                db.collection('users').doc(user.uid).get().then(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        if (userData.role === 'admin') {
+                            window.location.href = 'admin-dashboard.html';
+                        } else {
+                            window.location.href = 'member-dashboard.html';
+                        }
+                    }
+                });
+            }
+        });
+
+        // Add loading state to all navigation links
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                // Only show loading for internal links
+                if (link.href.startsWith(window.location.origin) || 
+                    link.href.startsWith('/') || 
+                    !link.href.startsWith('http')) {
+                    showLoading();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+<!-- All Done --><!-- All Done --><!-- All Done -->
+<!-- All Done --><!-- All Done --><!-- All Done -->

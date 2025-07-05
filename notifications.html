@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - PowerFit Gym</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --primary-dark: #2667cc;
+            --primary-light: rgba(58, 134, 255, 0.1);
+            --secondary: #ff006e;
+            --secondary-dark: #cc0058;
+            --success: #38b000;
+            --warning: #ffbe0b;
+            --danger: #ef233c;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --lighter: #ffffff;
+            --dark: #2b2d42;
+            --darker: #1a1b28;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --sidebar-width: 280px;
+            --topbar-height: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+            position: fixed;
+            height: 100vh;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+
+        .menu-title {
+            padding: 0 1.5rem 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--gray);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.5rem;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .menu-link:hover, .menu-link.active {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .menu-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: var(--primary);
+        }
+
+        .menu-link i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+            min-height: 100vh;
+        }
+
+        /* Topbar */
+        .topbar {
+            height: var(--topbar-height);
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-toggle {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-right: 1.5rem;
+            cursor: pointer;
+            display: none;
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            color: var(--primary);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--gray-light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            width: 250px;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-item {
+            margin-left: 1.5rem;
+            position: relative;
+        }
+
+        .topbar-link {
+            color: var(--dark);
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .topbar-link:hover {
+            color: var(--primary);
+        }
+
+        .topbar-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: var(--lighter);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: 50px;
+        }
+
+        .user-profile:hover {
+            background-color: var(--primary-light);
+        }
+
+        .user-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 0.75rem;
+            border: 2px solid var(--primary-light);
+        }
+
+        .user-name {
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 2rem;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .content-title h2 {
+            font-size: 1.75rem;
+            color: var(--darker);
+            margin-bottom: 0.5rem;
+        }
+
+        .content-title p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--lighter);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: var(--lighter);
+        }
+
+        .btn-success:hover {
+            background-color: #16a34a;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: var(--lighter);
+        }
+
+        .btn-danger:hover {
+            background-color: #e11d48;
+        }
+
+        /* Notifications Layout */
+        .notifications-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 992px) {
+            .notifications-container {
+                grid-template-columns: 300px 1fr;
+            }
+        }
+
+        /* Notification Types */
+        .notification-types {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .notification-type-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notification-type-item:hover {
+            background-color: var(--primary-light);
+        }
+
+        .notification-type-item.active {
+            background-color: var(--primary-light);
+            border-left: 3px solid var(--primary);
+        }
+
+        .notification-type-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-type-count {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        /* Notifications List */
+        .notifications-list {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+        }
+
+        .notification-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            transition: var(--transition);
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .notification-item.unread {
+            background-color: var(--primary-light);
+            border-left: 3px solid var(--primary);
+        }
+
+        .notification-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: var(--darker);
+            font-size: 1.1rem;
+        }
+
+        .notification-date {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .notification-content {
+            color: var(--dark);
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .mark-read-btn {
+            background-color: transparent;
+            border: none;
+            color: var(--primary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mark-read-btn:hover {
+            text-decoration: underline;
+        }
+
+        .no-notifications {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+        }
+
+        .no-notifications i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--gray-light);
+        }
+
+        /* Notification Form (Admin Only) */
+        .notification-form-container {
+            background-color: var(--lighter);
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .notification-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--darker);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            background-color: var(--darker);
+            color: var(--lighter);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1001;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease-out;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-success {
+            background-color: var(--success);
+        }
+
+        .toast-error {
+            background-color: var(--danger);
+        }
+
+        .toast-icon {
+            font-size: 1.25rem;
+        }
+
+        .toast-close {
+            margin-left: 1rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+        }
+
+        /* Loading States */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .skeleton {
+            background-color: var(--gray-light);
+            border-radius: 4px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .topbar {
+                padding: 0 1.5rem;
+            }
+
+            .search-box input {
+                width: 180px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .content-area {
+                padding: 1.5rem;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .search-box {
+                display: none;
+            }
+
+            .topbar {
+                padding: 0 1rem;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" data-aos="fade-right">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="sidebar-logo">
+                <i class="fas fa-dumbbell"></i>
+                <span>PowerFit</span>
+            </a>
+        </div>
+        <div class="sidebar-menu">
+            <h3 class="menu-title">Menu</h3>
+            <ul>
+                <li class="menu-item">
+                    <a href="dashboard.html" class="menu-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="members.html" class="menu-link">
+                        <i class="fas fa-users"></i>
+                        <span>Members</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="workouts.html" class="menu-link">
+                        <i class="fas fa-dumbbell"></i>
+                        <span>Workouts</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="diet.html" class="menu-link">
+                        <i class="fas fa-utensils"></i>
+                        <span>Diet Plans</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="notifications.html" class="menu-link active">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="settings.html" class="menu-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+
+            <h3 class="menu-title">Account</h3>
+            <ul>
+                <li class="menu-item">
+                    <a href="profile.html" class="menu-link">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="topbar" data-aos="fade-down">
+            <div class="topbar-left">
+                <div class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search notifications...">
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-item">
+                    <a href="notifications.html" class="topbar-link">
+                        <i class="fas fa-bell"></i>
+                        <span class="topbar-badge" id="notificationBadge">0</span>
+                    </a>
+                </div>
+                <div class="topbar-item">
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="user-img">
+                        <span class="user-name" id="username">User</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <div class="content-header">
+                <div class="content-title">
+                    <h2 id="pageTitle">Notifications</h2>
+                    <p id="pageSubtitle">Stay updated with gym announcements</p>
+                </div>
+                <div class="content-actions" id="adminActions">
+                    <!-- Admin actions will be added here -->
+                </div>
+            </div>
+
+            <div class="notifications-container">
+                <!-- Notification Types -->
+                <div class="notification-types">
+                    <h3>Filter Notifications</h3>
+                    <div class="notification-type-item active" data-type="all">
+                        <div class="notification-type-name">All Notifications</div>
+                        <div class="notification-type-count" id="allCount">0</div>
+                    </div>
+                    <div class="notification-type-item" data-type="announcement">
+                        <div class="notification-type-name">Announcements</div>
+                        <div class="notification-type-count" id="announcementCount">0</div>
+                    </div>
+                    <div class="notification-type-item" data-type="class">
+                        <div class="notification-type-name">Class Updates</div>
+                        <div class="notification-type-count" id="classCount">0</div>
+                    </div>
+                    <div class="notification-type-item" data-type="system">
+                        <div class="notification-type-name">System</div>
+                        <div class="notification-type-count" id="systemCount">0</div>
+                    </div>
+                </div>
+
+                <!-- Notifications List and Form -->
+                <div class="notifications-list">
+                    <!-- Notifications List -->
+                    <div id="notificationsListContainer">
+                        <div id="notificationsList">
+                            <!-- Notifications will be loaded here -->
+                            <div class="skeleton" style="width: 100%; height: 120px; margin-bottom: 1rem;"></div>
+                            <div class="skeleton" style="width: 100%; height: 120px; margin-bottom: 1rem;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Form (Admin Only) -->
+                    <div id="notificationFormContainer" style="display: none;">
+                        <div class="notification-form-container">
+                            <h3>Send New Notification</h3>
+                            <form class="notification-form" id="sendNotificationForm">
+                                <div class="form-group">
+                                    <label for="notificationType">Type</label>
+                                    <select id="notificationType" required>
+                                        <option value="announcement">Announcement</option>
+                                        <option value="class">Class Update</option>
+                                        <option value="system">System</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="notificationTitle">Title</label>
+                                    <input type="text" id="notificationTitle" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="notificationMessage">Message</label>
+                                    <textarea id="notificationMessage" required></textarea>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane"></i> Send Notification
+                                    </button>
+                                    <button type="button" class="btn btn-danger" id="cancelNotification">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toastNotification">
+        <div class="toast-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="toast-message" id="toastMessage">Notification sent successfully</div>
+        <div class="toast-close">
+            <i class="fas fa-times"></i>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS animation library
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMU_xXHhZdrR9cA3fPcZDSJeg4SQZBD7M",
+            authDomain: "gym-management-system-f06fd.firebaseapp.com",
+            projectId: "gym-management-system-f06fd",
+            storageBucket: "gym-management-system-f06fd.appspot.com",
+            messagingSenderId: "1061387303589",
+            appId: "1:1061387303589:web:bcdf5ea3bd3efb027f6b4c",
+            measurementId: "G-5YTGPJE3JP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // DOM Elements
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const logoutButton = document.getElementById('logoutButton');
+        const usernameElement = document.getElementById('username');
+        const notificationBadge = document.getElementById('notificationBadge');
+        const adminActions = document.getElementById('adminActions');
+        const notificationsList = document.getElementById('notificationsList');
+        const notificationFormContainer = document.getElementById('notificationFormContainer');
+        const sendNotificationForm = document.getElementById('sendNotificationForm');
+        const cancelNotification = document.getElementById('cancelNotification');
+        const toastNotification = document.getElementById('toastNotification');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastClose = document.querySelector('.toast-close');
+
+        // Global Variables
+        let currentUser = null;
+        let isAdmin = false;
+        let currentFilter = 'all';
+        let unsubscribeNotifications = null;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup sidebar toggle
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+
+            // Check authentication state
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    currentUser = user;
+                    loadUserData();
+                } else {
+                    window.location.href = 'login.html';
+                }
+            });
+
+            // Setup notification type filters
+            document.querySelectorAll('.notification-type-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all items
+                    document.querySelectorAll('.notification-type-item').forEach(i => {
+                        i.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    // Update current filter
+                    currentFilter = this.dataset.type;
+                    
+                    // Reload notifications with new filter
+                    setupNotificationsListener();
+                });
+            });
+
+            // Setup form submission
+            sendNotificationForm.addEventListener('submit', sendNotification);
+
+            // Cancel notification form
+            cancelNotification.addEventListener('click', () => {
+                notificationFormContainer.style.display = 'none';
+                document.getElementById('notificationsListContainer').style.display = 'block';
+                sendNotificationForm.reset();
+            });
+
+            // Close toast notification
+            toastClose.addEventListener('click', () => {
+                toastNotification.classList.remove('show');
+            });
+        });
+
+        // Load user data and check role
+        function loadUserData() {
+            db.collection('users').doc(currentUser.uid).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        isAdmin = userData.role === 'admin';
+                        
+                        // Update UI based on role
+                        updateUIForRole(userData);
+                        
+                        // Setup notifications listener
+                        setupNotificationsListener();
+                        
+                        // Update notification counts
+                        updateNotificationCounts();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error loading user data:", error);
+                    showToast('Error loading user data', 'error');
+                });
+        }
+
+        // Update UI based on user role
+        function updateUIForRole(userData) {
+            // Update username
+            if (userData.fullName) {
+                usernameElement.textContent = userData.fullName;
+            }
+            
+            // Update page title
+            document.getElementById('pageTitle').textContent = isAdmin ? 'Manage Notifications' : 'My Notifications';
+            document.getElementById('pageSubtitle').textContent = isAdmin ? 
+                'Send and manage system notifications' : 'Your recent messages and announcements';
+            
+            // Show/hide admin actions
+            if (isAdmin) {
+                adminActions.innerHTML = `
+                    <button class="btn btn-primary" id="newNotificationButton">
+                        <i class="fas fa-plus"></i> New Notification
+                    </button>
+                `;
+                
+                // Add event listener for new notification button
+                document.getElementById('newNotificationButton').addEventListener('click', () => {
+                    document.getElementById('notificationsListContainer').style.display = 'none';
+                    notificationFormContainer.style.display = 'block';
+                });
+            }
+        }
+
+        // Set up real-time notifications listener
+        function setupNotificationsListener() {
+            // Unsubscribe from previous listener if exists
+            if (unsubscribeNotifications) {
+                unsubscribeNotifications();
+            }
+            
+            let query = db.collection('notifications')
+                .orderBy('createdAt', 'desc')
+                .limit(50);
+            
+            // For members, only show notifications sent to them
+            if (!isAdmin) {
+                query = query.where('recipients', 'array-contains', currentUser.uid);
+            }
+            
+            // Apply filter if not 'all'
+            if (currentFilter !== 'all') {
+                query = query.where('type', '==', currentFilter);
+            }
+            
+            // Show loading state
+            notificationsList.innerHTML = `
+                <div class="skeleton" style="width: 100%; height: 120px; margin-bottom: 1rem;"></div>
+                <div class="skeleton" style="width: 100%; height: 120px; margin-bottom: 1rem;"></div>
+            `;
+            
+            unsubscribeNotifications = query.onSnapshot(snapshot => {
+                notificationsList.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    notificationsList.innerHTML = `
+                        <div class="no-notifications">
+                            <i class="fas fa-bell-slash"></i>
+                            <p>No notifications found</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                snapshot.forEach(doc => {
+                    const notification = doc.data();
+                    const notificationDate = notification.createdAt?.toDate() || new Date();
+                    const isUnread = !isAdmin && (!notification.readBy || !notification.readBy.includes(currentUser.uid));
+                    
+                    const notificationElement = document.createElement('div');
+                    notificationElement.className = `notification-item ${isUnread ? 'unread' : ''}`;
+                    notificationElement.setAttribute('data-aos', 'fade-up');
+                    notificationElement.innerHTML = `
+                        <div class="notification-header">
+                            <div class="notification-title">${notification.title}</div>
+                            <div class="notification-date">${formatDate(notificationDate)}</div>
+                        </div>
+                        <div class="notification-content">${notification.message}</div>
+                        ${isUnread ? `
+                            <div class="notification-actions">
+                                <button class="mark-read-btn" data-id="${doc.id}">
+                                    <i class="fas fa-check"></i> Mark as read
+                                </button>
+                            </div>
+                        ` : ''}
+                    `;
+                    
+                    notificationsList.appendChild(notificationElement);
+                    
+                    // Add event listener for mark as read button
+                    if (isUnread) {
+                        notificationElement.querySelector('.mark-read-btn').addEventListener('click', function() {
+                            markNotificationAsRead(doc.id);
+                        });
+                    }
+                });
+                
+                // Update notification counts
+                updateNotificationCounts();
+            }, error => {
+                console.error('Error loading notifications:', error);
+                showToast('Error loading notifications', 'error');
+            });
+        }
+
+        // Format date for display
+        function formatDate(date) {
+            const now = new Date();
+            const diff = now - date;
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            
+            if (days > 7) {
+                return date.toLocaleDateString();
+            } else if (days > 0) {
+                return `${days} day${days > 1 ? 's' : ''} ago`;
+            } else if (hours > 0) {
+                return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            } else if (minutes > 0) {
+                return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+            } else {
+                return 'Just now';
+            }
+        }
+
+        // Mark notification as read
+        function markNotificationAsRead(notificationId) {
+            db.collection('notifications').doc(notificationId).update({
+                readBy: firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
+            })
+            .then(() => {
+                // Update the UI
+                const notificationElement = document.querySelector(`.mark-read-btn[data-id="${notificationId}"]`)?.closest('.notification-item');
+                if (notificationElement) {
+                    notificationElement.classList.remove('unread');
+                    notificationElement.querySelector('.notification-actions').remove();
+                }
+                
+                // Update notification counts
+                updateNotificationCounts();
+            })
+            .catch(error => {
+                console.error('Error marking notification as read:', error);
+                showToast('Error marking notification as read', 'error');
+            });
+        }
+
+        // Update notification counts
+        function updateNotificationCounts() {
+            if (isAdmin) {
+                // For admin, show counts of all notifications by type
+                const types = ['all', 'announcement', 'class', 'system'];
+                
+                types.forEach(type => {
+                    let query = db.collection('notifications');
+                    
+                    if (type !== 'all') {
+                        query = query.where('type', '==', type);
+                    }
+                    
+                    query.count().get()
+                        .then(snapshot => {
+                            document.getElementById(`${type}Count`).textContent = snapshot.data().count;
+                        });
+                });
+            } else {
+                // For members, show counts of unread notifications by type
+                const types = ['all', 'announcement', 'class', 'system'];
+                
+                types.forEach(type => {
+                    let query = db.collection('notifications')
+                        .where('recipients', 'array-contains', currentUser.uid);
+                    
+                    if (type !== 'all') {
+                        query = query.where('type', '==', type);
+                    }
+                    
+                    query.get()
+                        .then(snapshot => {
+                            let unreadCount = 0;
+                            
+                            snapshot.forEach(doc => {
+                                const data = doc.data();
+                                if (!data.readBy?.includes(currentUser.uid)) {
+                                    unreadCount++;
+                                }
+                            });
+                            
+                            document.getElementById(`${type}Count`).textContent = unreadCount;
+                            
+                            // Update topbar badge with total unread count
+                            if (type === 'all') {
+                                notificationBadge.textContent = unreadCount > 0 ? unreadCount : '';
+                            }
+                        });
+                });
+            }
+        }
+
+        // Send new notification (Admin Only)
+        function sendNotification(e) {
+            e.preventDefault();
+            
+            const type = document.getElementById('notificationType').value;
+            const title = document.getElementById('notificationTitle').value;
+            const message = document.getElementById('notificationMessage').value;
+            
+            if (!type || !title || !message) {
+                showToast('Please fill all required fields', 'error');
+                return;
+            }
+            
+            // Create notification data
+            const notificationData = {
+                type: type,
+                title: title,
+                message: message,
+                recipients: ['all'], // For simplicity, send to all members
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                createdBy: currentUser.uid
+            };
+            
+            // Show loading state
+            const submitButton = sendNotificationForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = `<span class="loading-spinner"></span> Sending...`;
+            
+            // Save to Firestore
+            db.collection('notifications').add(notificationData)
+                .then(() => {
+                    // Log the action
+                    return db.collection('logs').add({
+                        action: 'notification_sent',
+                        adminId: currentUser.uid,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        details: {
+                            type: type,
+                            title: title
+                        }
+                    });
+                })
+                .then(() => {
+                    showToast('Notification sent successfully', 'success');
+                    
+                    // Reset form
+                    sendNotificationForm.reset();
+                    notificationFormContainer.style.display = 'none';
+                    document.getElementById('notificationsListContainer').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error sending notification:', error);
+                    showToast('Error sending notification', 'error');
+                })
+                .finally(() => {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = `<i class="fas fa-paper-plane"></i> Send Notification`;
+                });
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            toastMessage.textContent = message;
+            toastNotification.className = `toast toast-${type}`;
+            toastNotification.classList.add('show');
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                toastNotification.classList.remove('show');
+            }, 5000);
+        }
+
+        // Logout functionality
+        logoutButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            document.body.classList.add('loading');
+            
+            // Firebase logout
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch(error => {
+                console.error("Logout failed:", error);
+                showToast("Logout failed. Please try again.", "error");
+                document.body.classList.remove('loading');
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+<!-- All Done --><!-- All Done --><!-- All Done -->
+<!-- All Done --><!-- All Done --><!-- All Done -->
