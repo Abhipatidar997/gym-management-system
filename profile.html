@@ -76,6 +76,10 @@
             background-color: var(--danger);
         }
 
+        .toast.warning {
+            background-color: var(--warning);
+        }
+
         .toast i {
             margin-right: 0.75rem;
             font-size: 1.2rem;
@@ -559,6 +563,11 @@
             cursor: not-allowed;
         }
         
+        .form-control.readonly {
+            background-color: var(--gray-light);
+            cursor: not-allowed;
+        }
+        
         .form-actions {
             grid-column: span 2;
             display: flex;
@@ -777,6 +786,75 @@
             animation: spin 1s linear infinite;
             z-index: 10000;
         }
+
+        /* Password strength meter */
+        .password-strength {
+            height: 5px;
+            background-color: var(--gray-light);
+            border-radius: 5px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .password-strength-meter {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        .strength-weak {
+            background-color: var(--danger);
+            width: 33%;
+        }
+
+        .strength-medium {
+            background-color: var(--warning);
+            width: 66%;
+        }
+
+        .strength-strong {
+            background-color: var(--success);
+            width: 100%;
+        }
+
+        .password-hints {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .password-hints ul {
+            padding-left: 1.2rem;
+            margin-top: 0.25rem;
+        }
+
+        .password-hints li {
+            margin-bottom: 0.2rem;
+        }
+
+        .password-hints .valid {
+            color: var(--success);
+        }
+
+        .password-hints .invalid {
+            color: var(--gray);
+        }
+
+        /* Form validation */
+        .is-invalid {
+            border-color: var(--danger) !important;
+        }
+
+        .invalid-feedback {
+            color: var(--danger);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .is-invalid + .invalid-feedback {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -920,18 +998,21 @@
                                 <div class="form-group">
                                     <label class="form-label">First Name</label>
                                     <input type="text" class="form-control" id="firstName" required>
+                                    <div class="invalid-feedback">First name is required</div>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Last Name</label>
                                     <input type="text" class="form-control" id="lastName" required>
+                                    <div class="invalid-feedback">Last name is required</div>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" disabled>
+                                    <input type="email" class="form-control readonly" id="email" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone">
+                                    <input type="tel" class="form-control" id="phone" required>
+                                    <div class="invalid-feedback">Phone number is required</div>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Address</label>
@@ -971,6 +1052,7 @@
                                     <button type="button" class="password-toggle-btn" data-target="currentPassword">
                                         <i class="fas fa-eye"></i>
                                     </button>
+                                    <div class="invalid-feedback">Current password is required</div>
                                 </div>
                                 <div class="form-group password-toggle">
                                     <label class="form-label">New Password</label>
@@ -978,6 +1060,18 @@
                                     <button type="button" class="password-toggle-btn" data-target="newPassword">
                                         <i class="fas fa-eye"></i>
                                     </button>
+                                    <div class="password-strength">
+                                        <div class="password-strength-meter" id="passwordStrength"></div>
+                                    </div>
+                                    <div class="password-hints">
+                                        <p>Password must contain:</p>
+                                        <ul>
+                                            <li class="invalid" id="lengthHint">At least 8 characters</li>
+                                            <li class="invalid" id="uppercaseHint">At least 1 uppercase letter</li>
+                                            <li class="invalid" id="numberHint">At least 1 number</li>
+                                            <li class="invalid" id="specialHint">At least 1 special character</li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 <div class="form-group password-toggle">
                                     <label class="form-label">Confirm New Password</label>
@@ -985,6 +1079,7 @@
                                     <button type="button" class="password-toggle-btn" data-target="confirmPassword">
                                         <i class="fas fa-eye"></i>
                                     </button>
+                                    <div class="invalid-feedback">Passwords do not match</div>
                                 </div>
                                 <div class="form-actions">
                                     <button type="button" class="btn btn-outline" id="cancelPassword">
@@ -1058,6 +1153,18 @@
         const db = firebase.firestore();
         const storage = firebase.storage();
 
+        // DOM Elements
+        const personalInfoForm = document.getElementById('personalInfoForm');
+        const passwordForm = document.getElementById('passwordForm');
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+        const currentPasswordInput = document.getElementById('currentPassword');
+        const newPasswordInput = document.getElementById('newPassword');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const passwordStrengthMeter = document.getElementById('passwordStrength');
+
         // Show toast notification
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
@@ -1065,7 +1172,8 @@
             toast.className = `toast ${type}`;
             
             // Add icon based on type
-            const icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+            const icon = type === 'success' ? 'fas fa-check-circle' : 
+                         type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-info-circle';
             toast.innerHTML = `<i class="${icon}"></i> ${message}`;
             
             toast.classList.add('show');
@@ -1100,21 +1208,6 @@
                 // User is logged in, load their data
                 loadUserData(user);
                 loadMembershipData(user.uid);
-                
-                // Update user profile in topbar
-                db.collection('users').doc(user.uid).get()
-                    .then((doc) => {
-                        if (doc.exists) {
-                            const userData = doc.data();
-                            document.querySelector('.user-name').textContent = userData.fullName || 'Member';
-                            if (userData.photoURL) {
-                                document.querySelector('.user-img').src = userData.photoURL;
-                            }
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error loading user data:', error);
-                    });
             }
         });
         
@@ -1138,14 +1231,17 @@
                         const fullName = userData.fullName || '';
                         const nameParts = fullName.split(' ');
                         
-                        document.getElementById('firstName').value = nameParts[0] || '';
-                        document.getElementById('lastName').value = nameParts.slice(1).join(' ') || '';
-                        document.getElementById('email').value = user.email;
-                        document.getElementById('phone').value = userData.phone || '';
+                        firstNameInput.value = nameParts[0] || '';
+                        lastNameInput.value = nameParts.slice(1).join(' ') || '';
+                        emailInput.value = user.email;
+                        phoneInput.value = userData.phone || '';
                         document.getElementById('address').value = userData.address || '';
                         document.getElementById('city').value = userData.city || '';
                         document.getElementById('state').value = userData.state || '';
                         document.getElementById('zipCode').value = userData.zipCode || '';
+                        
+                        // Update topbar user info
+                        document.querySelector('.user-name').textContent = fullName || 'Member';
                         
                         // Set member info
                         document.getElementById('membershipId').textContent = user.uid.substring(0, 8).toUpperCase();
@@ -1235,7 +1331,7 @@
             
             // Validate file type
             if (!file.type.match('image.*')) {
-                showToast('Please select an image file', 'error');
+                showToast('Please select an image file (JPEG, PNG)', 'error');
                 return;
             }
             
@@ -1302,9 +1398,46 @@
             );
         });
         
+        // Form validation for personal info
+        function validatePersonalInfoForm() {
+            let isValid = true;
+            
+            // Validate first name
+            if (!firstNameInput.value.trim()) {
+                firstNameInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                firstNameInput.classList.remove('is-invalid');
+            }
+            
+            // Validate last name
+            if (!lastNameInput.value.trim()) {
+                lastNameInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                lastNameInput.classList.remove('is-invalid');
+            }
+            
+            // Validate phone
+            if (!phoneInput.value.trim()) {
+                phoneInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                phoneInput.classList.remove('is-invalid');
+            }
+            
+            return isValid;
+        }
+        
         // Update personal info
-        document.getElementById('personalInfoForm').addEventListener('submit', function(e) {
+        personalInfoForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // Validate form
+            if (!validatePersonalInfoForm()) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
             
             const user = auth.currentUser;
             if (!user) return;
@@ -1315,9 +1448,9 @@
             saveBtn.innerHTML = '<span class="loading-spinner"></span> Saving...';
             saveBtn.disabled = true;
             
-            const firstName = document.getElementById('firstName').value.trim();
-            const lastName = document.getElementById('lastName').value.trim();
-            const phone = document.getElementById('phone').value.trim();
+            const firstName = firstNameInput.value.trim();
+            const lastName = lastNameInput.value.trim();
+            const phone = phoneInput.value.trim();
             const address = document.getElementById('address').value.trim();
             const city = document.getElementById('city').value.trim();
             const state = document.getElementById('state').value.trim();
@@ -1362,9 +1495,100 @@
             });
         });
         
+        // Password strength checker
+        newPasswordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            // Reset hints
+            document.getElementById('lengthHint').className = 'invalid';
+            document.getElementById('uppercaseHint').className = 'invalid';
+            document.getElementById('numberHint').className = 'invalid';
+            document.getElementById('specialHint').className = 'invalid';
+            
+            // Check password length
+            if (password.length >= 8) {
+                strength += 1;
+                document.getElementById('lengthHint').className = 'valid';
+            }
+            
+            // Check for uppercase letters
+            if (/[A-Z]/.test(password)) {
+                strength += 1;
+                document.getElementById('uppercaseHint').className = 'valid';
+            }
+            
+            // Check for numbers
+            if (/[0-9]/.test(password)) {
+                strength += 1;
+                document.getElementById('numberHint').className = 'valid';
+            }
+            
+            // Check for special characters
+            if (/[^A-Za-z0-9]/.test(password)) {
+                strength += 1;
+                document.getElementById('specialHint').className = 'valid';
+            }
+            
+            // Update strength meter
+            passwordStrengthMeter.className = 'password-strength-meter';
+            
+            if (strength <= 1) {
+                passwordStrengthMeter.classList.add('strength-weak');
+            } else if (strength <= 3) {
+                passwordStrengthMeter.classList.add('strength-medium');
+            } else {
+                passwordStrengthMeter.classList.add('strength-strong');
+            }
+        });
+        
+        // Validate password form
+        function validatePasswordForm() {
+            let isValid = true;
+            
+            // Validate current password
+            if (!currentPasswordInput.value) {
+                currentPasswordInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                currentPasswordInput.classList.remove('is-invalid');
+            }
+            
+            // Validate new password
+            if (!newPasswordInput.value) {
+                newPasswordInput.classList.add('is-invalid');
+                isValid = false;
+            } else if (newPasswordInput.value.length < 6) {
+                newPasswordInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                newPasswordInput.classList.remove('is-invalid');
+            }
+            
+            // Validate confirm password
+            if (!confirmPasswordInput.value || confirmPasswordInput.value !== newPasswordInput.value) {
+                confirmPasswordInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                confirmPasswordInput.classList.remove('is-invalid');
+            }
+            
+            return isValid;
+        }
+        
         // Change password
-        document.getElementById('passwordForm').addEventListener('submit', function(e) {
+        passwordForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // Validate form
+            if (!validatePasswordForm()) {
+                if (confirmPasswordInput.value !== newPasswordInput.value) {
+                    showToast('New passwords do not match!', 'error');
+                } else {
+                    showToast('Please fill in all password fields correctly', 'error');
+                }
+                return;
+            }
             
             const user = auth.currentUser;
             if (!user) return;
@@ -1375,9 +1599,9 @@
             changeBtn.innerHTML = '<span class="loading-spinner"></span> Changing...';
             changeBtn.disabled = true;
             
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+            const currentPassword = currentPasswordInput.value;
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
             
             // Validate passwords
             if (newPassword !== confirmPassword) {
@@ -1414,7 +1638,15 @@
                     });
                     
                     showToast('Password changed successfully!');
-                    document.getElementById('passwordForm').reset();
+                    passwordForm.reset();
+                    passwordStrengthMeter.className = 'password-strength-meter';
+                    
+                    // Reset hints
+                    document.getElementById('lengthHint').className = 'invalid';
+                    document.getElementById('uppercaseHint').className = 'invalid';
+                    document.getElementById('numberHint').className = 'invalid';
+                    document.getElementById('specialHint').className = 'invalid';
+                    
                     changeBtn.innerHTML = originalText;
                     changeBtn.disabled = false;
                 })
@@ -1424,8 +1656,10 @@
                     let errorMessage = 'Failed to change password. Please try again.';
                     if (error.code === 'auth/wrong-password') {
                         errorMessage = 'Current password is incorrect';
+                        currentPasswordInput.classList.add('is-invalid');
                     } else if (error.code === 'auth/weak-password') {
                         errorMessage = 'Password is too weak';
+                        newPasswordInput.classList.add('is-invalid');
                     }
                     
                     showToast(errorMessage, 'error');
@@ -1443,7 +1677,19 @@
         });
         
         document.getElementById('cancelPassword').addEventListener('click', function() {
-            document.getElementById('passwordForm').reset();
+            passwordForm.reset();
+            passwordStrengthMeter.className = 'password-strength-meter';
+            
+            // Reset validation
+            currentPasswordInput.classList.remove('is-invalid');
+            newPasswordInput.classList.remove('is-invalid');
+            confirmPasswordInput.classList.remove('is-invalid');
+            
+            // Reset hints
+            document.getElementById('lengthHint').className = 'invalid';
+            document.getElementById('uppercaseHint').className = 'invalid';
+            document.getElementById('numberHint').className = 'invalid';
+            document.getElementById('specialHint').className = 'invalid';
         });
         
         // Toggle password visibility
@@ -1516,7 +1762,3 @@
     </script>
 </body>
 </html>
-
-
-<!-- All Done --><!-- All Done --><!-- All Done -->
-<!-- All Done --><!-- All Done --><!-- All Done -->

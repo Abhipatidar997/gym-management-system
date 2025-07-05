@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Print Bill - PowerFit Gym</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Invoice - PowerFit Gym</title>
     <style>
         :root {
             --primary: #4361ee;
@@ -28,7 +26,7 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
             color: var(--dark);
             max-width: 800px;
@@ -72,11 +70,22 @@
             font-size: 2rem;
             color: var(--primary);
             margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .bill-subtitle {
             color: var(--gray);
             font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .invoice-title {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 600;
         }
 
         .bill-info {
@@ -97,6 +106,8 @@
             margin-bottom: 0.75rem;
             color: var(--primary);
             font-size: 1.1rem;
+            border-bottom: 1px solid var(--gray-light);
+            padding-bottom: 0.5rem;
         }
 
         .bill-details {
@@ -120,14 +131,19 @@
         .bill-table td {
             padding: 0.75rem;
             border-bottom: 1px solid var(--gray-light);
+            vertical-align: top;
         }
 
         .bill-table tr:last-child td {
-            border-bottom: none;
+            border-bottom: 2px solid var(--gray-light);
         }
 
         .text-right {
             text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
         }
 
         .bill-total {
@@ -183,7 +199,7 @@
             padding: 0.75rem 1.5rem;
             border-radius: 5px;
             cursor: pointer;
-            font-family: 'Poppins', sans-serif;
+            font-family: inherit;
             font-size: 1rem;
             display: flex;
             align-items: center;
@@ -276,6 +292,7 @@
                 box-shadow: none;
                 padding: 0;
                 border-radius: 0;
+                animation: none;
             }
 
             .bill-header {
@@ -325,50 +342,87 @@
             gap: 0.5rem;
         }
 
-        .error-message i {
+        .error-icon {
             font-size: 1.2rem;
+        }
+
+        /* Payment details */
+        .payment-details {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(67, 97, 238, 0.05);
+            border-radius: 5px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .payment-details p {
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-details strong {
+            color: var(--primary);
         }
     </style>
 </head>
 <body>
     <div class="print-actions">
         <button class="print-btn" onclick="window.print()">
-            <i class="fas fa-print"></i> Print Bill
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 5px;">
+                <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
+            </svg>
+            Print Invoice
         </button>
         <button class="print-btn secondary" onclick="window.close()">
-            <i class="fas fa-times"></i> Close
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 5px;">
+                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+            </svg>
+            Close
         </button>
     </div>
     
     <div class="bill-container">
         <div class="bill-header">
             <div class="gym-logo">
-                <i class="fas fa-dumbbell"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M12.5 2a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zm-2 0a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zm-2 0a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zm-2 0a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zm-2 0a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5z"/>
+                    <path fill-rule="evenodd" d="M0 14.5a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5z"/>
+                </svg>
             </div>
             <h1 class="bill-title">PowerFit Gym</h1>
             <p class="bill-subtitle">123 Fitness Street, Workout City, WC 10001</p>
             <p class="bill-subtitle">Phone: (123) 456-7890 | Email: info@powerfitgym.com</p>
+            
+            <h2 class="invoice-title">MEMBERSHIP INVOICE</h2>
         </div>
         
         <div class="bill-info">
             <div class="bill-from">
-                <h3 class="bill-info-title">Bill From:</h3>
-                <p>PowerFit Gym</p>
+                <h3 class="bill-info-title">From:</h3>
+                <p><strong>PowerFit Gym</strong></p>
                 <p>123 Fitness Street</p>
                 <p>Workout City, WC 10001</p>
                 <p>Tax ID: 123456789</p>
+                <p>Billing Contact: billing@powerfitgym.com</p>
             </div>
             
             <div class="bill-to">
-                <h3 class="bill-info-title">Bill To:</h3>
-                <p id="memberName">Loading...</p>
+                <h3 class="bill-info-title">To:</h3>
+                <p id="memberName"><strong>Loading...</strong></p>
                 <p id="memberEmail">Loading...</p>
                 <p id="memberPhone">Loading...</p>
-                <p>Bill Date: <span id="billDate">Loading...</span></p>
+                <p>Invoice #: <span id="billNumber" class="highlight">Loading...</span></p>
+                <p>Date Issued: <span id="billDate">Loading...</span></p>
                 <p>Due Date: <span id="dueDate">Loading...</span></p>
                 <p>Status: <span id="paymentStatus">Loading...</span></p>
-                <p>Bill Number: <span id="billNumber">Loading...</span></p>
             </div>
+        </div>
+        
+        <div id="paymentInfoContainer" class="payment-details" style="display: none;">
+            <h3 class="bill-info-title">Payment Information</h3>
+            <p><strong>Payment Method:</strong> <span id="paymentMethod">Credit Card</span></p>
+            <p><strong>Transaction ID:</strong> <span id="transactionId">123456789</span></p>
+            <p><strong>Payment Date:</strong> <span id="paymentDate">Jan 1, 2023</span></p>
         </div>
         
         <div class="bill-details">
@@ -376,15 +430,14 @@
                 <thead>
                     <tr>
                         <th>Description</th>
-                        <th>Package</th>
-                        <th>Quantity</th>
-                        <th>Unit Price</th>
+                        <th>Plan</th>
+                        <th>Period</th>
                         <th>Amount</th>
                     </tr>
                 </thead>
                 <tbody id="billItems">
                     <tr>
-                        <td colspan="5" class="text-center">
+                        <td colspan="4" class="text-center">
                             <div class="loading-spinner"></div>
                         </td>
                     </tr>
@@ -403,15 +456,16 @@
                     <span id="tax">$0.00</span>
                 </div>
                 <div class="total-row total">
-                    <span>Total:</span>
+                    <span>Total Amount:</span>
                     <span id="total">$0.00</span>
                 </div>
             </div>
         </div>
         
         <div class="bill-footer">
-            <p>Thank you for your membership! Please pay this bill by the due date.</p>
+            <p><strong>Thank you for your membership!</strong> Please pay this invoice by the due date.</p>
             <p>For any questions, please contact our billing department at billing@powerfitgym.com</p>
+            <p style="margin-top: 1rem;">&copy; <span id="currentYear"></span> PowerFit Gym. All rights reserved.</p>
         </div>
     </div>
 
@@ -421,6 +475,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
 
     <script>
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDMU_xXHhZdrR9cA3fPcZDSJeg4SQZBD7M",
@@ -449,30 +506,46 @@
                 if (billId) {
                     loadBillData(billId, user.uid);
                 } else {
-                    showError("No bill ID provided in URL");
+                    showError("No invoice ID provided in URL");
                 }
             }
         });
 
         function showError(message) {
-            const billItems = document.getElementById('billItems');
-            billItems.innerHTML = `
-                <tr>
-                    <td colspan="5">
-                        <div class="error-message">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <span>${message}</span>
-                        </div>
-                    </td>
-                </tr>
+            const billContainer = document.querySelector('.bill-container');
+            billContainer.innerHTML = `
+                <div class="error-message">
+                    <svg class="error-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                    </svg>
+                    <span>${message}</span>
+                </div>
+                <button class="print-btn" onclick="window.history.back()" style="margin-top: 1rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 5px;">
+                        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                    </svg>
+                    Go Back
+                </button>
             `;
+        }
+
+        function formatDate(date) {
+            if (!date) return 'N/A';
+            const d = date.toDate();
+            return d.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         }
 
         function loadBillData(billId, userId) {
             db.collection('bills').doc(billId).get()
                 .then((billDoc) => {
                     if (!billDoc.exists) {
-                        showError("Bill not found");
+                        showError("Invoice not found");
                         return;
                     }
 
@@ -480,17 +553,17 @@
                     
                     // Verify this bill belongs to the logged-in user
                     if (billData.userId !== userId) {
-                        showError("You are not authorized to view this bill");
+                        showError("You are not authorized to view this invoice");
                         return;
                     }
 
                     // Set bill header info
-                    const billDate = billData.paymentDate.toDate();
+                    const billDate = billData.timestamp ? billData.timestamp.toDate() : new Date();
                     const dueDate = billData.dueDate ? billData.dueDate.toDate() : new Date(billDate.getTime() + 7 * 24 * 60 * 60 * 1000); // Default 7 days from bill date
                     
-                    document.getElementById('billDate').textContent = billDate.toLocaleDateString();
-                    document.getElementById('dueDate').textContent = dueDate.toLocaleDateString();
-                    document.getElementById('billNumber').textContent = billData.billNumber || billId;
+                    document.getElementById('billDate').textContent = formatDate(billData.timestamp);
+                    document.getElementById('dueDate').textContent = formatDate(billData.dueDate);
+                    document.getElementById('billNumber').textContent = billData.billNumber || `INV-${billId.substring(0, 8).toUpperCase()}`;
                     
                     // Set payment status
                     const statusElement = document.getElementById('paymentStatus');
@@ -500,6 +573,17 @@
                     if (billData.paid) {
                         statusClass = 'paid';
                         statusText = 'Paid';
+                        // Show payment details if paid
+                        document.getElementById('paymentInfoContainer').style.display = 'block';
+                        if (billData.paymentDate) {
+                            document.getElementById('paymentDate').textContent = formatDate(billData.paymentDate);
+                        }
+                        if (billData.paymentMethod) {
+                            document.getElementById('paymentMethod').textContent = billData.paymentMethod;
+                        }
+                        if (billData.transactionId) {
+                            document.getElementById('transactionId').textContent = billData.transactionId;
+                        }
                     } else if (new Date() > dueDate) {
                         statusClass = 'overdue';
                         statusText = 'Overdue';
@@ -512,7 +596,7 @@
                         .then((userDoc) => {
                             const userData = userDoc.data();
                             
-                            document.getElementById('memberName').textContent = userData.fullName || 'Member';
+                            document.getElementById('memberName').innerHTML = `<strong>${userData.fullName || 'Member'}</strong>`;
                             document.getElementById('memberEmail').textContent = userData.email;
                             document.getElementById('memberPhone').textContent = userData.phone || 'N/A';
                         })
@@ -529,27 +613,45 @@
                     if (!billData.items || billData.items.length === 0) {
                         billItems.innerHTML = `
                             <tr>
-                                <td colspan="5" class="text-center">No items in this bill</td>
+                                <td colspan="4" class="text-center">No items in this invoice</td>
                             </tr>
                         `;
                         return;
                     }
                     
-                    billData.items.forEach((item) => {
+                    // Main membership item
+                    if (billData.plan) {
                         const row = document.createElement('tr');
-                        const itemTotal = item.price * (item.quantity || 1);
+                        const itemTotal = billData.amount || 0;
                         
                         row.innerHTML = `
-                            <td>${item.description}</td>
-                            <td>${item.packageName || 'N/A'}</td>
-                            <td>${item.quantity || 1}</td>
-                            <td>$${item.price.toFixed(2)}</td>
+                            <td>Gym Membership</td>
+                            <td>${billData.plan}</td>
+                            <td>${billData.month || 'Monthly'}</td>
                             <td>$${itemTotal.toFixed(2)}</td>
                         `;
                         billItems.appendChild(row);
                         
                         subtotal += itemTotal;
-                    });
+                    }
+                    
+                    // Additional items
+                    if (billData.items) {
+                        billData.items.forEach((item) => {
+                            const row = document.createElement('tr');
+                            const itemTotal = item.price * (item.quantity || 1);
+                            
+                            row.innerHTML = `
+                                <td>${item.description || 'Additional Service'}</td>
+                                <td>${item.packageName || 'N/A'}</td>
+                                <td>${item.period || 'One-time'}</td>
+                                <td>$${itemTotal.toFixed(2)}</td>
+                            `;
+                            billItems.appendChild(row);
+                            
+                            subtotal += itemTotal;
+                        });
+                    }
                     
                     // Calculate totals
                     const taxRate = billData.taxRate || 0.1; // Default 10% tax
@@ -561,15 +663,10 @@
                     document.getElementById('total').textContent = '$' + total.toFixed(2);
                 })
                 .catch((error) => {
-                    console.error('Error loading bill:', error);
-                    showError("Error loading bill data. Please try again.");
+                    console.error('Error loading invoice:', error);
+                    showError("Error loading invoice data. Please try again.");
                 });
         }
     </script>
 </body>
 </html>
-
-
-
-<!-- All Done --><!-- All Done --><!-- All Done -->
-<!-- All Done --><!-- All Done --><!-- All Done -->

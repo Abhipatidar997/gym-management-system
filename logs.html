@@ -7,20 +7,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
- /* ====== CSS Variables ====== */
         :root {
             --primary: #3a86ff;
             --primary-dark: #2667cc;
             --primary-light: rgba(58, 134, 255, 0.1);
-            --secondary: #ff006e;
-            --secondary-dark: #cc0058;
-            --dark: #2b2d42;
-            --darker: #1a1b28;
-            --light: #f8f9fa;
-            --lighter: #ffffff;
             --success: #38b000;
             --warning: #ffbe0b;
             --danger: #ef233c;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --lighter: #ffffff;
+            --dark: #2b2d42;
+            --darker: #1a1b28;
             --gray: #6c757d;
             --gray-light: #e9ecef;
             --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -31,7 +29,6 @@
             --topbar-height: 70px;
         }
 
-        /* ====== Base Styles ====== */
         * {
             margin: 0;
             padding: 0;
@@ -47,22 +44,7 @@
             display: flex;
         }
 
-        /* ====== Scrollbar ====== */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--gray-light);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 5px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
-        }
-
-        /* ====== Sidebar ====== */
+        /* Sidebar Styles */
         .sidebar {
             width: var(--sidebar-width);
             background-color: var(--lighter);
@@ -71,7 +53,6 @@
             height: 100vh;
             transition: var(--transition);
             z-index: 1000;
-            overflow-y: auto;
         }
 
         .sidebar-header {
@@ -80,26 +61,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: var(--topbar-height);
         }
 
         .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary);
             text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .sidebar-logo:hover {
-            transform: translateX(3px);
-        }
-
-        .sidebar-logo i {
-            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
         }
 
         .sidebar-menu {
@@ -129,12 +100,7 @@
             position: relative;
         }
 
-        .menu-link:hover {
-            color: var(--primary);
-            background-color: var(--primary-light);
-        }
-
-        .menu-link.active {
+        .menu-link:hover, .menu-link.active {
             color: var(--primary);
             background-color: var(--primary-light);
         }
@@ -156,17 +122,15 @@
             text-align: center;
         }
 
-        /* ====== Main Content ====== */
+        /* Main Content */
         .main-content {
             flex: 1;
             margin-left: var(--sidebar-width);
             transition: var(--transition);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* ====== Topbar ====== */
+        /* Topbar */
         .topbar {
             height: var(--topbar-height);
             background-color: var(--lighter);
@@ -198,72 +162,6 @@
             color: var(--primary);
         }
 
-        .search-box {
-            position: relative;
-        }
-
-        .search-box input {
-            padding: 0.6rem 1rem 0.6rem 2.5rem;
-            border-radius: 50px;
-            border: 1px solid var(--gray-light);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
-            transition: var(--transition);
-            width: 250px;
-            background-color: var(--light);
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-light);
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray);
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .topbar-item {
-            margin-left: 1.5rem;
-            position: relative;
-        }
-
-        .topbar-link {
-            color: var(--dark);
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            transition: var(--transition);
-        }
-
-        .topbar-link:hover {
-            color: var(--primary);
-        }
-
-        .topbar-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: var(--danger);
-            color: var(--lighter);
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 0.65rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
         .user-profile {
             display: flex;
             align-items: center;
@@ -291,10 +189,9 @@
             margin-right: 0.5rem;
         }
 
-        /* ====== Content Area ====== */
+        /* Content Area */
         .content-area {
             padding: 2rem;
-            flex: 1;
         }
 
         .content-header {
@@ -315,331 +212,234 @@
             font-size: 0.9rem;
         }
 
-        .btn {
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: var(--lighter);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        /* ====== Dashboard Cards ====== */
-        .dashboard-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .card {
-            background-color: var(--lighter);
-            border-radius: 10px;
-            box-shadow: var(--shadow-sm);
-            padding: 1.5rem;
-            transition: var(--transition);
-            border-left: 4px solid var(--primary);
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .card-title {
-            font-size: 0.95rem;
-            color: var(--gray);
-            font-weight: 500;
-        }
-
-        .card-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            color: var(--lighter);
-            background-color: var(--primary);
-        }
-
-        .card-icon.members {
-            background-color: #3a86ff;
-        }
-
-        .card-icon.revenue {
-            background-color: #38b000;
-        }
-
-        .card-icon.packages {
-            background-color: #ffbe0b;
-        }
-
-        .card-icon.expiring {
-            background-color: #ef233c;
-        }
-
-        .card-body h3 {
-            font-size: 1.8rem;
-            margin-bottom: 0.25rem;
-            color: var(--darker);
-            font-weight: 600;
-        }
-
-        .card-body p {
-            color: var(--gray);
-            font-size: 0.85rem;
-        }
-
-        .card-footer {
-            margin-top: 1rem;
-            font-size: 0.8rem;
-            color: var(--success);
-            display: flex;
-            align-items: center;
-        }
-
-        .card-footer i {
-            margin-right: 0.5rem;
-            font-size: 0.7rem;
-        }
-
-        /* ====== Recent Activity ====== */
-        .recent-activity {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .activity-card {
+        /* Logs Container */
+        .logs-container {
             background-color: var(--lighter);
             border-radius: 10px;
             box-shadow: var(--shadow-sm);
             padding: 1.5rem;
         }
 
-        .activity-header {
+        .logs-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-        .activity-title {
+        .logs-title {
             font-size: 1.25rem;
-            color: var(--darker);
             font-weight: 600;
         }
 
-        .activity-link {
-            color: var(--primary);
+        .logs-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-light);
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--lighter);
+            color: var(--dark);
             font-size: 0.9rem;
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
+            min-width: 180px;
         }
 
-        .activity-link:hover {
-            text-decoration: underline;
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
         }
 
-        .activity-table {
+        /* Logs Table */
+        .logs-table-container {
+            max-height: 600px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--gray-light);
+        }
+
+        .logs-table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        .activity-table th {
-            text-align: left;
-            padding: 0.75rem 0;
+        .logs-table th {
+            position: sticky;
+            top: 0;
+            background-color: var(--lighter);
+            padding: 1rem;
             border-bottom: 1px solid var(--gray-light);
             color: var(--gray);
             font-weight: 500;
             font-size: 0.85rem;
+            text-align: left;
+            z-index: 10;
         }
 
-        .activity-table td {
-            padding: 1rem 0;
+        .logs-table td {
+            padding: 1rem;
             border-bottom: 1px solid var(--gray-light);
             font-size: 0.9rem;
             vertical-align: middle;
         }
 
-        .activity-table tr:last-child td {
+        .logs-table tr:last-child td {
             border-bottom: none;
         }
 
-        .member-info {
-            display: flex;
-            align-items: center;
+        .logs-table tr:hover {
+            background-color: var(--primary-light);
         }
 
-        .member-img {
+        /* Log User */
+        .log-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .log-user-img {
             width: 36px;
             height: 36px;
             border-radius: 50%;
             object-fit: cover;
-            margin-right: 1rem;
             border: 2px solid var(--gray-light);
         }
 
-        .member-name {
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-            font-size: 0.95rem;
+        .log-user-info {
+            display: flex;
+            flex-direction: column;
         }
 
-        .member-email {
+        .log-user-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .log-user-email {
             font-size: 0.8rem;
             color: var(--gray);
         }
 
-        .status-badge {
-            display: inline-block;
+        /* Log Action */
+        .log-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             padding: 0.35rem 0.75rem;
             border-radius: 50px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 500;
         }
 
-        .status-badge.active {
+        .log-action.login {
+            background-color: rgba(58, 134, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .log-action.signup {
             background-color: rgba(56, 176, 0, 0.1);
             color: var(--success);
         }
 
-        .status-badge.pending {
+        .log-action.diet {
             background-color: rgba(255, 190, 11, 0.1);
             color: var(--warning);
         }
 
-        .status-badge.expired {
+        .log-action.bill {
             background-color: rgba(239, 35, 60, 0.1);
             color: var(--danger);
         }
 
-        /* ====== Revenue Chart ====== */
-        .revenue-chart {
-            height: 250px;
-            background-color: var(--light);
-            border-radius: 8px;
+        .log-action.system {
+            background-color: rgba(72, 149, 239, 0.1);
+            color: var(--info);
+        }
+
+        /* Log Date */
+        .log-date {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
+        }
+
+        .log-date-time {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .log-date-ago {
+            font-size: 0.8rem;
             color: var(--gray);
-            font-size: 0.9rem;
-            position: relative;
-            overflow: hidden;
+            font-style: italic;
         }
 
-        .chart-placeholder {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        /* Empty State */
+        .empty-state {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            background-color: var(--light);
-            z-index: 1;
+            padding: 3rem;
+            text-align: center;
         }
 
-        .chart-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--gray-light);
+            margin-bottom: 1rem;
         }
 
-        /* ====== Loading States ====== */
+        .empty-state p {
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Loading State */
+        .loading-state {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+        }
+
         .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid var(--primary-light);
             border-top-color: var(--primary);
-            animation: spin 1s ease-in-out infinite;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .skeleton {
-            background-color: var(--gray-light);
-            border-radius: 4px;
-            animation: pulse 1.5s infinite ease-in-out;
+        /* Error State */
+        .error-state {
+            background-color: rgba(239, 35, 60, 0.1);
+            color: var(--danger);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        .error-state i {
+            font-size: 1.2rem;
         }
 
-        /* ====== Page Loading Overlay ====== */
-        body.loading {
-            cursor: wait;
-            position: relative;
-        }
-
-        body.loading::after {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255,255,255,0.8);
-            z-index: 9999;
-        }
-
-        body.loading::before {
-            content: "";
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--primary-light);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            z-index: 10000;
-        }
-
-        /* ====== Responsive Design ====== */
-        @media (max-width: 1200px) {
-            .recent-activity {
-                grid-template-columns: 1fr;
-            }
-        }
-
+        /* Responsive Design */
         @media (max-width: 992px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -663,10 +463,6 @@
                 padding: 0 1.5rem;
             }
 
-            .search-box input {
-                width: 180px;
-            }
-
             .user-name {
                 display: none;
             }
@@ -680,17 +476,23 @@
                 align-items: flex-start;
                 gap: 1rem;
             }
+
+            .logs-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .logs-filters {
+                width: 100%;
+            }
+
+            .filter-select {
+                flex: 1;
+                min-width: auto;
+            }
         }
 
         @media (max-width: 576px) {
-            .dashboard-cards {
-                grid-template-columns: 1fr;
-            }
-
-            .search-box {
-                display: none;
-            }
-
             .topbar {
                 padding: 0 1rem;
             }
@@ -698,213 +500,21 @@
             .content-area {
                 padding: 1rem;
             }
-        }
-        
-        /* Logs specific styles */
-        .logs-container {
-            background-color: var(--lighter);
-            border-radius: 10px;
-            box-shadow: var(--shadow-sm);
-            padding: 1.5rem;
-        }
-        
-        .logs-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .logs-table th {
-            text-align: left;
-            padding: 1rem;
-            border-bottom: 1px solid var(--gray-light);
-            color: var(--gray);
-            font-weight: 500;
-            font-size: 0.85rem;
-        }
-        
-        .logs-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--gray-light);
-            font-size: 0.9rem;
-        }
-        
-        .logs-table tr:hover {
-            background-color: var(--primary-light);
-        }
-        
-        .log-user {
-            display: flex;
-            align-items: center;
-        }
-        
-        .log-user-img {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 0.75rem;
-            border: 2px solid var(--gray-light);
-        }
-        
-        .log-action {
-            display: inline-block;
-            padding: 0.35rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            text-transform: capitalize;
-        }
-        
-        .log-action.login {
-            background-color: rgba(58, 134, 255, 0.1);
-            color: var(--primary);
-        }
-        
-        .log-action.create {
-            background-color: rgba(56, 176, 0, 0.1);
-            color: var(--success);
-        }
-        
-        .log-action.update {
-            background-color: rgba(255, 190, 11, 0.1);
-            color: var(--warning);
-        }
-        
-        .log-action.delete {
-            background-color: rgba(239, 35, 60, 0.1);
-            color: var(--danger);
-        }
-        
-        .log-date {
-            color: var(--gray);
-            font-size: 0.85rem;
-            white-space: nowrap;
-        }
-        
-        .logs-filter {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        
-        .filter-select {
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            border: 1px solid var(--gray-light);
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--lighter);
-            color: var(--dark);
-            font-size: 0.9rem;
-            min-width: 180px;
-        }
-        
-        .filter-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-light);
-        }
-        
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 2rem;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        
-        .page-btn {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--gray-light);
-            background-color: var(--lighter);
-            border-radius: 5px;
-            cursor: pointer;
-            transition: var(--transition);
-            min-width: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .page-btn:hover:not(:disabled) {
-            background-color: var(--primary-light);
-            color: var(--primary);
-            border-color: var(--primary-light);
-        }
-        
-        .page-btn.active {
-            background-color: var(--primary);
-            color: var(--lighter);
-            border-color: var(--primary);
-        }
-        
-        .page-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            text-align: center;
-            color: var(--gray);
-        }
-        
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: var(--gray-light);
-        }
-        
-        .empty-state p {
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .empty-state .btn {
-            margin-top: 1rem;
-        }
-        
-        /* Relative time indicator */
-        .time-ago {
-            font-size: 0.8rem;
-            color: var(--gray);
-            font-style: italic;
-        }
 
-        /* Loading spinner for table */
-        .table-loading {
-            display: flex;
-            justify-content: center;
-            padding: 2rem;
-        }
-        
-        .table-loading .spinner {
-            width: 2rem;
-            height: 2rem;
-            border: 3px solid var(--primary-light);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+            .logs-table td {
+                padding: 0.75rem;
+            }
 
-        /* Error message */
-        .error-message {
-            background-color: rgba(239, 35, 60, 0.1);
-            color: var(--danger);
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .error-message i {
-            font-size: 1.2rem;
+            .log-user {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .log-user-img {
+                width: 32px;
+                height: 32px;
+            }
         }
     </style>
 </head>
@@ -914,7 +524,7 @@
         <div class="sidebar-header">
             <a href="admin-dashboard.html" class="sidebar-logo">
                 <i class="fas fa-dumbbell"></i>
-                <span>PowerFit Pro</span>
+                <span>PowerFit</span>
             </a>
         </div>
         <div class="sidebar-menu">
@@ -948,13 +558,6 @@
                     <a href="notifications.html" class="menu-link">
                         <i class="fas fa-bell"></i>
                         <span>Notifications</span>
-                        <span class="topbar-badge">3</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="supplements.html" class="menu-link">
-                        <i class="fas fa-pills"></i>
-                        <span>Supplements</span>
                     </a>
                 </li>
                 <li class="menu-item">
@@ -997,81 +600,64 @@
                 <div class="menu-toggle">
                     <i class="fas fa-bars"></i>
                 </div>
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search members, bills...">
-                </div>
             </div>
             <div class="topbar-right">
-                <div class="topbar-item">
-                    <a href="notifications.html" class="topbar-link">
-                        <i class="fas fa-bell"></i>
-                        <span class="topbar-badge">3</span>
-                    </a>
-                </div>
-                <div class="topbar-item">
-                    <div class="user-profile" id="userProfile">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Admin" class="user-img">
-                        <span class="user-name">Admin</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
+                <div class="user-profile" id="userProfile">
+                    <img id="userProfileImage" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="user-img">
+                    <span class="user-name" id="username">Admin</span>
                 </div>
             </div>
         </div>
+
         <!-- Content Area -->
         <div class="content-area">
             <div class="content-header">
                 <div class="content-title">
                     <h2>Activity Logs</h2>
-                    <p>Track all system activities and user actions</p>
+                    <p>Audit trail of all system activities</p>
                 </div>
             </div>
-            
+
             <div class="logs-container">
-                <div id="errorContainer" style="display: none;"></div>
+                <div id="errorContainer"></div>
                 
-                <div class="logs-filter">
-                    <select class="filter-select" id="actionFilter">
-                        <option value="all">All Actions</option>
-                        <option value="login">Logins</option>
-                        <option value="create">Creations</option>
-                        <option value="update">Updates</option>
-                        <option value="delete">Deletions</option>
-                    </select>
-                    
-                    <select class="filter-select" id="userFilter">
-                        <option value="all">All Users</option>
-                        <!-- Users will be populated by JavaScript -->
-                    </select>
-                    
-                    <select class="filter-select" id="dateFilter">
-                        <option value="all">All Time</option>
-                        <option value="today">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                    </select>
+                <div class="logs-header">
+                    <h3 class="logs-title">Recent Activities</h3>
+                    <div class="logs-filters">
+                        <select class="filter-select" id="actionFilter">
+                            <option value="all">All Actions</option>
+                            <option value="login">Logins</option>
+                            <option value="signup">Signups</option>
+                            <option value="diet">Diet Plans</option>
+                            <option value="bill">Billing</option>
+                            <option value="system">System</option>
+                        </select>
+                        
+                        <select class="filter-select" id="userFilter">
+                            <option value="all">All Users</option>
+                            <!-- Users will be populated by JavaScript -->
+                        </select>
+                    </div>
                 </div>
                 
-                <table class="logs-table">
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Action</th>
-                            <th>Details</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logsTable">
-                        <tr>
-                            <td colspan="4" class="table-loading">
-                                <div class="spinner"></div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <div class="pagination" id="pagination">
-                    <!-- Pagination will be populated by JavaScript -->
+                <div class="logs-table-container">
+                    <table class="logs-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Details</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTable">
+                            <tr>
+                                <td colspan="4" class="loading-state">
+                                    <div class="loading-spinner"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -1081,7 +667,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-
+    
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -1099,83 +685,280 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Check authentication state
-        auth.onAuthStateChanged((user) => {
-            if (!user) {
-                window.location.href = 'login.html';
-            } else {
-                // Check if user is admin
-                db.collection('users').doc(user.uid).get()
-                    .then((doc) => {
-                        if (doc.exists) {
-                            const userData = doc.data();
-                            if (userData.role !== 'admin') {
-                                window.location.href = 'member-dashboard.html';
-                            } else {
-                                // Load logs and users for filter
-                                loadUsersForFilter();
-                                loadLogs();
-                                
-                                // Update user profile in topbar
-                                document.querySelector('.user-name').textContent = userData.fullName || 'Admin';
-                                if (userData.photoURL) {
-                                    document.querySelector('.user-img').src = userData.photoURL;
-                                }
-                            }
-                        } else {
-                            auth.signOut();
-                            window.location.href = 'login.html';
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error getting user data:', error);
-                        showError('Error verifying user permissions. Please try again.');
-                        auth.signOut();
-                        window.location.href = 'login.html';
-                    });
-            }
+        // DOM Elements
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const logoutButton = document.getElementById('logoutButton');
+        const usernameElement = document.getElementById('username');
+        const userProfileImage = document.getElementById('userProfileImage');
+        const errorContainer = document.getElementById('errorContainer');
+        const logsTable = document.getElementById('logsTable');
+        const actionFilter = document.getElementById('actionFilter');
+        const userFilter = document.getElementById('userFilter');
+
+        // Global Variables
+        let currentUser = null;
+        let isAdmin = false;
+        let unsubscribeLogs = null;
+        let unsubscribeUsers = null;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup sidebar toggle
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+
+            // Check authentication state
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    currentUser = user;
+                    checkAdminStatus();
+                } else {
+                    window.location.href = 'login.html';
+                }
+            });
+
+            // Setup filter change events
+            actionFilter.addEventListener('change', loadLogs);
+            userFilter.addEventListener('change', loadLogs);
+            
+            // Logout functionality
+            logoutButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                auth.signOut().then(() => {
+                    window.location.href = 'login.html';
+                }).catch(error => {
+                    console.error("Logout failed:", error);
+                    showError("Logout failed. Please try again.");
+                });
+            });
         });
 
-        // Show error message
-        function showError(message) {
-            const errorContainer = document.getElementById('errorContainer');
-            errorContainer.style.display = 'block';
-            errorContainer.innerHTML = `
-                <div class="error-message">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            
-            // Hide error after 5 seconds
-            setTimeout(() => {
-                errorContainer.style.display = 'none';
-            }, 5000);
+        // Check if user is admin
+        function checkAdminStatus() {
+            db.collection('users').doc(currentUser.uid).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        isAdmin = userData.role === 'admin';
+                        
+                        // Update UI based on role
+                        updateUIForRole(userData);
+                        
+                        // Load users for filter
+                        loadUsersForFilter();
+                        
+                        // Load logs
+                        loadLogs();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking admin status:", error);
+                    showError('Error verifying user role');
+                });
+        }
+
+        // Update UI based on user role
+        function updateUIForRole(userData) {
+            // Update username and profile image
+            if (userData.fullName) {
+                usernameElement.textContent = userData.fullName;
+            }
+            if (userData.profileImage) {
+                userProfileImage.src = userData.profileImage;
+            }
         }
 
         // Load users for filter dropdown
         function loadUsersForFilter() {
-            const userFilter = document.getElementById('userFilter');
-            
             // Clear existing options except the first one
             while (userFilter.options.length > 1) {
                 userFilter.remove(1);
             }
             
-            db.collection('users').get()
-                .then((querySnapshot) => {
-                    querySnapshot.forEach((doc) => {
-                        const userData = doc.data();
+            // Set up real-time listener for users
+            unsubscribeUsers = db.collection('users').orderBy('fullName').onSnapshot(snapshot => {
+                snapshot.docChanges().forEach(change => {
+                    if (change.type === 'added') {
+                        const userData = change.doc.data();
                         const option = document.createElement('option');
-                        option.value = doc.id;
+                        option.value = change.doc.id;
                         option.textContent = userData.fullName || userData.email;
                         userFilter.appendChild(option);
-                    });
-                })
-                .catch((error) => {
-                    console.error('Error loading users:', error);
-                    showError('Failed to load users for filter. Please refresh the page.');
+                    }
                 });
+            }, error => {
+                console.error("Error loading users:", error);
+                showError('Failed to load users for filter');
+            });
+        }
+
+        // Load logs with real-time updates
+        function loadLogs() {
+            // Clear any existing error
+            errorContainer.innerHTML = '';
+            
+            // Show loading state
+            logsTable.innerHTML = `
+                <tr>
+                    <td colspan="4" class="loading-state">
+                        <div class="loading-spinner"></div>
+                    </td>
+                </tr>
+            `;
+            
+            // Build query based on filters
+            let query = db.collection('logs').orderBy('timestamp', 'desc');
+            
+            // Apply action filter if not 'all'
+            const selectedAction = actionFilter.value;
+            if (selectedAction !== 'all') {
+                query = query.where('action', '==', selectedAction);
+            }
+            
+            // Apply user filter if not 'all'
+            const selectedUser = userFilter.value;
+            if (selectedUser !== 'all') {
+                query = query.where('userId', '==', selectedUser);
+            }
+            
+            // Unsubscribe from previous listener if exists
+            if (unsubscribeLogs) {
+                unsubscribeLogs();
+            }
+            
+            // Set up real-time listener for logs
+            unsubscribeLogs = query.onSnapshot(snapshot => {
+                // Clear existing logs
+                logsTable.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    logsTable.innerHTML = `
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <i class="fas fa-clipboard-list"></i>
+                                    <p>No activity logs found</p>
+                                    <p>Try adjusting your filters or check back later</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Array to hold all promises for user data
+                const userPromises = [];
+                const rows = [];
+                
+                snapshot.forEach(doc => {
+                    const logData = doc.data();
+                    const logDate = logData.timestamp.toDate();
+                    
+                    // Create row element
+                    const row = document.createElement('tr');
+                    
+                    // Add temporary content
+                    row.innerHTML = `
+                        <td>
+                            <div class="log-user">
+                                <div class="skeleton" style="width: 36px; height: 36px; border-radius: 50%;"></div>
+                                <div class="log-user-info">
+                                    <div class="skeleton" style="width: 120px; height: 16px; margin-bottom: 4px;"></div>
+                                    <div class="skeleton" style="width: 160px; height: 14px;"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="log-action ${logData.action}">
+                                <i class="fas fa-${getActionIcon(logData.action)}"></i>
+                                ${formatActionText(logData.action)}
+                            </span>
+                        </td>
+                        <td>${logData.details || 'No details provided'}</td>
+                        <td class="log-date">
+                            <span class="log-date-time">${logDate.toLocaleString()}</span>
+                            <span class="log-date-ago">${formatRelativeTime(logDate)}</span>
+                        </td>
+                    `;
+                    
+                    logsTable.appendChild(row);
+                    rows.push(row);
+                    
+                    // Get user data promise
+                    const userPromise = db.collection('users').doc(logData.userId).get()
+                        .then(userDoc => {
+                            if (userDoc.exists) {
+                                return userDoc.data();
+                            }
+                            return null;
+                        });
+                    
+                    userPromises.push(userPromise);
+                });
+                
+                // When all user data is fetched, update the rows
+                Promise.all(userPromises).then(users => {
+                    users.forEach((userData, index) => {
+                        if (userData) {
+                            const userCell = rows[index].cells[0];
+                            userCell.innerHTML = `
+                                <div class="log-user">
+                                    <img src="${userData.profileImage || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(userData.fullName || userData.email) + '&background=random'}" 
+                                         alt="${userData.fullName || 'User'}" class="log-user-img">
+                                    <div class="log-user-info">
+                                        <div class="log-user-name">${userData.fullName || userData.email}</div>
+                                        <div class="log-user-email">${userData.role || 'Member'}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                });
+            }, error => {
+                console.error('Error loading logs:', error);
+                showError('Failed to load activity logs. Please try again.');
+                
+                logsTable.innerHTML = `
+                    <tr>
+                        <td colspan="4">
+                            <div class="empty-state">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <p>Failed to load activity logs</p>
+                                <button class="filter-select" onclick="loadLogs()" style="margin-top: 1rem;">
+                                    <i class="fas fa-sync-alt"></i> Retry
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Get appropriate icon for action type
+        function getActionIcon(action) {
+            switch(action) {
+                case 'login': return 'sign-in-alt';
+                case 'signup': return 'user-plus';
+                case 'diet': return 'utensils';
+                case 'bill': return 'file-invoice-dollar';
+                case 'system': return 'cog';
+                default: return 'circle';
+            }
+        }
+
+        // Format action text for display
+        function formatActionText(action) {
+            switch(action) {
+                case 'login': return 'Login';
+                case 'signup': return 'Signup';
+                case 'diet': return 'Diet Plan';
+                case 'bill': return 'Billing';
+                case 'system': return 'System';
+                default: return action.charAt(0).toUpperCase() + action.slice(1);
+            }
         }
 
         // Format date as relative time (e.g., "2 hours ago")
@@ -1203,316 +986,23 @@
             }
             
             // If older than a week, show actual date
-            return date.toLocaleString();
+            return date.toLocaleDateString();
         }
 
-        // Load logs with pagination
-        let currentPage = 1;
-        const logsPerPage = 10;
-        let totalLogs = 0;
-        let lastVisible = null;
-        let firstVisible = null;
-        
-        function loadLogs() {
-            const logsTable = document.getElementById('logsTable');
-            logsTable.innerHTML = `
-                <tr>
-                    <td colspan="4" class="table-loading">
-                        <div class="spinner"></div>
-                    </td>
-                </tr>
+        // Show error message
+        function showError(message) {
+            errorContainer.innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>${message}</span>
+                </div>
             `;
             
-            const actionFilter = document.getElementById('actionFilter').value;
-            const userFilter = document.getElementById('userFilter').value;
-            const dateFilter = document.getElementById('dateFilter').value;
-            
-            let query = db.collection('logs').orderBy('timestamp', 'desc');
-            
-            // Apply filters
-            if (actionFilter !== 'all') {
-                query = query.where('action', '==', actionFilter);
-            }
-            
-            if (userFilter !== 'all') {
-                query = query.where('userId', '==', userFilter);
-            }
-            
-            if (dateFilter !== 'all') {
-                const now = new Date();
-                let startDate;
-                
-                if (dateFilter === 'today') {
-                    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                } else if (dateFilter === 'week') {
-                    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
-                } else if (dateFilter === 'month') {
-                    startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-                }
-                
-                query = query.where('timestamp', '>=', startDate);
-            }
-            
-            // Get total count for pagination
-            query.get().then((snapshot) => {
-                totalLogs = snapshot.size;
-                updatePagination();
-                
-                // Get paginated results
-                if (currentPage === 1) {
-                    query = query.limit(logsPerPage);
-                } else {
-                    query = query.startAfter(lastVisible).limit(logsPerPage);
-                }
-                
-                return query.get();
-            })
-            .then((querySnapshot) => {
-                logsTable.innerHTML = '';
-                
-                if (querySnapshot.empty) {
-                    logsTable.innerHTML = `
-                        <tr>
-                            <td colspan="4">
-                                <div class="empty-state">
-                                    <i class="fas fa-clipboard-list"></i>
-                                    <p>No activity logs found</p>
-                                    <p>Try adjusting your filters or check back later</p>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                lastVisible = querySnapshot.docs[querySnapshot.docs.length-1];
-                firstVisible = querySnapshot.docs[0];
-                
-                // Array to hold all promises for user data
-                const userPromises = [];
-                const rows = [];
-                
-                querySnapshot.forEach((doc) => {
-                    const logData = doc.data();
-                    const logDate = logData.timestamp.toDate();
-                    
-                    // Create row element
-                    const row = document.createElement('tr');
-                    
-                    // Add temporary content
-                    row.innerHTML = `
-                        <td>
-                            <div class="log-user">
-                                <div class="skeleton" style="width: 36px; height: 36px; border-radius: 50%;"></div>
-                                <div>
-                                    <div class="skeleton" style="width: 100px; height: 16px; margin-bottom: 4px;"></div>
-                                    <div class="skeleton" style="width: 60px; height: 14px;"></div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="log-action ${logData.action}">${logData.action}</span>
-                        </td>
-                        <td>${logData.details || 'No details'}</td>
-                        <td class="log-date">
-                            ${logDate.toLocaleString()}
-                            <div class="time-ago">${formatRelativeTime(logDate)}</div>
-                        </td>
-                    `;
-                    
-                    logsTable.appendChild(row);
-                    rows.push(row);
-                    
-                    // Get user data promise
-                    const userPromise = db.collection('users').doc(logData.userId).get()
-                        .then((userDoc) => {
-                            if (userDoc.exists) {
-                                const userData = userDoc.data();
-                                return userData;
-                            }
-                            return null;
-                        })
-                        .catch(() => null);
-                    
-                    userPromises.push(userPromise);
-                });
-                
-                // When all user data is fetched, update the rows
-                Promise.all(userPromises).then((users) => {
-                    users.forEach((userData, index) => {
-                        if (userData) {
-                            const userCell = rows[index].cells[0];
-                            userCell.innerHTML = `
-                                <div class="log-user">
-                                    <img src="${userData.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(userData.fullName || 'User') + '&background=random'}" 
-                                         alt="${userData.fullName}" class="log-user-img">
-                                    <div>
-                                        <div>${userData.fullName || userData.email}</div>
-                                        <div class="log-date">${userData.role || 'User'}</div>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    });
-                });
-            })
-            .catch((error) => {
-                console.error('Error loading logs:', error);
-                showError('Failed to load activity logs. Please try again.');
-                
-                logsTable.innerHTML = `
-                    <tr>
-                        <td colspan="4">
-                            <div class="empty-state">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <p>Failed to load activity logs</p>
-                                <button class="btn btn-primary" onclick="loadLogs()">
-                                    <i class="fas fa-sync-alt"></i> Retry
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
+            // Hide error after 5 seconds
+            setTimeout(() => {
+                errorContainer.innerHTML = '';
+            }, 5000);
         }
-        
-        // Update pagination controls
-        function updatePagination() {
-            const pagination = document.getElementById('pagination');
-            pagination.innerHTML = '';
-            
-            const totalPages = Math.ceil(totalLogs / logsPerPage);
-            
-            if (totalPages <= 1) return;
-            
-            // Previous button
-            const prevBtn = document.createElement('button');
-            prevBtn.className = 'page-btn';
-            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
-            prevBtn.disabled = currentPage === 1;
-            prevBtn.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    loadLogs();
-                }
-            });
-            pagination.appendChild(prevBtn);
-            
-            // Page buttons - show max 5 pages around current page
-            const maxVisiblePages = 5;
-            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-            
-            // Adjust if we're at the end
-            if (endPage - startPage + 1 < maxVisiblePages) {
-                startPage = Math.max(1, endPage - maxVisiblePages + 1);
-            }
-            
-            // First page and ellipsis
-            if (startPage > 1) {
-                const firstPageBtn = document.createElement('button');
-                firstPageBtn.className = 'page-btn';
-                firstPageBtn.textContent = '1';
-                firstPageBtn.addEventListener('click', () => {
-                    currentPage = 1;
-                    loadLogs();
-                });
-                pagination.appendChild(firstPageBtn);
-                
-                if (startPage > 2) {
-                    const ellipsis = document.createElement('span');
-                    ellipsis.textContent = '...';
-                    ellipsis.style.padding = '0.5rem';
-                    pagination.appendChild(ellipsis);
-                }
-            }
-            
-            // Page buttons
-            for (let i = startPage; i <= endPage; i++) {
-                const pageBtn = document.createElement('button');
-                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
-                pageBtn.textContent = i;
-                pageBtn.addEventListener('click', () => {
-                    currentPage = i;
-                    loadLogs();
-                });
-                pagination.appendChild(pageBtn);
-            }
-            
-            // Last page and ellipsis
-            if (endPage < totalPages) {
-                if (endPage < totalPages - 1) {
-                    const ellipsis = document.createElement('span');
-                    ellipsis.textContent = '...';
-                    ellipsis.style.padding = '0.5rem';
-                    pagination.appendChild(ellipsis);
-                }
-                
-                const lastPageBtn = document.createElement('button');
-                lastPageBtn.className = 'page-btn';
-                lastPageBtn.textContent = totalPages;
-                lastPageBtn.addEventListener('click', () => {
-                    currentPage = totalPages;
-                    loadLogs();
-                });
-                pagination.appendChild(lastPageBtn);
-            }
-            
-            // Next button
-            const nextBtn = document.createElement('button');
-            nextBtn.className = 'page-btn';
-            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
-            nextBtn.disabled = currentPage === totalPages;
-            nextBtn.addEventListener('click', () => {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    loadLogs();
-                }
-            });
-            pagination.appendChild(nextBtn);
-        }
-        
-        // Filter change events
-        document.getElementById('actionFilter').addEventListener('change', () => {
-            currentPage = 1;
-            loadLogs();
-        });
-        
-        document.getElementById('userFilter').addEventListener('change', () => {
-            currentPage = 1;
-            loadLogs();
-        });
-        
-        document.getElementById('dateFilter').addEventListener('change', () => {
-            currentPage = 1;
-            loadLogs();
-        });
-        
-        // Sidebar toggle for mobile
-        document.querySelector('.menu-toggle').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('active');
-        });
-        
-        // Logout functionality
-        document.getElementById('logoutButton').addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Show loading state
-            document.body.classList.add('loading');
-            
-            firebase.auth().signOut().then(() => {
-                window.location.href = 'login.html';
-            }).catch((error) => {
-                console.error("Logout failed:", error);
-                document.body.classList.remove('loading');
-                showError('Logout failed. Please try again.');
-            });
-        });
     </script>
 </body>
 </html>
-
-
-
-<!-- All Done --><!-- All Done --><!-- All Done -->
-<!-- All Done --><!-- All Done --><!-- All Done -->

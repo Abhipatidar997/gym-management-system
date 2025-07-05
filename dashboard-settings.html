@@ -54,6 +54,44 @@
             transition: var(--transition);
         }
 
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            transform: translateX(150%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background-color: var(--success);
+        }
+
+        .toast.error {
+            background-color: var(--danger);
+        }
+
+        .toast.warning {
+            background-color: var(--warning);
+        }
+
+        .toast i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
         /* Sidebar Styles */
         .sidebar {
             width: var(--sidebar-width);
@@ -514,6 +552,7 @@
             display: flex;
             justify-content: flex-end;
             margin-top: 2rem;
+            gap: 1rem;
         }
         
         .btn {
@@ -544,7 +583,6 @@
             background-color: transparent;
             border: 1px solid var(--gray-light);
             color: var(--dark);
-            margin-right: 1rem;
         }
         
         .btn-outline:hover {
@@ -627,6 +665,15 @@
         @media (max-width: 576px) {
             .search-box {
                 display: none;
+            }
+
+            .settings-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
@@ -731,7 +778,7 @@
                         <span id="userName" class="user-name">Admin</span>
                         <i class="fas fa-chevron-down"></i>
                         <div class="profile-dropdown" id="profileDropdown">
-                            <a href="admin-profile.html" class="dropdown-item">
+                            <a href="#" class="dropdown-item" id="profileLink">
                                 <i class="fas fa-user"></i>
                                 <span>View Profile</span>
                             </a>
@@ -762,8 +809,12 @@
                             <h4 class="settings-card-title">Theme</h4>
                             <p class="settings-card-description">Choose a color scheme for your dashboard</p>
                             <div class="theme-selector">
-                                <div class="theme-option theme-light selected" data-theme="light"></div>
-                                <div class="theme-option theme-dark" data-theme="dark"></div>
+                                <div class="theme-option theme-light selected" data-theme="light" title="Light Mode">
+                                    <i class="fas fa-sun"></i>
+                                </div>
+                                <div class="theme-option theme-dark" data-theme="dark" title="Dark Mode">
+                                    <i class="fas fa-moon"></i>
+                                </div>
                             </div>
                         </div>
                         
@@ -846,9 +897,13 @@
         </div>
     </div>
 
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
 
     <script>
         // Firebase configuration
@@ -865,16 +920,39 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db = firebase.firestore();
 
         // DOM Elements
         const userProfile = document.getElementById('userProfile');
         const profileDropdown = document.getElementById('profileDropdown');
         const logoutButton = document.getElementById('logoutButton');
+        const profileLink = document.getElementById('profileLink');
         const menuToggle = document.querySelector('.menu-toggle');
         const sidebar = document.querySelector('.sidebar');
         const themeOptions = document.querySelectorAll('.theme-option');
         const saveSettingsBtn = document.getElementById('saveSettings');
         const resetSettingsBtn = document.getElementById('resetSettings');
+        const userName = document.getElementById('userName');
+        const userProfileImage = document.getElementById('userProfileImage');
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            
+            // Add icon based on type
+            const icon = type === 'success' ? 'fas fa-check-circle' : 
+                         type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-info-circle';
+            toast.innerHTML = `<i class="${icon}"></i> ${message}`;
+            
+            toast.classList.add('show');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
 
         // Toggle sidebar on mobile
         menuToggle.addEventListener('click', function() {
@@ -907,7 +985,12 @@
             document.documentElement.setAttribute('data-theme', settings.theme);
             
             // Update theme selector
-            document.querySelector(`.theme-option[data-theme="${settings.theme}"]`).classList.add('selected');
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.classList.remove('selected');
+                if (option.getAttribute('data-theme') === settings.theme) {
+                    option.classList.add('selected');
+                }
+            });
             
             // Update toggle switches
             document.getElementById('compactLayout').checked = settings.compactLayout;
@@ -930,6 +1013,13 @@
                 const theme = this.getAttribute('data-theme');
                 document.documentElement.setAttribute('data-theme', theme);
                 currentSettings.theme = theme;
+                
+                // Show toast notification
+                const themeName = theme === 'light' ? 'Light Mode' : 'Dark Mode';
+                showToast(`Theme changed to ${themeName}`);
+                
+                // Save immediately for theme changes
+                localStorage.setItem('dashboardSettings', JSON.stringify(currentSettings));
             });
         });
 
@@ -943,7 +1033,7 @@
             
             localStorage.setItem('dashboardSettings', JSON.stringify(currentSettings));
             
-            alert('Settings saved successfully!');
+            showToast('Settings saved successfully!');
         });
 
         // Reset settings
@@ -960,7 +1050,7 @@
                 
                 localStorage.setItem('dashboardSettings', JSON.stringify(defaultSettings));
                 loadSettings();
-                alert('Settings reset to defaults!');
+                showToast('Settings reset to defaults!');
             }
         });
 
@@ -975,18 +1065,40 @@
                 window.location.href = 'login.html';
             }).catch((error) => {
                 console.error('Logout failed:', error);
-                alert('Logout failed. Please try again.');
+                showToast('Logout failed. Please try again.', 'error');
                 document.body.classList.remove('loading');
             });
         });
 
-        // Check authentication state
+        // Check authentication state and load user data
         auth.onAuthStateChanged((user) => {
             if (!user) {
                 window.location.href = 'login.html';
             } else {
-                // Update user profile in topbar
-                document.getElementById('userName').textContent = 'Admin';
+                // Load user data from Firestore
+                db.collection('users').doc(user.uid).get()
+                    .then((doc) => {
+                        if (doc.exists) {
+                            const userData = doc.data();
+                            
+                            // Update user profile in topbar
+                            userName.textContent = userData.fullName || 'User';
+                            
+                            // Set profile image if available
+                            if (userData.photoURL) {
+                                userProfileImage.src = userData.photoURL;
+                            } else {
+                                const name = userData.fullName || 'User';
+                                userProfileImage.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
+                            }
+                            
+                            // Set profile link based on role
+                            profileLink.href = userData.role === 'admin' ? 'admin-profile.html' : 'profile.html';
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error getting user data:', error);
+                    });
             }
         });
 
@@ -1009,7 +1121,3 @@
     </script>
 </body>
 </html>
-
-
-<!-- All Done --><!-- All Done --><!-- All Done -->
-<!-- All Done --><!-- All Done --><!-- All Done -->

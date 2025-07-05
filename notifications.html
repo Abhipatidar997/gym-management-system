@@ -6,17 +6,14 @@
     <title>Notifications - PowerFit Gym</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
         :root {
             --primary: #3a86ff;
             --primary-dark: #2667cc;
             --primary-light: rgba(58, 134, 255, 0.1);
-            --secondary: #ff006e;
-            --secondary-dark: #cc0058;
             --success: #38b000;
-            --warning: #ffbe0b;
             --danger: #ef233c;
+            --warning: #ffbe0b;
             --info: #4895ef;
             --light: #f8f9fa;
             --lighter: #ffffff;
@@ -165,71 +162,6 @@
             color: var(--primary);
         }
 
-        .search-box {
-            position: relative;
-        }
-
-        .search-box input {
-            padding: 0.6rem 1rem 0.6rem 2.5rem;
-            border-radius: 50px;
-            border: 1px solid var(--gray-light);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
-            transition: var(--transition);
-            width: 250px;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-light);
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray);
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .topbar-item {
-            margin-left: 1.5rem;
-            position: relative;
-        }
-
-        .topbar-link {
-            color: var(--dark);
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            transition: var(--transition);
-        }
-
-        .topbar-link:hover {
-            color: var(--primary);
-        }
-
-        .topbar-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: var(--danger);
-            color: var(--lighter);
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 0.65rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
         .user-profile {
             display: flex;
             align-items: center;
@@ -306,15 +238,6 @@
             box-shadow: var(--shadow-sm);
         }
 
-        .btn-success {
-            background-color: var(--success);
-            color: var(--lighter);
-        }
-
-        .btn-success:hover {
-            background-color: #16a34a;
-        }
-
         .btn-danger {
             background-color: var(--danger);
             color: var(--lighter);
@@ -333,7 +256,7 @@
 
         @media (min-width: 992px) {
             .notifications-container {
-                grid-template-columns: 300px 1fr;
+                grid-template-columns: 250px 1fr;
             }
         }
 
@@ -382,12 +305,11 @@
 
         .notification-item {
             padding: 1.5rem;
-            border-bottom: 1px solid var(--gray-light);
-            transition: var(--transition);
             margin-bottom: 1rem;
             border-radius: 8px;
             background-color: var(--lighter);
             box-shadow: var(--shadow-sm);
+            transition: var(--transition);
         }
 
         .notification-item.unread {
@@ -403,8 +325,9 @@
         .notification-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 0.75rem;
+            gap: 1rem;
         }
 
         .notification-title {
@@ -416,6 +339,7 @@
         .notification-date {
             font-size: 0.85rem;
             color: var(--gray);
+            white-space: nowrap;
         }
 
         .notification-content {
@@ -442,6 +366,21 @@
         }
 
         .mark-read-btn:hover {
+            text-decoration: underline;
+        }
+
+        .delete-notification-btn {
+            background-color: transparent;
+            border: none;
+            color: var(--danger);
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .delete-notification-btn:hover {
             text-decoration: underline;
         }
 
@@ -610,10 +549,6 @@
                 padding: 0 1.5rem;
             }
 
-            .search-box input {
-                width: 180px;
-            }
-
             .user-name {
                 display: none;
             }
@@ -630,10 +565,6 @@
         }
 
         @media (max-width: 576px) {
-            .search-box {
-                display: none;
-            }
-
             .topbar {
                 padding: 0 1rem;
             }
@@ -641,14 +572,24 @@
             .content-area {
                 padding: 1rem;
             }
+
+            .notification-item {
+                padding: 1rem;
+            }
+
+            .notification-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Sidebar -->
-    <div class="sidebar" data-aos="fade-right">
+    <div class="sidebar">
         <div class="sidebar-header">
-            <a href="dashboard.html" class="sidebar-logo">
+            <a href="admin-dashboard.html" class="sidebar-logo">
                 <i class="fas fa-dumbbell"></i>
                 <span>PowerFit</span>
             </a>
@@ -657,7 +598,7 @@
             <h3 class="menu-title">Menu</h3>
             <ul>
                 <li class="menu-item">
-                    <a href="dashboard.html" class="menu-link">
+                    <a href="admin-dashboard.html" class="menu-link">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
@@ -669,9 +610,9 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="workouts.html" class="menu-link">
-                        <i class="fas fa-dumbbell"></i>
-                        <span>Workouts</span>
+                    <a href="bills.html" class="menu-link">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Billing</span>
                     </a>
                 </li>
                 <li class="menu-item">
@@ -687,19 +628,25 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="settings.html" class="menu-link">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
+                    <a href="logs.html" class="menu-link">
+                        <i class="fas fa-history"></i>
+                        <span>Activity Logs</span>
                     </a>
                 </li>
             </ul>
 
-            <h3 class="menu-title">Account</h3>
+            <h3 class="menu-title">Settings</h3>
             <ul>
                 <li class="menu-item">
-                    <a href="profile.html" class="menu-link">
-                        <i class="fas fa-user"></i>
+                    <a href="admin-profile.html" class="menu-link">
+                        <i class="fas fa-user-cog"></i>
                         <span>Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="dashboard-settings.html" class="menu-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
                     </a>
                 </li>
                 <li class="menu-item">
@@ -715,27 +662,17 @@
     <!-- Main Content -->
     <div class="main-content">
         <!-- Topbar -->
-        <div class="topbar" data-aos="fade-down">
+        <div class="topbar">
             <div class="topbar-left">
                 <div class="menu-toggle">
                     <i class="fas fa-bars"></i>
                 </div>
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search notifications...">
-                </div>
             </div>
             <div class="topbar-right">
                 <div class="topbar-item">
-                    <a href="notifications.html" class="topbar-link">
-                        <i class="fas fa-bell"></i>
-                        <span class="topbar-badge" id="notificationBadge">0</span>
-                    </a>
-                </div>
-                <div class="topbar-item">
-                    <div class="user-profile">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="user-img">
-                        <span class="user-name" id="username">User</span>
+                    <div class="user-profile" id="userProfile">
+                        <img id="userProfileImage" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="user-img">
+                        <span class="user-name" id="username">Admin</span>
                     </div>
                 </div>
             </div>
@@ -746,10 +683,12 @@
             <div class="content-header">
                 <div class="content-title">
                     <h2 id="pageTitle">Notifications</h2>
-                    <p id="pageSubtitle">Stay updated with gym announcements</p>
+                    <p id="pageSubtitle">Manage and view system notifications</p>
                 </div>
                 <div class="content-actions" id="adminActions">
-                    <!-- Admin actions will be added here -->
+                    <button class="btn btn-primary" id="newNotificationButton">
+                        <i class="fas fa-plus"></i> New Notification
+                    </button>
                 </div>
             </div>
 
@@ -765,9 +704,9 @@
                         <div class="notification-type-name">Announcements</div>
                         <div class="notification-type-count" id="announcementCount">0</div>
                     </div>
-                    <div class="notification-type-item" data-type="class">
-                        <div class="notification-type-name">Class Updates</div>
-                        <div class="notification-type-count" id="classCount">0</div>
+                    <div class="notification-type-item" data-type="reminder">
+                        <div class="notification-type-name">Reminders</div>
+                        <div class="notification-type-count" id="reminderCount">0</div>
                     </div>
                     <div class="notification-type-item" data-type="system">
                         <div class="notification-type-name">System</div>
@@ -792,26 +731,27 @@
                             <h3>Send New Notification</h3>
                             <form class="notification-form" id="sendNotificationForm">
                                 <div class="form-group">
-                                    <label for="notificationType">Type</label>
+                                    <label for="notificationType">Type <span class="required">*</span></label>
                                     <select id="notificationType" required>
+                                        <option value="">Select Type</option>
                                         <option value="announcement">Announcement</option>
-                                        <option value="class">Class Update</option>
+                                        <option value="reminder">Reminder</option>
                                         <option value="system">System</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="notificationTitle">Title</label>
+                                    <label for="notificationTitle">Title <span class="required">*</span></label>
                                     <input type="text" id="notificationTitle" required>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="notificationMessage">Message</label>
+                                    <label for="notificationMessage">Message <span class="required">*</span></label>
                                     <textarea id="notificationMessage" required></textarea>
                                 </div>
 
                                 <div class="form-actions">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-primary" id="sendNotificationBtn">
                                         <i class="fas fa-paper-plane"></i> Send Notification
                                     </button>
                                     <button type="button" class="btn btn-danger" id="cancelNotification">
@@ -828,13 +768,9 @@
 
     <!-- Toast Notification -->
     <div class="toast" id="toastNotification">
-        <div class="toast-icon">
-            <i class="fas fa-check-circle"></i>
-        </div>
-        <div class="toast-message" id="toastMessage">Notification sent successfully</div>
-        <div class="toast-close">
-            <i class="fas fa-times"></i>
-        </div>
+        <i class="fas fa-check toast-icon"></i>
+        <span id="toastMessage">Operation completed successfully</span>
+        <span class="toast-close" id="toastClose">&times;</span>
     </div>
 
     <!-- Firebase SDK -->
@@ -842,17 +778,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
     
-    <!-- Animation Library -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
     <script>
-        // Initialize AOS animation library
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
-
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDMU_xXHhZdrR9cA3fPcZDSJeg4SQZBD7M",
@@ -874,15 +800,18 @@
         const sidebar = document.querySelector('.sidebar');
         const logoutButton = document.getElementById('logoutButton');
         const usernameElement = document.getElementById('username');
-        const notificationBadge = document.getElementById('notificationBadge');
+        const userProfileImage = document.getElementById('userProfileImage');
         const adminActions = document.getElementById('adminActions');
+        const newNotificationButton = document.getElementById('newNotificationButton');
         const notificationsList = document.getElementById('notificationsList');
         const notificationFormContainer = document.getElementById('notificationFormContainer');
+        const notificationsListContainer = document.getElementById('notificationsListContainer');
         const sendNotificationForm = document.getElementById('sendNotificationForm');
         const cancelNotification = document.getElementById('cancelNotification');
+        const sendNotificationBtn = document.getElementById('sendNotificationBtn');
         const toastNotification = document.getElementById('toastNotification');
         const toastMessage = document.getElementById('toastMessage');
-        const toastClose = document.querySelector('.toast-close');
+        const toastClose = document.getElementById('toastClose');
 
         // Global Variables
         let currentUser = null;
@@ -901,7 +830,7 @@
             auth.onAuthStateChanged(user => {
                 if (user) {
                     currentUser = user;
-                    loadUserData();
+                    checkAdminStatus();
                 } else {
                     window.location.href = 'login.html';
                 }
@@ -929,11 +858,17 @@
             // Setup form submission
             sendNotificationForm.addEventListener('submit', sendNotification);
 
+            // New notification button
+            newNotificationButton.addEventListener('click', () => {
+                notificationsListContainer.style.display = 'none';
+                notificationFormContainer.style.display = 'block';
+                sendNotificationForm.reset();
+            });
+
             // Cancel notification form
             cancelNotification.addEventListener('click', () => {
                 notificationFormContainer.style.display = 'none';
-                document.getElementById('notificationsListContainer').style.display = 'block';
-                sendNotificationForm.reset();
+                notificationsListContainer.style.display = 'block';
             });
 
             // Close toast notification
@@ -942,8 +877,8 @@
             });
         });
 
-        // Load user data and check role
-        function loadUserData() {
+        // Check if user is admin
+        function checkAdminStatus() {
             db.collection('users').doc(currentUser.uid).get()
                 .then(doc => {
                     if (doc.exists) {
@@ -961,16 +896,19 @@
                     }
                 })
                 .catch(error => {
-                    console.error("Error loading user data:", error);
-                    showToast('Error loading user data', 'error');
+                    console.error("Error checking admin status:", error);
+                    showToast('Error verifying user role', 'error');
                 });
         }
 
         // Update UI based on user role
         function updateUIForRole(userData) {
-            // Update username
+            // Update username and profile image
             if (userData.fullName) {
                 usernameElement.textContent = userData.fullName;
+            }
+            if (userData.profileImage) {
+                userProfileImage.src = userData.profileImage;
             }
             
             // Update page title
@@ -979,18 +917,8 @@
                 'Send and manage system notifications' : 'Your recent messages and announcements';
             
             // Show/hide admin actions
-            if (isAdmin) {
-                adminActions.innerHTML = `
-                    <button class="btn btn-primary" id="newNotificationButton">
-                        <i class="fas fa-plus"></i> New Notification
-                    </button>
-                `;
-                
-                // Add event listener for new notification button
-                document.getElementById('newNotificationButton').addEventListener('click', () => {
-                    document.getElementById('notificationsListContainer').style.display = 'none';
-                    notificationFormContainer.style.display = 'block';
-                });
+            if (!isAdmin) {
+                adminActions.style.display = 'none';
             }
         }
 
@@ -1004,11 +932,6 @@
             let query = db.collection('notifications')
                 .orderBy('createdAt', 'desc')
                 .limit(50);
-            
-            // For members, only show notifications sent to them
-            if (!isAdmin) {
-                query = query.where('recipients', 'array-contains', currentUser.uid);
-            }
             
             // Apply filter if not 'all'
             if (currentFilter !== 'all') {
@@ -1041,20 +964,24 @@
                     
                     const notificationElement = document.createElement('div');
                     notificationElement.className = `notification-item ${isUnread ? 'unread' : ''}`;
-                    notificationElement.setAttribute('data-aos', 'fade-up');
                     notificationElement.innerHTML = `
                         <div class="notification-header">
                             <div class="notification-title">${notification.title}</div>
                             <div class="notification-date">${formatDate(notificationDate)}</div>
                         </div>
                         <div class="notification-content">${notification.message}</div>
-                        ${isUnread ? `
-                            <div class="notification-actions">
+                        <div class="notification-actions">
+                            ${isUnread ? `
                                 <button class="mark-read-btn" data-id="${doc.id}">
                                     <i class="fas fa-check"></i> Mark as read
                                 </button>
-                            </div>
-                        ` : ''}
+                            ` : ''}
+                            ${isAdmin ? `
+                                <button class="delete-notification-btn" data-id="${doc.id}">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            ` : ''}
+                        </div>
                     `;
                     
                     notificationsList.appendChild(notificationElement);
@@ -1063,6 +990,13 @@
                     if (isUnread) {
                         notificationElement.querySelector('.mark-read-btn').addEventListener('click', function() {
                             markNotificationAsRead(doc.id);
+                        });
+                    }
+                    
+                    // Add event listener for delete button (admin only)
+                    if (isAdmin) {
+                        notificationElement.querySelector('.delete-notification-btn').addEventListener('click', function() {
+                            deleteNotification(doc.id);
                         });
                     }
                 });
@@ -1077,24 +1011,15 @@
 
         // Format date for display
         function formatDate(date) {
-            const now = new Date();
-            const diff = now - date;
-            const seconds = Math.floor(diff / 1000);
-            const minutes = Math.floor(seconds / 60);
-            const hours = Math.floor(minutes / 60);
-            const days = Math.floor(hours / 24);
-            
-            if (days > 7) {
-                return date.toLocaleDateString();
-            } else if (days > 0) {
-                return `${days} day${days > 1 ? 's' : ''} ago`;
-            } else if (hours > 0) {
-                return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-            } else if (minutes > 0) {
-                return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-            } else {
-                return 'Just now';
-            }
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true
+            };
+            return date.toLocaleDateString('en-US', options);
         }
 
         // Mark notification as read
@@ -1107,11 +1032,13 @@
                 const notificationElement = document.querySelector(`.mark-read-btn[data-id="${notificationId}"]`)?.closest('.notification-item');
                 if (notificationElement) {
                     notificationElement.classList.remove('unread');
-                    notificationElement.querySelector('.notification-actions').remove();
+                    notificationElement.querySelector('.mark-read-btn').remove();
                 }
                 
                 // Update notification counts
                 updateNotificationCounts();
+                
+                showToast('Notification marked as read', 'success');
             })
             .catch(error => {
                 console.error('Error marking notification as read:', error);
@@ -1119,56 +1046,41 @@
             });
         }
 
+        // Delete notification (admin only)
+        function deleteNotification(notificationId) {
+            if (!confirm('Are you sure you want to delete this notification?')) {
+                return;
+            }
+            
+            db.collection('notifications').doc(notificationId).delete()
+                .then(() => {
+                    showToast('Notification deleted successfully', 'success');
+                })
+                .catch(error => {
+                    console.error('Error deleting notification:', error);
+                    showToast('Error deleting notification', 'error');
+                });
+        }
+
         // Update notification counts
         function updateNotificationCounts() {
-            if (isAdmin) {
-                // For admin, show counts of all notifications by type
-                const types = ['all', 'announcement', 'class', 'system'];
+            const types = ['all', 'announcement', 'reminder', 'system'];
+            
+            types.forEach(type => {
+                let query = db.collection('notifications');
                 
-                types.forEach(type => {
-                    let query = db.collection('notifications');
-                    
-                    if (type !== 'all') {
-                        query = query.where('type', '==', type);
-                    }
-                    
-                    query.count().get()
-                        .then(snapshot => {
-                            document.getElementById(`${type}Count`).textContent = snapshot.data().count;
-                        });
-                });
-            } else {
-                // For members, show counts of unread notifications by type
-                const types = ['all', 'announcement', 'class', 'system'];
+                if (type !== 'all') {
+                    query = query.where('type', '==', type);
+                }
                 
-                types.forEach(type => {
-                    let query = db.collection('notifications')
-                        .where('recipients', 'array-contains', currentUser.uid);
-                    
-                    if (type !== 'all') {
-                        query = query.where('type', '==', type);
-                    }
-                    
-                    query.get()
-                        .then(snapshot => {
-                            let unreadCount = 0;
-                            
-                            snapshot.forEach(doc => {
-                                const data = doc.data();
-                                if (!data.readBy?.includes(currentUser.uid)) {
-                                    unreadCount++;
-                                }
-                            });
-                            
-                            document.getElementById(`${type}Count`).textContent = unreadCount;
-                            
-                            // Update topbar badge with total unread count
-                            if (type === 'all') {
-                                notificationBadge.textContent = unreadCount > 0 ? unreadCount : '';
-                            }
-                        });
-                });
-            }
+                query.count().get()
+                    .then(snapshot => {
+                        document.getElementById(`${type}Count`).textContent = snapshot.data().count;
+                    })
+                    .catch(error => {
+                        console.error('Error getting notification count:', error);
+                    });
+            });
         }
 
         // Send new notification (Admin Only)
@@ -1176,11 +1088,17 @@
             e.preventDefault();
             
             const type = document.getElementById('notificationType').value;
-            const title = document.getElementById('notificationTitle').value;
-            const message = document.getElementById('notificationMessage').value;
+            const title = document.getElementById('notificationTitle').value.trim();
+            const message = document.getElementById('notificationMessage').value.trim();
             
+            // Validate form
             if (!type || !title || !message) {
                 showToast('Please fill all required fields', 'error');
+                return;
+            }
+            
+            if (message.length < 5) {
+                showToast('Message must be at least 5 characters', 'error');
                 return;
             }
             
@@ -1189,15 +1107,14 @@
                 type: type,
                 title: title,
                 message: message,
-                recipients: ['all'], // For simplicity, send to all members
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                createdBy: currentUser.uid
+                createdBy: currentUser.uid,
+                recipients: ['all'] // For simplicity, send to all members
             };
             
             // Show loading state
-            const submitButton = sendNotificationForm.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.innerHTML = `<span class="loading-spinner"></span> Sending...`;
+            sendNotificationBtn.disabled = true;
+            sendNotificationBtn.innerHTML = `<span class="loading-spinner"></span> Sending...`;
             
             // Save to Firestore
             db.collection('notifications').add(notificationData)
@@ -1216,26 +1133,25 @@
                 .then(() => {
                     showToast('Notification sent successfully', 'success');
                     
-                    // Reset form
+                    // Reset form and show list
                     sendNotificationForm.reset();
                     notificationFormContainer.style.display = 'none';
-                    document.getElementById('notificationsListContainer').style.display = 'block';
+                    notificationsListContainer.style.display = 'block';
                 })
                 .catch(error => {
                     console.error('Error sending notification:', error);
                     showToast('Error sending notification', 'error');
                 })
                 .finally(() => {
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = `<i class="fas fa-paper-plane"></i> Send Notification`;
+                    sendNotificationBtn.disabled = false;
+                    sendNotificationBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Send Notification`;
                 });
         }
 
         // Show toast notification
         function showToast(message, type = 'success') {
             toastMessage.textContent = message;
-            toastNotification.className = `toast toast-${type}`;
-            toastNotification.classList.add('show');
+            toastNotification.className = `toast toast-${type} show`;
             
             // Hide after 5 seconds
             setTimeout(() => {
@@ -1247,23 +1163,13 @@
         logoutButton.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Show loading state
-            document.body.classList.add('loading');
-            
-            // Firebase logout
             auth.signOut().then(() => {
                 window.location.href = 'login.html';
             }).catch(error => {
                 console.error("Logout failed:", error);
                 showToast("Logout failed. Please try again.", "error");
-                document.body.classList.remove('loading');
             });
         });
     </script>
 </body>
 </html>
-
-
-
-<!-- All Done --><!-- All Done --><!-- All Done -->
-<!-- All Done --><!-- All Done --><!-- All Done -->

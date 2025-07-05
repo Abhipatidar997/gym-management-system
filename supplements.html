@@ -6,7 +6,6 @@
     <title>Supplement Store - PowerFit Gym</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
         :root {
             --primary: #3a86ff;
@@ -181,7 +180,7 @@
         /* Products */
         .store-products {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
         }
 
@@ -197,10 +196,20 @@
             box-shadow: var(--shadow-sm);
             overflow: hidden;
             transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-5px) scale(1.02);
             box-shadow: var(--shadow-md);
         }
 
@@ -211,12 +220,18 @@
             align-items: center;
             justify-content: center;
             position: relative;
+            overflow: hidden;
         }
 
         .product-image img {
             max-width: 80%;
             max-height: 80%;
             object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
         }
 
         .product-badge {
@@ -229,6 +244,7 @@
             border-radius: 50px;
             font-size: 0.75rem;
             font-weight: 500;
+            z-index: 1;
         }
 
         .product-details {
@@ -245,11 +261,12 @@
         .product-name {
             font-weight: 600;
             margin-bottom: 0.5rem;
+            font-size: 1.1rem;
         }
 
         .product-description {
             font-size: 0.85rem;
-            color: var(--gray-dark);
+            color: var(--gray);
             margin-bottom: 1rem;
             height: 40px;
             overflow: hidden;
@@ -264,6 +281,7 @@
         .product-price {
             font-weight: 700;
             color: var(--dark);
+            font-size: 1.1rem;
         }
 
         .product-price.sale {
@@ -293,6 +311,7 @@
 
         .add-to-cart:hover {
             background-color: var(--primary-dark);
+            transform: scale(1.05);
         }
 
         /* Search */
@@ -385,6 +404,11 @@
             margin-bottom: 1.5rem;
             padding-bottom: 1.5rem;
             border-bottom: 1px solid var(--gray-light);
+            transition: var(--transition);
+        }
+
+        .cart-item:hover {
+            background-color: var(--primary-light);
         }
 
         .cart-item-image {
@@ -434,6 +458,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: var(--transition);
+        }
+
+        .cart-item-quantity button:hover {
+            background-color: var(--primary);
+            color: var(--lighter);
         }
 
         .cart-item-quantity input {
@@ -453,10 +483,12 @@
             display: flex;
             align-items: center;
             gap: 0.25rem;
+            transition: var(--transition);
         }
 
         .cart-item-remove:hover {
             text-decoration: underline;
+            transform: translateX(2px);
         }
 
         .cart-footer {
@@ -469,6 +501,7 @@
             justify-content: space-between;
             margin-bottom: 1.5rem;
             font-weight: 600;
+            font-size: 1.1rem;
         }
 
         .cart-checkout {
@@ -489,6 +522,8 @@
 
         .cart-checkout:hover {
             background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
 
         .empty-cart {
@@ -548,6 +583,47 @@
 
         .toast-close:hover {
             opacity: 1;
+        }
+
+        /* Loading States */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Rating Stars */
+        .product-rating {
+            position: absolute;
+            bottom: 0.5rem;
+            left: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 0.25rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .product-rating .fas.fa-star {
+            color: var(--warning);
+        }
+
+        .product-rating .far.fa-star {
+            color: var(--gray-light);
+        }
+
+        .product-rating .fas.fa-star-half-alt {
+            color: var(--warning);
         }
     </style>
 </head>
@@ -617,7 +693,7 @@
                 </div>
 
                 <div class="store-products" id="productList">
-                    <!-- Products will be loaded here -->
+                    <!-- Products will be loaded here with staggered animation -->
                 </div>
             </div>
         </div>
@@ -655,18 +731,8 @@
         </div>
     </div>
 
-    <!-- Animation Library -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
     <script>
-        // Initialize AOS animation library
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
-
-        // Sample product data
+        // Sample product data with more items
         const products = [
             {
                 id: '1',
@@ -674,8 +740,9 @@
                 category: 'protein',
                 description: 'Premium 100% whey protein isolate with 25g protein per serving.',
                 price: 39.99,
-                image: 'https://via.placeholder.com/300?text=Whey+Protein',
-                rating: 4.8
+                image: 'https://m.media-amazon.com/images/I/71iX7Qe3wIL._AC_UL320_.jpg',
+                rating: 4.8,
+                featured: true
             },
             {
                 id: '2',
@@ -683,7 +750,7 @@
                 category: 'pre-workout',
                 description: 'Advanced formula to boost energy, focus and performance during workouts.',
                 price: 29.99,
-                image: 'https://via.placeholder.com/300?text=Pre-Workout',
+                image: 'https://m.media-amazon.com/images/I/61j8C9+LwZL._AC_UL320_.jpg',
                 rating: 4.5
             },
             {
@@ -693,7 +760,7 @@
                 description: 'Branch chain amino acids to support muscle recovery and reduce soreness.',
                 price: 24.99,
                 salePrice: 19.99,
-                image: 'https://via.placeholder.com/300?text=BCAA',
+                image: 'https://m.media-amazon.com/images/I/71+Uq6ZR5QL._AC_UL320_.jpg',
                 rating: 4.7
             },
             {
@@ -702,7 +769,7 @@
                 category: 'vitamins',
                 description: 'Complete multivitamin with essential vitamins and minerals for athletes.',
                 price: 19.99,
-                image: 'https://via.placeholder.com/300?text=Multivitamin',
+                image: 'https://m.media-amazon.com/images/I/71j5y+5DHDL._AC_UL320_.jpg',
                 rating: 4.6
             },
             {
@@ -711,7 +778,7 @@
                 category: 'weight-loss',
                 description: 'Thermogenic fat burner to support weight loss and metabolism.',
                 price: 34.99,
-                image: 'https://via.placeholder.com/300?text=Fat+Burner',
+                image: 'https://m.media-amazon.com/images/I/61+U6J9gVTL._AC_UL320_.jpg',
                 rating: 4.3
             },
             {
@@ -720,7 +787,7 @@
                 category: 'protein',
                 description: 'Pure creatine monohydrate to enhance strength and power output.',
                 price: 14.99,
-                image: 'https://via.placeholder.com/300?text=Creatine',
+                image: 'https://m.media-amazon.com/images/I/71HrqY6a-thL._AC_UL320_.jpg',
                 rating: 4.9
             },
             {
@@ -729,7 +796,7 @@
                 category: 'protein',
                 description: 'Vegan protein powder with pea, rice and hemp proteins.',
                 price: 32.99,
-                image: 'https://via.placeholder.com/300?text=Plant+Protein',
+                image: 'https://m.media-amazon.com/images/I/71w5y5JYH6L._AC_UL320_.jpg',
                 rating: 4.4
             },
             {
@@ -738,8 +805,46 @@
                 category: 'recovery',
                 description: 'Fast-absorbing recovery formula with carbs and electrolytes.',
                 price: 27.99,
-                image: 'https://via.placeholder.com/300?text=Post-Workout',
+                image: 'https://m.media-amazon.com/images/I/61+9h7+QmZL._AC_UL320_.jpg',
                 rating: 4.6
+            },
+            {
+                id: '9',
+                name: 'Omega-3 Fish Oil',
+                category: 'vitamins',
+                description: 'High potency fish oil with 1000mg EPA/DHA per serving.',
+                price: 22.99,
+                salePrice: 18.99,
+                image: 'https://m.media-amazon.com/images/I/71HrqY6a-thL._AC_UL320_.jpg',
+                rating: 4.7
+            },
+            {
+                id: '10',
+                name: 'Electrolyte Hydration',
+                category: 'recovery',
+                description: 'Rapid hydration formula with essential electrolytes.',
+                price: 17.99,
+                image: 'https://m.media-amazon.com/images/I/71+Uq6ZR5QL._AC_UL320_.jpg',
+                rating: 4.5
+            },
+            {
+                id: '11',
+                name: 'Mass Gainer',
+                category: 'protein',
+                description: 'High calorie formula for muscle mass and weight gain.',
+                price: 44.99,
+                image: 'https://m.media-amazon.com/images/I/71iX7Qe3wIL._AC_UL320_.jpg',
+                rating: 4.3
+            },
+            {
+                id: '12',
+                name: 'Collagen Peptides',
+                category: 'recovery',
+                description: 'Hydrolyzed collagen for joint and skin health.',
+                price: 29.99,
+                salePrice: 24.99,
+                image: 'https://m.media-amazon.com/images/I/71w5y5JYH6L._AC_UL320_.jpg',
+                rating: 4.8
             }
         ];
 
@@ -763,7 +868,7 @@
 
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
-            // Load products
+            // Load products with staggered animation
             renderProducts();
             
             // Update cart count
@@ -794,20 +899,24 @@
             }
             
             if (filteredProducts.length === 0) {
-                productList.innerHTML = '<p class="empty-cart">No products found</p>';
+                productList.innerHTML = '<p class="empty-cart">No products found matching your criteria</p>';
                 return;
             }
             
-            filteredProducts.forEach(product => {
+            // Sort featured products first
+            filteredProducts.sort((a, b) => (b.featured || false) - (a.featured || false));
+            
+            filteredProducts.forEach((product, index) => {
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
-                productCard.setAttribute('data-aos', 'fade-up');
+                productCard.style.animationDelay = `${index * 0.1}s`;
                 productCard.innerHTML = `
                     <div class="product-image">
                         <img src="${product.image}" alt="${product.name}">
                         ${product.salePrice ? '<span class="product-badge">SALE</span>' : ''}
                         <div class="product-rating">
                             ${renderRatingStars(product.rating)}
+                            <span>${product.rating}</span>
                         </div>
                     </div>
                     <div class="product-details">
@@ -885,12 +994,26 @@
             if (!cartSidebar.classList.contains('active')) {
                 cartSidebar.classList.add('active');
             }
+            
+            // Add animation to cart button
+            cartToggle.classList.add('animate');
+            setTimeout(() => {
+                cartToggle.classList.remove('animate');
+            }, 500);
         }
 
         // Update cart count in header
         function updateCartCount() {
             const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
             cartCount.textContent = totalItems;
+            
+            // Add animation if items changed
+            if (totalItems > 0) {
+                cartCount.classList.add('animate');
+                setTimeout(() => {
+                    cartCount.classList.remove('animate');
+                }, 300);
+            }
         }
 
         // Render cart items in sidebar
@@ -1046,6 +1169,13 @@
                 cartSidebar.classList.remove('active');
             });
             
+            // Close cart when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!cartSidebar.contains(event.target) && !cartToggle.contains(event.target)) {
+                    cartSidebar.classList.remove('active');
+                }
+            });
+            
             // Checkout button
             checkoutButton.addEventListener('click', function() {
                 if (cart.length === 0) {
@@ -1072,6 +1202,3 @@
     </script>
 </body>
 </html>
-
-<!-- All Done --><!-- All Done --><!-- All Done -->
-<!-- All Done --><!-- All Done --><!-- All Done -->
