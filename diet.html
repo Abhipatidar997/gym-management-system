@@ -6,7 +6,6 @@
     <title>Diet Plans Management | PowerFit Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
         /* ====== CSS Variables ====== */
         :root {
@@ -443,6 +442,7 @@
             color: var(--success);
             font-weight: 500;
             margin-top: 0.5rem;
+            display: none;
         }
 
         /* Diet Plan Details */
@@ -917,7 +917,7 @@
 </head>
 <body>
     <!-- Sidebar -->
-    <div class="sidebar" data-aos="fade-right">
+    <div class="sidebar">
         <div class="sidebar-header">
             <a href="admin-dashboard.html" class="sidebar-logo">
                 <i class="fas fa-dumbbell"></i>
@@ -999,7 +999,7 @@
     <!-- Main Content -->
     <div class="main-content">
         <!-- Topbar -->
-        <div class="topbar" data-aos="fade-down">
+        <div class="topbar">
             <div class="topbar-left">
                 <div class="menu-toggle">
                     <i class="fas fa-bars"></i>
@@ -1040,7 +1040,7 @@
                 </div>
             </div>
 
-            <div class="diet-container" data-aos="fade-up">
+            <div class="diet-container">
                 <!-- Members List -->
                 <div class="diet-members">
                     <div class="diet-members-header">
@@ -1130,12 +1130,13 @@
                             <input type="hidden" id="dietPlanUserId">
 
                             <div class="form-group">
-                                <label for="dietPlanNameInput">Plan Name</label>
+                                <label for="dietPlanNameInput">Plan Name <span class="required">*</span></label>
                                 <input type="text" id="dietPlanNameInput" required>
+                                <div class="error-message" id="nameError"></div>
                             </div>
 
                             <div class="form-group">
-                                <label for="dietPlanTypeSelect">Plan Type</label>
+                                <label for="dietPlanTypeSelect">Plan Type <span class="required">*</span></label>
                                 <select id="dietPlanTypeSelect" required>
                                     <option value="">Select Type</option>
                                     <option value="weight-loss">Weight Loss</option>
@@ -1144,6 +1145,7 @@
                                     <option value="performance">Performance</option>
                                     <option value="custom">Custom</option>
                                 </select>
+                                <div class="error-message" id="typeError"></div>
                             </div>
 
                             <h4>Meal Plan</h4>
@@ -1188,7 +1190,7 @@
                                 <button type="button" class="add-meal-item" data-meal="dinner">Add Item</button>
                             </div>
 
-                                                        <div class="form-group">
+                            <div class="form-group">
                                 <label>Evening Snack</label>
                                 <div id="eveningSnackFormItems">
                                     <!-- Evening snack items will be added here -->
@@ -1202,7 +1204,7 @@
                             </div>
 
                             <div class="diet-plan-actions">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary" id="saveDietPlan">
                                     <i class="fas fa-save"></i> Save Plan
                                 </button>
                                 <button type="button" class="btn btn-danger" id="cancelDietForm">
@@ -1218,30 +1220,30 @@
 
     <!-- Delete Confirmation Modal -->
     <div class="modal" id="deleteModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 400px;">
             <div class="modal-header">
-                <h3 class="modal-title">Confirm Deletion</h3>
+                <h3 class="modal-title">Confirm Delete</h3>
                 <button class="modal-close" id="closeDeleteModal">&times;</button>
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to delete this diet plan? This action cannot be undone.</p>
+                <input type="hidden" id="deleteDietPlanId">
             </div>
             <div class="modal-footer">
-                <button class="btn btn-danger" id="confirmDelete">Delete</button>
+                <button class="btn btn-danger" id="confirmDelete">
+                    <span>Delete</span>
+                    <span class="loading-spinner" id="deleteSpinner" style="display: none;"></span>
+                </button>
                 <button class="btn" id="cancelDelete">Cancel</button>
             </div>
         </div>
     </div>
 
     <!-- Toast Notification -->
-    <div class="toast" id="toastNotification">
-        <div class="toast-icon">
-            <i class="fas fa-check-circle"></i>
-        </div>
-        <div class="toast-message" id="toastMessage">Operation completed successfully</div>
-        <div class="toast-close">
-            <i class="fas fa-times"></i>
-        </div>
+    <div class="toast" id="toast">
+        <i class="fas fa-check toast-icon"></i>
+        <span id="toastMessage">Operation completed successfully</span>
+        <span class="toast-close" id="toastClose">&times;</span>
     </div>
 
     <!-- Firebase SDK -->
@@ -1249,17 +1251,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
     
-    <!-- Animation Library -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
     <script>
-        // Initialize AOS animation library
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
-
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDMU_xXHhZdrR9cA3fPcZDSJeg4SQZBD7M",
@@ -1280,37 +1272,41 @@
         const menuToggle = document.querySelector('.menu-toggle');
         const sidebar = document.querySelector('.sidebar');
         const logoutButton = document.getElementById('logoutButton');
+        const userProfile = document.getElementById('userProfile');
         const membersList = document.getElementById('membersList');
         const memberSearch = document.getElementById('memberSearch');
         const addDietPlanButton = document.getElementById('addDietPlanButton');
         const editDietPlanButton = document.getElementById('editDietPlanButton');
         const deleteDietPlanButton = document.getElementById('deleteDietPlanButton');
-        const cancelDietForm = document.getElementById('cancelDietForm');
         const dietForm = document.getElementById('dietForm');
         const dietPlanView = document.getElementById('dietPlanView');
         const dietPlanForm = document.getElementById('dietPlanForm');
+        const cancelDietForm = document.getElementById('cancelDietForm');
         const deleteModal = document.getElementById('deleteModal');
         const closeDeleteModal = document.getElementById('closeDeleteModal');
         const cancelDelete = document.getElementById('cancelDelete');
         const confirmDelete = document.getElementById('confirmDelete');
-        const toastNotification = document.getElementById('toastNotification');
+        const deleteDietPlanId = document.getElementById('deleteDietPlanId');
+        const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toastMessage');
-        const toastClose = document.querySelector('.toast-close');
+        const toastClose = document.getElementById('toastClose');
+        const saveDietPlanBtn = document.getElementById('saveDietPlan');
+        const deleteSpinner = document.getElementById('deleteSpinner');
 
-        // Global Variables
+        // Global variables
         let currentUser = null;
-        let isAdmin = false;
         let selectedMemberId = null;
         let selectedDietPlanId = null;
         let members = [];
+        let dietPlansListener = null;
 
-        // Initialize the page
+        // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             // Check authentication state
             auth.onAuthStateChanged(user => {
                 if (user) {
                     currentUser = user;
-                    loadUserData();
+                    checkAdminStatus();
                 } else {
                     window.location.href = 'login.html';
                 }
@@ -1320,27 +1316,26 @@
             setupEventListeners();
         });
 
-        // Load user data and check role
-        function loadUserData() {
+        // Check if user is admin
+        function checkAdminStatus() {
             db.collection('users').doc(currentUser.uid).get()
                 .then(doc => {
                     if (doc.exists) {
                         const userData = doc.data();
-                        isAdmin = userData.role === 'admin';
-                        
-                        if (!isAdmin) {
-                            // Redirect non-admin users
+                        if (userData.role !== 'admin') {
                             window.location.href = 'member-dashboard.html';
                         } else {
-                            // Load members for admin
+                            // Load data for admin
                             loadMembers();
+                            setupRealTimeDietPlans();
                             updateUserProfile(userData);
+                            loadUnreadNotificationsCount();
                         }
                     }
                 })
                 .catch(error => {
-                    console.error("Error loading user data:", error);
-                    showToast('Error loading user data', 'error');
+                    console.error("Error checking admin status:", error);
+                    showToast('Error verifying user role', 'error');
                 });
         }
 
@@ -1356,6 +1351,20 @@
             if (userData.fullName) {
                 userName.textContent = userData.fullName;
             }
+        }
+
+        // Load unread notifications count
+        function loadUnreadNotificationsCount() {
+            db.collection('notifications')
+                .where('adminId', '==', currentUser.uid)
+                .where('read', '==', false)
+                .onSnapshot(snapshot => {
+                    const count = snapshot.size;
+                    document.getElementById('notificationBadge').textContent = count;
+                    document.getElementById('topbarNotificationBadge').textContent = count;
+                }, error => {
+                    console.error("Error loading notifications:", error);
+                });
         }
 
         // Load members from Firestore
@@ -1392,12 +1401,9 @@
                         memberItem.innerHTML = `
                             <div class="diet-member-name">${member.fullName || 'Member'}</div>
                             <div class="diet-member-email">${member.email}</div>
-                            <div class="diet-member-plan" style="display: none;">Has Plan</div>
+                            <div class="diet-member-plan">Has Plan</div>
                         `;
                         membersList.appendChild(memberItem);
-                        
-                        // Check if member has a diet plan
-                        checkMemberHasDietPlan(doc.id, memberItem);
                         
                         // Add click event to load diet plan
                         memberItem.addEventListener('click', function() {
@@ -1411,17 +1417,39 @@
                 });
         }
 
-        // Check if member has a diet plan
-        function checkMemberHasDietPlan(memberId, memberItem) {
-            db.collection('dietPlans')
-                .where('userId', '==', memberId)
-                .limit(1)
-                .get()
-                .then(querySnapshot => {
-                    if (!querySnapshot.empty) {
-                        const planBadge = memberItem.querySelector('.diet-member-plan');
-                        planBadge.style.display = 'block';
+        // Setup real-time listener for diet plans
+        function setupRealTimeDietPlans() {
+            // Clear any existing listener
+            if (dietPlansListener) {
+                dietPlansListener();
+            }
+
+            dietPlansListener = db.collection('dietPlans')
+                .onSnapshot(snapshot => {
+                    // Update the "Has Plan" badges when diet plans change
+                    members.forEach(member => {
+                        const memberItem = document.querySelector(`.diet-member-item[data-id="${member.id}"]`);
+                        if (memberItem) {
+                            const planBadge = memberItem.querySelector('.diet-member-plan');
+                            
+                            // Check if member has a diet plan
+                            let hasPlan = false;
+                            snapshot.forEach(doc => {
+                                if (doc.data().userId === member.id) {
+                                    hasPlan = true;
+                                }
+                            });
+                            
+                            planBadge.style.display = hasPlan ? 'block' : 'none';
+                        }
+                    });
+
+                    // If a member is selected, reload their plan
+                    if (selectedMemberId) {
+                        loadDietPlan(selectedMemberId);
                     }
+                }, error => {
+                    console.error("Error listening to diet plans:", error);
                 });
         }
 
@@ -1533,7 +1561,9 @@
         function showDietPlanForm(editMode = false, dietPlanData = null) {
             // Reset form
             dietForm.reset();
-            document.getElementById('dietPlanId').value = '';
+            clearValidationErrors();
+            
+            // Set member ID
             document.getElementById('dietPlanUserId').value = selectedMemberId;
             
             // Clear all meal items
@@ -1563,6 +1593,7 @@
             } else {
                 // Create mode - empty form
                 document.getElementById('dietFormTitle').textContent = 'Create New Diet Plan';
+                document.getElementById('dietPlanId').value = '';
                 
                 // Add one empty item for each meal type
                 mealTypes.forEach(meal => {
@@ -1592,20 +1623,71 @@
             container.appendChild(div);
         }
 
+        // Clear validation errors
+        function clearValidationErrors() {
+            document.getElementById('nameError').textContent = '';
+            document.getElementById('typeError').textContent = '';
+        }
+
+        // Validate diet plan form
+        function validateDietForm() {
+            let isValid = true;
+            clearValidationErrors();
+
+            // Name validation
+            const name = document.getElementById('dietPlanNameInput').value.trim();
+            if (!name) {
+                document.getElementById('nameError').textContent = 'Plan name is required';
+                isValid = false;
+            }
+
+            // Type validation
+            const type = document.getElementById('dietPlanTypeSelect').value;
+            if (!type) {
+                document.getElementById('typeError').textContent = 'Plan type is required';
+                isValid = false;
+            }
+
+            // Check at least one meal item is provided
+            const mealTypes = ['breakfast', 'morningSnack', 'lunch', 'afternoonSnack', 'dinner', 'eveningSnack'];
+            let hasMealItems = false;
+            
+            mealTypes.forEach(meal => {
+                const containers = document.getElementById(`${meal}FormItems`).querySelectorAll('.meal-item-container');
+                containers.forEach(container => {
+                    const nameInput = container.querySelector('input[type="text"]');
+                    if (nameInput.value.trim()) {
+                        hasMealItems = true;
+                    }
+                });
+            });
+
+            if (!hasMealItems) {
+                showToast('Please add at least one meal item', 'error');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
         // Save diet plan
         function saveDietPlan(e) {
             e.preventDefault();
             
-            const dietPlanId = document.getElementById('dietPlanId').value;
-            const userId = document.getElementById('dietPlanUserId').value;
-            const name = document.getElementById('dietPlanNameInput').value;
-            const type = document.getElementById('dietPlanTypeSelect').value;
-            const notes = document.getElementById('dietPlanNotesInput').value;
-            
-            if (!name || !type || !userId) {
-                showToast('Please fill all required fields', 'error');
+            // Validate form
+            if (!validateDietForm()) {
                 return;
             }
+
+            const dietPlanId = document.getElementById('dietPlanId').value;
+            const userId = document.getElementById('dietPlanUserId').value;
+            const name = document.getElementById('dietPlanNameInput').value.trim();
+            const type = document.getElementById('dietPlanTypeSelect').value;
+            const notes = document.getElementById('dietPlanNotesInput').value.trim();
+            
+            // Show loading state
+            saveDietPlanBtn.disabled = true;
+            saveDietPlanBtn.innerHTML = '<span class="loading-spinner"></span> Saving...';
             
             // Collect meal items
             const dietPlanData = {
@@ -1638,9 +1720,6 @@
                 dietPlanData[meal] = items;
             });
             
-            // Show loading state
-            document.body.classList.add('loading');
-            
             // Save to Firestore
             let savePromise;
             
@@ -1670,9 +1749,6 @@
                 .then(() => {
                     showToast('Diet plan saved successfully', 'success');
                     
-                    // Reload the plan
-                    loadDietPlan(userId);
-                    
                     // Show view and hide form
                     dietPlanView.style.display = 'block';
                     dietPlanForm.style.display = 'none';
@@ -1682,18 +1758,29 @@
                     showToast('Error saving diet plan', 'error');
                 })
                 .finally(() => {
-                    document.body.classList.remove('loading');
+                    saveDietPlanBtn.disabled = false;
+                    saveDietPlanBtn.innerHTML = '<i class="fas fa-save"></i> Save Plan';
                 });
+        }
+
+        // Show delete confirmation modal
+        function showDeleteModal() {
+            if (!selectedDietPlanId) return;
+            
+            deleteDietPlanId.value = selectedDietPlanId;
+            deleteModal.style.display = 'flex';
         }
 
         // Delete diet plan
         function deleteDietPlan() {
-            if (!selectedDietPlanId) return;
+            const dietPlanId = deleteDietPlanId.value;
+            if (!dietPlanId) return;
             
             // Show loading state
-            document.body.classList.add('loading');
+            confirmDelete.disabled = true;
+            deleteSpinner.style.display = 'inline-block';
             
-            db.collection('dietPlans').doc(selectedDietPlanId).delete()
+            db.collection('dietPlans').doc(dietPlanId).delete()
                 .then(() => {
                     // Log the action
                     return db.collection('logs').add({
@@ -1702,35 +1789,39 @@
                         memberId: selectedMemberId,
                         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                         details: {
-                            dietPlanId: selectedDietPlanId
+                            dietPlanId: dietPlanId
                         }
                     });
                 })
                 .then(() => {
                     showToast('Diet plan deleted successfully', 'success');
-                    loadDietPlan(selectedMemberId);
+                    deleteModal.style.display = 'none';
                 })
                 .catch(error => {
                     console.error("Error deleting diet plan:", error);
                     showToast('Error deleting diet plan', 'error');
                 })
                 .finally(() => {
-                    document.body.classList.remove('loading');
-                    deleteModal.style.display = 'none';
+                    confirmDelete.disabled = false;
+                    deleteSpinner.style.display = 'none';
                 });
         }
 
         // Show toast notification
         function showToast(message, type = 'success') {
             toastMessage.textContent = message;
-            toastNotification.className = 'toast ' + type;
-            toastNotification.classList.add('show');
+            toast.className = `toast toast-${type} show`;
             
             // Hide after 5 seconds
             setTimeout(() => {
-                toastNotification.classList.remove('show');
+                toast.classList.remove('show');
             }, 5000);
         }
+
+        // Close toast
+        toastClose.addEventListener('click', () => {
+            toast.classList.remove('show');
+        });
 
         // Setup event listeners
         function setupEventListeners() {
@@ -1790,10 +1881,7 @@
             });
             
             // Delete diet plan
-            deleteDietPlanButton.addEventListener('click', () => {
-                if (!selectedDietPlanId) return;
-                deleteModal.style.display = 'flex';
-            });
+            deleteDietPlanButton.addEventListener('click', showDeleteModal);
             
             // Cancel diet form
             cancelDietForm.addEventListener('click', () => {
@@ -1812,11 +1900,6 @@
             
             // Confirm delete
             confirmDelete.addEventListener('click', deleteDietPlan);
-            
-            // Close toast
-            toastClose.addEventListener('click', () => {
-                toastNotification.classList.remove('show');
-            });
             
             // Add meal item buttons
             document.addEventListener('click', (e) => {
@@ -1838,12 +1921,14 @@
             
             // Submit diet form
             dietForm.addEventListener('submit', saveDietPlan);
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === deleteModal) {
+                    deleteModal.style.display = 'none';
+                }
+            });
         }
     </script>
 </body>
 </html>
-
-
-
-<!-- All Done --><!-- All Done --><!-- All Done -->
-<!-- All Done --><!-- All Done --><!-- All Done -->
