@@ -587,6 +587,106 @@
             z-index: 10000;
         }
 
+        /* ====== Password Strength Meter ====== */
+        .password-strength {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .strength-meter {
+            height: 4px;
+            background-color: var(--gray-light);
+            border-radius: 2px;
+            margin-top: 0.3rem;
+            overflow: hidden;
+        }
+
+        .strength-meter-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--danger);
+            transition: width 0.3s ease;
+        }
+
+        .password-rules {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .password-rule {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.2rem;
+        }
+
+        .password-rule i {
+            font-size: 0.6rem;
+            margin-right: 0.5rem;
+            color: var(--danger);
+        }
+
+        .password-rule.valid i {
+            color: var(--success);
+        }
+
+        /* ====== Toast Messages ====== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 350px;
+            width: 100%;
+        }
+
+        .toast {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            box-shadow: var(--shadow-md);
+            transform: translateX(120%);
+            transition: transform 0.3s ease-out;
+            background-color: white;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast i {
+            font-size: 1.2rem;
+        }
+
+        .toast-success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast-danger {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast-warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .toast-message {
+            flex: 1;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0 0.3rem;
+        }
+
         /* ====== Responsive Design ====== */
         @media (max-width: 992px) {
             .auth-left {
@@ -605,6 +705,12 @@
         @media (max-width: 768px) {
             .auth-form-header h2 {
                 font-size: 1.8rem;
+            }
+            
+            .toast-container {
+                max-width: 280px;
+                right: 10px;
+                top: 10px;
             }
         }
 
@@ -626,10 +732,19 @@
                 flex-direction: column;
                 gap: 0.7rem;
             }
+            
+            .toast {
+                max-width: 90%;
+                right: 5%;
+                left: 5%;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+    
     <div class="auth-container">
         <!-- Left Panel -->
         <div class="auth-left" data-aos="fade-right" data-aos-duration="800">
@@ -708,10 +823,42 @@
                     <div class="form-group">
                         <label for="password" class="form-label">Password</label>
                         <div class="input-with-icon">
-                            <input type="password" id="password" class="form-control" placeholder="At least 8 characters" required minlength="8">
+                            <input type="password" id="password" class="form-control" placeholder="Create a strong password" required>
                             <i class="fas fa-eye input-icon" id="toggle-password"></i>
                         </div>
-                        <div class="invalid-feedback">Password must be at least 8 characters</div>
+                        <div class="invalid-feedback" id="password-error">Please enter a valid password</div>
+                        
+                        <!-- Password Strength Meter -->
+                        <div class="password-strength">
+                            <span id="strength-text">Password Strength: Weak</span>
+                            <div class="strength-meter">
+                                <div class="strength-meter-fill" id="strength-meter"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Password Rules -->
+                        <div class="password-rules">
+                            <div class="password-rule" id="rule-length">
+                                <i class="fas fa-circle"></i>
+                                <span>At least 8 characters</span>
+                            </div>
+                            <div class="password-rule" id="rule-uppercase">
+                                <i class="fas fa-circle"></i>
+                                <span>At least 1 uppercase letter</span>
+                            </div>
+                            <div class="password-rule" id="rule-lowercase">
+                                <i class="fas fa-circle"></i>
+                                <span>At least 1 lowercase letter</span>
+                            </div>
+                            <div class="password-rule" id="rule-number">
+                                <i class="fas fa-circle"></i>
+                                <span>At least 1 number</span>
+                            </div>
+                            <div class="password-rule" id="rule-special">
+                                <i class="fas fa-circle"></i>
+                                <span>At least 1 special character</span>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="form-group" data-aos="fade-up" data-aos-delay="150">
@@ -744,6 +891,7 @@
                     <div class="form-check" data-aos="fade-up" data-aos-delay="200">
                         <input type="checkbox" id="terms" required>
                         <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                        <div class="invalid-feedback">You must accept the terms and conditions</div>
                     </div>
                     
                     <button type="submit" class="auth-btn" id="signup-btn" data-aos="fade-up" data-aos-delay="250">
@@ -804,11 +952,53 @@
         const phoneInput = document.getElementById('phone');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
+        const passwordError = document.getElementById('password-error');
         const togglePasswordBtn = document.getElementById('toggle-password');
         const termsCheckbox = document.getElementById('terms');
         const signupBtn = document.getElementById('signup-btn');
         const alertMessage = document.getElementById('alert-message');
         const alertText = document.getElementById('alert-text');
+        const strengthText = document.getElementById('strength-text');
+        const strengthMeter = document.getElementById('strength-meter');
+        const toastContainer = document.getElementById('toast-container');
+
+        // Password strength indicators
+        const passwordRules = {
+            length: document.getElementById('rule-length'),
+            uppercase: document.getElementById('rule-uppercase'),
+            lowercase: document.getElementById('rule-lowercase'),
+            number: document.getElementById('rule-number'),
+            special: document.getElementById('rule-special')
+        };
+
+        // Check if user is already logged in and redirect
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // User is signed in, check if email is verified
+                if (user.emailVerified) {
+                    // Get user role from Firestore and redirect
+                    db.collection('users').doc(user.uid).get().then(doc => {
+                        if (doc.exists) {
+                            const userData = doc.data();
+                            if (userData.role === 'admin') {
+                                window.location.href = 'admin-dashboard.html';
+                            } else {
+                                window.location.href = 'member-dashboard.html';
+                            }
+                        } else {
+                            // User document doesn't exist, sign them out
+                            auth.signOut();
+                        }
+                    }).catch(error => {
+                        console.error("Error getting user document:", error);
+                        showToast('An error occurred. Please try again.', 'danger');
+                    });
+                } else {
+                    // Email not verified, show message and stay on page
+                    showToast('Please verify your email address before proceeding.', 'warning');
+                }
+            }
+        });
 
         // Toggle password visibility
         togglePasswordBtn.addEventListener('click', function() {
@@ -832,6 +1022,74 @@
             
             e.target.value = phone;
         });
+
+        // Password strength validation
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            const strength = checkPasswordStrength(password);
+            
+            // Update strength meter
+            strengthMeter.style.width = `${strength.score * 25}%`;
+            
+            // Update strength text and color
+            let strengthLabel = '';
+            let strengthColor = '';
+            
+            switch(strength.score) {
+                case 1:
+                    strengthLabel = 'Weak';
+                    strengthColor = 'var(--danger)';
+                    break;
+                case 2:
+                    strengthLabel = 'Fair';
+                    strengthColor = 'var(--warning)';
+                    break;
+                case 3:
+                    strengthLabel = 'Good';
+                    strengthColor = 'var(--primary)';
+                    break;
+                case 4:
+                    strengthLabel = 'Strong';
+                    strengthColor = 'var(--success)';
+                    break;
+                default:
+                    strengthLabel = 'Weak';
+                    strengthColor = 'var(--danger)';
+            }
+            
+            strengthText.textContent = `Password Strength: ${strengthLabel}`;
+            strengthMeter.style.backgroundColor = strengthColor;
+            
+            // Update password rules indicators
+            passwordRules.length.classList.toggle('valid', password.length >= 8);
+            passwordRules.uppercase.classList.toggle('valid', strength.hasUpper);
+            passwordRules.lowercase.classList.toggle('valid', strength.hasLower);
+            passwordRules.number.classList.toggle('valid', strength.hasNumber);
+            passwordRules.special.classList.toggle('valid', strength.hasSpecial);
+        });
+
+        // Check password strength
+        function checkPasswordStrength(password) {
+            const strength = {
+                score: 0,
+                hasUpper: /[A-Z]/.test(password),
+                hasLower: /[a-z]/.test(password),
+                hasNumber: /\d/.test(password),
+                hasSpecial: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+            
+            // Calculate strength score
+            strength.score += password.length >= 8 ? 1 : 0;
+            strength.score += strength.hasUpper ? 1 : 0;
+            strength.score += strength.hasLower ? 1 : 0;
+            strength.score += strength.hasNumber ? 1 : 0;
+            strength.score += strength.hasSpecial ? 1 : 0;
+            
+            // Cap the score at 4
+            strength.score = Math.min(strength.score, 4);
+            
+            return strength;
+        }
 
         // Form validation
         function validateForm() {
@@ -864,8 +1122,12 @@
             }
             
             // Validate password
-            if (passwordInput.value.length < 8) {
+            const password = passwordInput.value;
+            const strength = checkPasswordStrength(password);
+            
+            if (password.length < 8 || strength.score < 2) {
                 passwordInput.classList.add('is-invalid');
+                passwordError.textContent = 'Password must be at least 8 characters and meet complexity requirements';
                 isValid = false;
             } else {
                 passwordInput.classList.remove('is-invalid');
@@ -895,6 +1157,45 @@
                     alertMessage.className = 'alert';
                 }, 500);
             }, 5000);
+        }
+
+        // Show toast message
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const icon = type === 'success' ? 'fa-check-circle' : 
+                         type === 'danger' ? 'fa-exclamation-circle' : 'fa-exclamation-triangle';
+            
+            toast.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <div class="toast-message">${message}</div>
+                <button class="toast-close">&times;</button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            // Auto-remove toast after 5 seconds
+            const autoRemove = setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 5000);
+            
+            // Remove toast on click
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                clearTimeout(autoRemove);
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            });
         }
 
         // Show loading state
@@ -935,7 +1236,9 @@
                 const user = userCredential.user;
                 
                 // Send email verification
-                await user.sendEmailVerification();
+                await user.sendEmailVerification({
+                    url: window.location.origin + (role === 'admin' ? '/admin-dashboard.html' : '/member-dashboard.html')
+                });
                 
                 // Save additional user data to Firestore
                 await db.collection('users').doc(user.uid).set({
@@ -964,15 +1267,14 @@
                 });
                 
                 // Show success message
-                showAlert('Account created successfully! Please check your email for verification.', 'success');
+                showToast('Account created successfully! Please check your email for verification.', 'success');
                 
-                // Redirect after a short delay
+                // Sign out user until they verify their email
+                await auth.signOut();
+                
+                // Redirect to login page after a short delay
                 setTimeout(() => {
-                    if (role === 'admin') {
-                        window.location.href = 'admin-dashboard.html';
-                    } else {
-                        window.location.href = 'member-dashboard.html';
-                    }
+                    window.location.href = 'login.html?verify_email=true';
                 }, 3000);
                 
             } catch (error) {
@@ -986,12 +1288,15 @@
                 switch (error.code) {
                     case 'auth/email-already-in-use':
                         errorMessage = 'This email is already registered. Please use a different email or sign in.';
+                        emailInput.classList.add('is-invalid');
                         break;
                     case 'auth/invalid-email':
                         errorMessage = 'Please enter a valid email address.';
+                        emailInput.classList.add('is-invalid');
                         break;
                     case 'auth/weak-password':
-                        errorMessage = 'Password should be at least 8 characters.';
+                        errorMessage = 'Password should be at least 8 characters and include a mix of letters, numbers, and symbols.';
+                        passwordInput.classList.add('is-invalid');
                         break;
                     case 'auth/operation-not-allowed':
                         errorMessage = 'Email/password accounts are not enabled.';
@@ -1002,6 +1307,7 @@
                 }
                 
                 showAlert(errorMessage);
+                showToast(errorMessage, 'danger');
                 console.error('Signup error:', error);
             }
         });
@@ -1009,25 +1315,8 @@
         // Social login handlers (placeholder - would need proper implementation)
         document.querySelectorAll('.social-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                showAlert('Social login would be implemented here in a production app.', 'success');
+                showToast('Social login would be implemented here in a production app.', 'success');
             });
-        });
-
-        // Check if user is already logged in
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                // User is signed in, redirect to appropriate dashboard
-                db.collection('users').doc(user.uid).get().then(doc => {
-                    if (doc.exists) {
-                        const userData = doc.data();
-                        if (userData.role === 'admin') {
-                            window.location.href = 'admin-dashboard.html';
-                        } else {
-                            window.location.href = 'member-dashboard.html';
-                        }
-                    }
-                });
-            }
         });
 
         // Add loading state to all navigation links
@@ -1041,10 +1330,12 @@
                 }
             });
         });
+
+        // Check for email verification redirect
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('verify_email')) {
+            showToast('Please check your email for a verification link.', 'success');
+        }
     </script>
 </body>
 </html>
-
-
-<!-- All Done --><!-- All Done --><!-- All Done -->
-<!-- All Done --><!-- All Done --><!-- All Done -->

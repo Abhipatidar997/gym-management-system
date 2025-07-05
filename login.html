@@ -532,6 +532,61 @@
             z-index: 10000;
         }
 
+        /* ====== Toast Notification ====== */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-lg);
+            transform: translateX(150%);
+            transition: transform 0.3s ease-out;
+            max-width: 350px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast i {
+            font-size: 1.2rem;
+        }
+
+        .toast-success {
+            background-color: var(--success);
+        }
+
+        .toast-warning {
+            background-color: var(--warning);
+        }
+
+        .toast-error {
+            background-color: var(--danger);
+        }
+
+        .toast-close {
+            margin-left: auto;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+        }
+
         /* ====== Responsive Design ====== */
         @media (max-width: 992px) {
             .auth-left {
@@ -555,6 +610,16 @@
             .auth-left h1 {
                 font-size: 2rem;
             }
+
+            .toast-container {
+                bottom: 10px;
+                right: 10px;
+            }
+
+            .toast {
+                max-width: 280px;
+                padding: 12px 15px;
+            }
         }
 
         @media (max-width: 576px) {
@@ -575,6 +640,19 @@
             .social-auth {
                 flex-direction: column;
                 gap: 0.7rem;
+            }
+
+            .toast-container {
+                width: 100%;
+                padding: 0 10px;
+                bottom: 0;
+                right: 0;
+            }
+
+            .toast {
+                max-width: 100%;
+                border-radius: 0;
+                box-shadow: none;
             }
         }
     </style>
@@ -685,6 +763,9 @@
         </div>
     </div>
 
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -723,6 +804,43 @@
         const loginBtn = document.getElementById('login-btn');
         const alertMessage = document.getElementById('alert-message');
         const alertText = document.getElementById('alert-text');
+        const toastContainer = document.getElementById('toast-container');
+
+        // Check if user is already logged in and redirect
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // User is signed in, check email verification
+                if (!user.emailVerified) {
+                    showToast('Please verify your email before logging in.', 'warning');
+                    await auth.signOut();
+                    return;
+                }
+
+                // Get user role from Firestore
+                try {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        const role = userData.role || 'member';
+                        
+                        // Redirect based on role
+                        if (role === 'admin') {
+                            window.location.href = 'admin-dashboard.html';
+                        } else {
+                            window.location.href = 'member-dashboard.html';
+                        }
+                    } else {
+                        showToast('User data not found. Please contact support.', 'error');
+                        await auth.signOut();
+                    }
+                } catch (error) {
+                    console.error('Error checking user role:', error);
+                    showToast('Error checking user data. Please try again.', 'error');
+                    await auth.signOut();
+                }
+            }
+        });
 
         // Toggle password visibility
         togglePasswordBtn.addEventListener('click', function() {
@@ -769,6 +887,46 @@
                     alertMessage.className = 'alert';
                 }, 500);
             }, 5000);
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            let iconClass = 'fas fa-check-circle';
+            if (type === 'warning') iconClass = 'fas fa-exclamation-triangle';
+            if (type === 'error') iconClass = 'fas fa-times-circle';
+            
+            toast.innerHTML = `
+                <i class="${iconClass}"></i>
+                <span>${message}</span>
+                <span class="toast-close"><i class="fas fa-times"></i></span>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            // Auto-remove toast after 5 seconds
+            const autoRemove = setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 5000);
+            
+            // Close button click handler
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                clearTimeout(autoRemove);
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            });
         }
 
         // Show loading state
@@ -831,7 +989,8 @@
                 if (!user.emailVerified) {
                     // Send verification email if not verified
                     await user.sendEmailVerification();
-                    showAlert('Please verify your email first. A new verification email has been sent.', 'warning');
+                    await auth.signOut();
+                    showToast('Please verify your email first. A new verification email has been sent.', 'warning');
                     hideLoading();
                     return;
                 }
@@ -867,7 +1026,7 @@
                 });
 
                 // Show success message
-                showAlert('Login successful! Redirecting...', 'success');
+                showToast('Login successful! Redirecting...', 'success');
 
                 // Redirect based on role
                 setTimeout(() => {
@@ -909,7 +1068,7 @@
                         }
                 }
                 
-                showAlert(errorMessage);
+                showToast(errorMessage, 'error');
                 console.error('Login error:', error);
             }
         });
@@ -917,32 +1076,15 @@
         // Social login handlers (placeholder)
         document.querySelectorAll('.social-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                showAlert('Social login would be implemented here in a production app.', 'success');
+                showToast('Social login would be implemented here in a production app.', 'warning');
             });
         });
 
         // Check if there's a success message from signup page
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('signupSuccess') === 'true') {
-            showAlert('Account created successfully! Please log in.', 'success');
+            showToast('Account created successfully! Please log in.', 'success');
         }
-
-        // Check if user is already logged in
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                // User is signed in, check their role and redirect
-                db.collection('users').doc(user.uid).get().then(doc => {
-                    if (doc.exists) {
-                        const userData = doc.data();
-                        if (userData.role === 'admin') {
-                            window.location.href = 'admin-dashboard.html';
-                        } else {
-                            window.location.href = 'member-dashboard.html';
-                        }
-                    }
-                });
-            }
-        });
 
         // Add loading state to all navigation links
         document.querySelectorAll('a[href]').forEach(link => {
@@ -958,7 +1100,3 @@
     </script>
 </body>
 </html>
-
-
-<!-- All Done --><!-- All Done --><!-- All Done -->
-<!-- All Done --><!-- All Done --><!-- All Done -->
